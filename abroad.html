@@ -10,6 +10,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth; /* Ensures smooth scrolling */
         }
         #map {
             height: 500px;
@@ -33,14 +34,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Calm Harmony -->
-    <!-- Application Structure Plan: A dashboard-style SPA is used to present the data. The structure includes a header, a control panel for user interaction (filters, search, sort), an interactive map, and a responsive grid for displaying mission details as cards. This structure was chosen to transform a static data table into an engaging, user-driven exploration tool. It prioritizes usability by allowing users to quickly find and compare information both textually and geographically. The map provides immediate visual context that updates with user filters. -->
-    <!-- Visualization & Content Choices: Report Info: List of missions -> Goal: Organize & Inform -> Presentation: Interactive card grid -> Interaction: The grid dynamically updates based on user filtering, sorting, and searching. Report Info: Geographic location of missions -> Goal: Organize & Compare -> Viz Method: Interactive Map (Leaflet.js) with markers -> Interaction: Markers on the map are filtered in real-time based on the user's selections in the control panel, providing a direct visual link between the filtered data and their locations. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <!-- Universal Navigation Bar -->
     <nav class="bg-gray-800 text-white shadow-md no-print">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-center h-16">
@@ -111,6 +107,13 @@
             </section>
         </main>
     </div>
+
+    <button onclick="scrollToBottom()" id="goToBottomBtn" title="Go to Bottom" class="fixed bottom-5 left-5 w-12 h-12 bg-green-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-green-700 transition-all text-2xl font-bold z-20">
+        &#8595;
+    </button>
+    <button onclick="scrollToTop()" id="goToTopBtn" title="Go to top" class="fixed hidden bottom-5 right-5 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-all text-2xl font-bold z-20">
+        &#8593;
+    </button>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -317,6 +320,39 @@
             initializeMap();
             initializeFilters();
             renderMissions();
+            
+            // --- Scroll Button Logic ---
+            const goToTopBtn = document.getElementById('goToTopBtn');
+            const goToBottomBtn = document.getElementById('goToBottomBtn');
+    
+            window.onscroll = function() {
+                const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+                const pageHeight = document.documentElement.scrollHeight;
+                const viewportHeight = window.innerHeight;
+    
+                // Show "Go to Top" button only when scrolled down
+                if (scrollPosition > 100) {
+                    goToTopBtn.classList.remove('hidden');
+                } else {
+                    goToTopBtn.classList.add('hidden');
+                }
+    
+                // Show "Go to Bottom" button unless you're at the very bottom
+                if (scrollPosition + viewportHeight >= pageHeight - 100) { // Hides 100px from bottom
+                    goToBottomBtn.classList.add('hidden');
+                } else {
+                    goToBottomBtn.classList.remove('hidden');
+                }
+            };
+    
+            function scrollToTop() {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }
+    
+            function scrollToBottom() {
+                // This function scrolls to the very end of the page
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }
         });
     </script>
 </body>
