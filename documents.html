@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Compliance Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- jsPDF and html2canvas for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .document-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .document-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            transition: background-color 0.2s;
+        }
+        .status-not-started { background-color: #ef4444; } /* red-500 */
+        .status-in-progress { background-color: #f59e0b; } /* amber-500 */
+        .status-ready { background-color: #22c55e; } /* green-500 */
+        .status-requires-update { background-color: #3b82f6; } /* blue-500 */
+
+        .floating-btn {
+            position: fixed;
+            background-color: #1f2937;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+            text-align: center;
+            line-height: 50px;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .floating-btn:hover {
+            transform: scale(1.1);
+        }
+        #returnToTop {
+            bottom: 20px;
+            right: 20px;
+        }
+        #goToBottom {
+            bottom: 20px;
+            left: 20px;
+        }
+
+        @media print {
+            .no-print { display: none; }
+            body { margin: 0; }
+            .container { padding: 0 !important; }
+            .document-card { box-shadow: none !important; border: 1px solid #e5e7eb; }
+            #main-content { margin-top: 0 !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Top Navigation Bar -->
+    <nav class="no-print sticky top-0 bg-white/90 backdrop-blur-sm shadow-md z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-center items-center h-16">
+                <div class="flex space-x-4">
+                    <a href="#personal-documents" class="text-gray-600 hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Personal</a>
+                    <a href="#financial-documents" class="text-gray-600 hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Financial</a>
+                    <a href="#business-documents" class="text-gray-600 hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Business & Mission</a>
+                    <a href="#translation-hub" class="text-gray-600 hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Translation & Notarization</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="main-content" class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-12 no-print">
+            <h1 class="text-4xl font-bold text-gray-900">Document Compliance Planner</h1>
+            <p class="mt-2 text-lg text-gray-600">A meticulous checklist for global business visa applications.</p>
+        </header>
+
+        <div id="document-categories">
+            <!-- Document cards will be dynamically inserted here -->
+        </div>
+
+        <!-- Translation and Notarization Hub -->
+        <div id="translation-hub" class="mt-8 p-6 bg-white rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4 border-b pb-2">Translation & Notarization Hub</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="font-semibold text-lg mb-2">Translation Checklist</h3>
+                    <p class="text-sm text-gray-600 mb-4">Ensure all relevant documents are translated into the official language(s) of your destination countries. Use certified translators.</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Spanish</span></label>
+                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">French</span></label>
+                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Mandarin</span></label>
+                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Arabic</span></label>
+                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Russian</span></label>
+                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Portuguese</span></label>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-lg mb-2">Notarization & Apostille Guide</h3>
+                    <p class="text-sm text-gray-600">
+                        <strong>Notarization:</strong> A Notary Public verifies the authenticity of your signature.
+                        <br>
+                        <strong>Apostille:</strong> For countries in the Hague Convention, an Apostille from DFAT authenticates the document itself. This is a higher level of verification. Always check if an Apostille is required.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="page-footer" class="no-print sticky bottom-0 bg-white/80 backdrop-blur-sm border-t border-gray-200 p-4 text-center shadow-lg">
+        <button onclick="window.print()" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">
+            Print Checklist
+        </button>
+        <button onclick="exportPDF()" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300 ml-4">
+            Export as PDF
+        </button>
+    </footer>
+
+    <button id="returnToTop" class="floating-btn" onclick="scrollToTop()">↑</button>
+    <button id="goToBottom" class="floating-btn" onclick="scrollToBottom()">↓</button>
+
+    <script>
+        const documentData = [
+            {
+                id: 'personal-documents',
+                category: 'Personal Documents',
+                items: [
+                    { name: 'Passport Bio Pages (Primary & Concurrent)', notes: 'High-resolution color scans of all pages. Ensure at least 12 months validity and 4 blank pages.' },
+                    { name: 'Birth Certificate', notes: 'Original, certified copy, and high-resolution scan. May require an Apostille.' },
+                    { name: 'National ID Cards / Driver\'s License', notes: 'High-resolution color scans of front and back.' },
+                    { name: 'Curriculum Vitae (CV)', notes: 'Updated quarterly. Tailor to highlight business experience and qualifications relevant to the mission.' },
+                    { name: 'Police Clearance Certificates', notes: 'From Australian Federal Police and any country of residence for >12 months in the last 10 years. Renew as required.' },
+                    { name: 'Vaccination Records', notes: 'Including International Certificate of Vaccination for Yellow Fever.' },
+                    { name: 'Passport Photos', notes: 'Multiple sets in various required sizes (e.g., 2x2 inch, 35x45 mm). Digital and physical copies.' },
+                    { name: 'Marriage Certificate', notes: 'If applicable. Original, certified copy, and scan. May require an Apostille.' },
+                    { name: 'Proof of Address', notes: 'Utility bill or bank statement from the last 3 months.' }
+                ]
+            },
+            {
+                id: 'financial-documents',
+                category: 'Financial Documents',
+                items: [
+                    { name: 'Bank Statements (Personal)', notes: 'Rolling 12 months of statements, updated monthly. Must show sufficient funds.' },
+                    { name: 'Bank Statements (Business)', notes: 'Rolling 12 months of statements for primary business entities, updated monthly.' },
+                    { name: 'Tax Returns (Personal & Business)', notes: 'Previous 3 financial years. Stamped by an accountant if possible.' },
+                    { name: 'Proof of Property Ownership / Assets', notes: 'Deeds, valuation reports. Can demonstrate ties to home country.' },
+                    { name: 'Letter from Financial Institution', notes: 'Confirming account status, length of relationship, and good standing.' },
+                    { name: 'Proof of Comprehensive Health/Travel Insurance', notes: 'Policy document showing global coverage, including medical evacuation and repatriation, for the entire mission duration.' }
+                ]
+            },
+            {
+                id: 'business-documents',
+                category: 'Business & Mission Documents',
+                items: [
+                    { name: 'Certificate of Incorporation (Mission Entities)', notes: 'For GAJRA Earth, Alpha Infinity Foundation, etc. Certified copies.' },
+                    { name: 'Business Plan Summary', notes: '1-page summary of Project Odyssey, outlining goals, activities, and timeline in the destination country.' },
+                    { name: 'Letter of Support (From Own Company)', notes: 'Template letter confirming employment, salary, purpose of travel, and that all expenses will be covered.' },
+                    { name: 'Letter of Invitation (From Host)', notes: 'Template to be customized by hosts in destination countries. Must be on their letterhead and often needs to be certified or notarized locally.' },
+                    { name: 'List of Global Contacts/Partners', notes: 'For reference in applications, showing established business connections.' },
+                    { name: 'Company Profile / Brochure', notes: 'Professional document outlining your business activities.' },
+                    { name: 'Proof of Past Business Dealings', notes: 'Contracts, invoices, or correspondence with companies in the destination country, if applicable.' }
+                ]
+            }
+        ];
+
+        function createDocumentCard(item) {
+            return `
+                <div class="document-card bg-white p-4 rounded-lg border border-gray-200 flex flex-col">
+                    <h4 class="font-bold text-md text-gray-800">${item.name}</h4>
+                    <p class="text-sm text-gray-600 mt-1 flex-grow">${item.notes}</p>
+                    <div class="mt-4 border-t pt-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Status</label>
+                                <div class="flex items-center mt-1">
+                                    <span class="status-dot status-not-started"></span>
+                                    <select class="status-select w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                        <option value="not-started" selected>Not Started</option>
+                                        <option value="in-progress">In Progress</option>
+                                        <option value="ready">Ready</option>
+                                        <option value="requires-update">Requires Update</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Expiry Date</label>
+                                <input type="date" class="mt-1 w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <h5 class="text-sm font-medium text-gray-700">Actions</h5>
+                            <div class="flex flex-wrap gap-x-4 gap-y-2 mt-2 text-sm">
+                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Scan</span></label>
+                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Certify</span></label>
+                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Notarize</span></label>
+                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Translate</span></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function populateDocuments() {
+            const container = document.getElementById('document-categories');
+            container.innerHTML = '';
+            documentData.forEach(category => {
+                const categorySection = document.createElement('div');
+                categorySection.className = 'mb-8';
+                categorySection.id = category.id;
+                let itemsHTML = category.items.map(createDocumentCard).join('');
+                
+                categorySection.innerHTML = `
+                    <h2 class="text-3xl font-bold mb-6 border-b pb-3">${category.category}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${itemsHTML}
+                    </div>
+                `;
+                container.appendChild(categorySection);
+            });
+
+            document.querySelectorAll('.status-select').forEach(select => {
+                select.addEventListener('change', (event) => {
+                    const dot = event.target.previousElementSibling;
+                    dot.className = 'status-dot'; // Reset classes
+                    dot.classList.add(`status-${event.target.value}`);
+                });
+            });
+        }
+        
+        function exportPDF() {
+            const { jsPDF } = window.jspdf;
+            const content = document.getElementById('main-content');
+            
+            html2canvas(content, { scale: 2 }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const canvasWidth = canvas.width;
+                const canvasHeight = canvas.height;
+                const ratio = canvasWidth / canvasHeight;
+                const imgHeight = pdfWidth / ratio;
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+                heightLeft -= pdfHeight;
+
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+                    heightLeft -= pdfHeight;
+                }
+                pdf.save('Document_Compliance_Plan.pdf');
+            });
+        }
+
+        const topButton = document.getElementById('returnToTop');
+        const bottomButton = document.getElementById('goToBottom');
+
+        window.onscroll = function() {
+            const isAtBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100;
+            const isAtTop = window.scrollY < 100;
+            
+            topButton.style.display = isAtTop ? "none" : "block";
+            bottomButton.style.display = isAtBottom ? "none" : "block";
+        };
+
+        function scrollToTop() {
+            window.scrollTo({top: 0});
+        }
+        function scrollToBottom() {
+            document.getElementById('page-footer').scrollIntoView();
+        }
+
+        window.onload = () => {
+            populateDocuments();
+            // Initial check for scroll button visibility
+            window.dispatchEvent(new Event('scroll'));
+        };
+    </script>
+</body>
+</html>
