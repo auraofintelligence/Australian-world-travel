@@ -32,7 +32,7 @@
         .level-3 { background-color: #fee2e2; color: #991b1b; } /* Reconsider your need to travel */
         .level-4 { background-color: #d1d5db; color: #1f2937; } /* Do not travel */
         
-        #tripPlanner, #embassySection {
+        #tripPlanner {
             display: none; /* Hidden by default */
         }
         #map { 
@@ -66,6 +66,12 @@
             left: 20px;
             background-color: #16a34a; /* Green color */
         }
+        .city-select {
+            min-width: 180px;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -76,6 +82,9 @@
             <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Global Business Visa Guide</h1>
             <p class="mt-2 text-lg text-gray-600">For a 42-year-old Male Australian Citizen</p>
             <p class="text-sm text-gray-500 mt-1">Distances are approximate from Brisbane, QLD</p>
+            <a href="missions.html" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition duration-300 mt-4 inline-block">
+                View Diplomatic Missions in Australia
+            </a>
         </header>
 
         <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md mb-8" role="alert">
@@ -88,7 +97,7 @@
 
         <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
             <div class="w-full sm:w-1/2 mb-4 sm:mb-0">
-                <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Type to search by country or airport code..." class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Type to search by country, city, or airport code..." class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div class="flex gap-2">
                 <button onclick="selectAll()" class="bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 transition duration-300">Select All</button>
@@ -102,7 +111,7 @@
                     <tr>
                         <th class="p-4 font-semibold text-gray-600"></th>
                         <th class="p-4 font-semibold text-gray-600" onclick="sortTable(1)">Country <span class="sort-arrow"></span></th>
-                        <th class="p-4 font-semibold text-gray-600" onclick="sortTable(2)">Airport Code <span class="sort-arrow"></span></th>
+                        <th class="p-4 font-semibold text-gray-600">Major Airports</th>
                         <th class="p-4 font-semibold text-gray-600" onclick="sortTable(3)">Business Visa Requirements Summary <span class="sort-arrow"></span></th>
                         <th class="p-4 font-semibold text-gray-600" onclick="sortTable(4)">Est. Cost (AUD) <span class="sort-arrow"></span></th>
                         <th class="p-4 font-semibold text-gray-600" onclick="sortTable(5)">Simplicity <span class="sort-arrow"></span></th>
@@ -117,7 +126,7 @@
         <div id="tripPlanner" class="mt-8 p-6 bg-white rounded-lg shadow">
             <h2 class="text-2xl font-bold mb-4">Trip Planner</h2>
             <div id="selectedCountriesList" class="mb-4">
-                <h3 class="font-semibold text-lg">Selected Countries:</h3>
+                <h3 class="font-semibold text-lg">Selected Destinations:</h3>
                 <ul class="list-disc list-inside mt-2 text-gray-700"></ul>
             </div>
             <div class="border-t pt-4">
@@ -126,25 +135,6 @@
             <div class="mt-4">
                  <button onclick="exportList()" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">Export for Travel Search</button>
                  <span id="copyMessage" class="ml-4 text-green-600 font-medium hidden">List copied to clipboard!</span>
-            </div>
-        </div>
-
-        <!-- Embassy Section -->
-        <div id="embassySection" class="mt-8">
-            <h2 class="text-2xl font-bold mb-4 text-center">Diplomatic Missions in Australia</h2>
-            <div class="overflow-x-auto bg-white rounded-lg shadow">
-                <table id="embassyTable" class="w-full text-left table-sortable">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="p-4 font-semibold text-gray-600" onclick="sortEmbassyTable(0)">Country <span class="sort-arrow"></span></th>
-                            <th class="p-4 font-semibold text-gray-600" onclick="sortEmbassyTable(1)">City (Australia) <span class="sort-arrow"></span></th>
-                            <th class="p-4 font-semibold text-gray-600">Type</th>
-                            <th class="p-4 font-semibold text-gray-600">Address</th>
-                            <th class="p-4 font-semibold text-gray-600">Website</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
             </div>
         </div>
 
@@ -157,257 +147,203 @@
     <button id="returnToTop" class="floating-btn" onclick="scrollToTop()">↑</button>
     <button id="goToPlanner" class="floating-btn" onclick="scrollToPlanner()">↓</button>
 
+    <!-- Leaflet JS for the map -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
         const countryData = [
-            // Data from previous turn...
-            { name: 'Afghanistan', airport: 'KBL', lat: 33.93911, lng: 67.709953, requirements: 'Visa required. Extremely difficult to obtain. Not advised.', cost: 'Variable', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 10950 },
-            { name: 'Albania', airport: 'TIA', lat: 41.153332, lng: 20.168331, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 15500 },
-            { name: 'Algeria', airport: 'ALG', lat: 28.033886, lng: 1.659626, requirements: 'Visa required in advance. Requires invitation letter.', cost: '~ $125', simplicity: 'Hard', warning: 'Reconsider your need to travel', level: 3, distance: 16900 },
-            { name: 'Andorra', airport: 'None', lat: 42.506285, lng: 1.521801, requirements: 'Visa-free (entry via France or Spain - Schengen rules apply).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 17000 },
-            { name: 'Angola', airport: 'LAD', lat: -11.202692, lng: 17.873887, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14000 },
-            { name: 'Antigua and Barbuda', airport: 'ANU', lat: 17.060816, lng: -61.796428, requirements: 'Visa-free for business visits up to 1 month.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16500 },
-            { name: 'Argentina', airport: 'EZE', lat: -38.416097, lng: -63.616672, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 12850 },
-            { name: 'Armenia', airport: 'EVN', lat: 40.069099, lng: 45.038189, requirements: 'Visa-free for business visits up to 180 days per year.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 13500 },
-            { name: 'Austria', airport: 'VIE', lat: 47.516231, lng: 14.550072, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16000 },
-            { name: 'Azerbaijan', airport: 'GYD', lat: 40.143105, lng: 47.576927, requirements: 'e-Visa required in advance. Apply online.', cost: '~ $40', simplicity: 'Easy', warning: 'Reconsider your need to travel', level: 3, distance: 12900 },
-            { name: 'Bahamas', airport: 'NAS', lat: 25.03428, lng: -77.39628, requirements: 'Visa-free for business visits up to 3 months.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 15800 },
-            { name: 'Bahrain', airport: 'BAH', lat: 25.930414, lng: 50.637772, requirements: 'e-Visa or visa on arrival available.', cost: '~ $45', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 12400 },
-            { name: 'Bangladesh', airport: 'DAC', lat: 23.685, lng: 90.3563, requirements: 'Visa on arrival available for business travelers.', cost: '~ $75', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 8900 },
-            { name: 'Barbados', airport: 'BGI', lat: 13.193887, lng: -59.543198, requirements: 'Visa-free for business visits up to 6 months.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 17000 },
-            { name: 'Belarus', airport: 'MSQ', lat: 53.709807, lng: 27.953389, requirements: 'Visa-free for 30 days via Minsk airport. Restrictions apply.', cost: 'Free (conditions apply)', simplicity: 'Medium', warning: 'Do not travel', level: 4, distance: 14800 },
-            { name: 'Belgium', airport: 'BRU', lat: 50.503887, lng: 4.469936, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16450 },
-            { name: 'Belize', airport: 'BZE', lat: 17.189877, lng: -88.49765, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 15000 },
-            { name: 'Benin', airport: 'COO', lat: 9.30769, lng: 2.315834, requirements: 'e-Visa required in advance.', cost: '~ $110', simplicity: 'Medium', warning: 'Reconsider your need to travel', level: 3, distance: 16900 },
-            { name: 'Bhutan', airport: 'PBH', lat: 27.514162, lng: 90.433601, requirements: 'Visa must be arranged through a licensed tour operator.', cost: 'High (daily fee applies)', simplicity: 'Hard', warning: 'Exercise normal safety precautions', level: 1, distance: 9200 },
-            { name: 'Bolivia', airport: 'VVI', lat: -16.290154, lng: -63.588653, requirements: 'Visa required in advance. Must apply at consulate.', cost: '~ $150', simplicity: 'Hard', warning: 'Exercise a high degree of caution', level: 2, distance: 13900 },
-            { name: 'Bosnia and Herzegovina', airport: 'SJJ', lat: 43.915886, lng: 17.679076, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 15600 },
-            { name: 'Botswana', airport: 'GBE', lat: -22.328474, lng: 24.684866, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11800 },
-            { name: 'Brazil', airport: 'GRU', lat: -14.235004, lng: -51.92528, requirements: 'e-Visa required starting April 2025. Must apply online in advance.', cost: '~ $120', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 14830 },
-            { name: 'Brunei', airport: 'BWN', lat: 4.535277, lng: 114.727669, requirements: 'Visa on arrival for business visits up to 30 days.', cost: '~ $30', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 5900 },
-            { name: 'Bulgaria', airport: 'SOF', lat: 42.733883, lng: 25.48583, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15000 },
-            { name: 'Burkina Faso', airport: 'OUA', lat: 12.238333, lng: -1.561593, requirements: 'Visa required in advance.', cost: '~ $150', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 17400 },
-            { name: 'Burundi', airport: 'BJM', lat: -3.373056, lng: 29.918886, requirements: 'Visa required in advance.', cost: '~ $130', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 13200 },
-            { name: 'Cabo Verde', airport: 'RAI', lat: 16.5388, lng: -23.0418, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 18800 },
-            { name: 'Cambodia', airport: 'PNH', lat: 12.565679, lng: 104.990963, requirements: 'e-Visa or Visa on arrival available for business.', cost: '~ $55', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 6950 },
-            { name: 'Cameroon', airport: 'NSI', lat: 7.369722, lng: 12.354722, requirements: 'Visa required in advance.', cost: '~ $200', simplicity: 'Hard', warning: 'Reconsider your need to travel', level: 3, distance: 15900 },
-            { name: 'Canada', airport: 'YYZ', lat: 56.130366, lng: -106.346771, requirements: 'eTA (Electronic Travel Authorization) required for air travel.', cost: '~ $7 CAD', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 12450 },
-            { name: 'Central African Republic', airport: 'BGF', lat: 6.611111, lng: 20.939444, requirements: 'Visa required in advance.', cost: '~ $220', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 15200 },
-            { name: 'Chad', airport: 'NDJ', lat: 15.454166, lng: 18.732207, requirements: 'Visa required in advance.', cost: '~ $250', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 15700 },
-            { name: 'Chile', airport: 'SCL', lat: -35.675147, lng: -71.542969, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11950 },
-            { name: 'China', airport: 'PEK', lat: 35.86166, lng: 104.195397, requirements: 'Business (M) visa required in advance. Requires invitation letter.', cost: '~ $110 + fee', simplicity: 'Hard', warning: 'Exercise a high degree of caution', level: 2, distance: 7850 },
-            { name: 'Colombia', airport: 'BOG', lat: 4.570868, lng: -74.297333, requirements: 'Visa-free for business visits up to 90 days, extendable.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14900 },
-            { name: 'Comoros', airport: 'HAH', lat: -11.875001, lng: 43.872219, requirements: 'Visa on arrival available.', cost: '~ $75', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11500 },
-            { name: 'Congo, Dem. Rep.', airport: 'FIH', lat: -4.038333, lng: 21.758664, requirements: 'Visa required in advance.', cost: '~ $200', simplicity: 'Hard', warning: 'Reconsider your need to travel', level: 3, distance: 14300 },
-            { name: 'Congo, Rep.', airport: 'BZV', lat: -0.228021, lng: 15.827659, requirements: 'Visa required in advance.', cost: '~ $150', simplicity: 'Hard', warning: 'Exercise a high degree of caution', level: 2, distance: 14700 },
-            { name: 'Costa Rica', airport: 'SJO', lat: 9.748917, lng: -83.753428, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14800 },
-            { name: 'Croatia', airport: 'ZAG', lat: 45.1, lng: 15.2, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15800 },
-            { name: 'Cuba', airport: 'HAV', lat: 21.521757, lng: -77.781167, requirements: 'Tourist card (visa) required in advance.', cost: '~ $100+', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 16100 },
-            { name: 'Cyprus', airport: 'LCA', lat: 35.126413, lng: 33.429859, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14200 },
-            { name: 'Czech Republic', airport: 'PRG', lat: 49.817492, lng: 15.472962, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15900 },
-            { name: 'Denmark', airport: 'CPH', lat: 56.26392, lng: 9.501785, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15950 },
-            { name: 'Djibouti', airport: 'JIB', lat: 11.825138, lng: 42.590275, requirements: 'e-Visa required in advance.', cost: '~ $90', simplicity: 'Medium', warning: 'Reconsider your need to travel', level: 3, distance: 13200 },
-            { name: 'Dominica', airport: 'DOM', lat: 15.414999, lng: -61.370976, requirements: 'Visa-free for business visits up to 6 months.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16800 },
-            { name: 'Dominican Republic', airport: 'PUJ', lat: 18.735693, lng: -70.162651, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 16200 },
-            { name: 'Ecuador', airport: 'UIO', lat: -1.831239, lng: -78.183406, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14200 },
-            { name: 'Egypt', airport: 'CAI', lat: 26.820553, lng: 30.802498, requirements: 'Visa required. Can be obtained on arrival or as an e-Visa.', cost: '~ $40', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 14000 },
-            { name: 'El Salvador', airport: 'SAL', lat: 13.794185, lng: -88.89653, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14500 },
-            { name: 'Equatorial Guinea', airport: 'SSG', lat: 1.650801, lng: 10.267895, requirements: 'Visa required in advance.', cost: '~ $150', simplicity: 'Hard', warning: 'Exercise a high degree of caution', level: 2, distance: 15600 },
-            { name: 'Eritrea', airport: 'ASM', lat: 15.179384, lng: 39.782334, requirements: 'Visa required in advance.', cost: '~ $100', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 13600 },
-            { name: 'Estonia', airport: 'TLL', lat: 58.595272, lng: 25.013607, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15000 },
-            { name: 'Eswatini', airport: 'SHO', lat: -26.522503, lng: 31.465866, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11500 },
-            { name: 'Ethiopia', airport: 'ADD', lat: 9.145, lng: 40.489673, requirements: 'e-Visa required for business travelers. Apply online before trip.', cost: '~ $125', simplicity: 'Medium', warning: 'Reconsider your need to travel', level: 3, distance: 13300 },
-            { name: 'Fiji', airport: 'NAN', lat: -17.713371, lng: 178.065032, requirements: 'Visa-free for business visits up to 14 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 2750 },
-            { name: 'Finland', airport: 'HEL', lat: 61.92411, lng: 25.748151, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 14900 },
-            { name: 'France', airport: 'CDG', lat: 46.227638, lng: 2.213749, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 16650 },
-            { name: 'Gabon', airport: 'LBV', lat: -0.803689, lng: 11.609444, requirements: 'e-Visa or visa on arrival available.', cost: '~ $120', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 15100 },
-            { name: 'Gambia', airport: 'BJL', lat: 13.443182, lng: -15.310139, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 18100 },
-            { name: 'Georgia', airport: 'TBS', lat: 42.315407, lng: 43.356892, requirements: 'Visa-free for business visits up to 1 year.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 13300 },
-            { name: 'Germany', airport: 'FRA', lat: 51.165691, lng: 10.451526, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16120 },
-            { name: 'Ghana', airport: 'ACC', lat: 7.946527, lng: -1.023194, requirements: 'Visa required in advance. Apply at embassy/consulate.', cost: '~ $100+', simplicity: 'Hard', warning: 'Exercise a high degree of caution', level: 2, distance: 16800 },
-            { name: 'Greece', airport: 'ATH', lat: 39.074208, lng: 21.824312, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15200 },
-            { name: 'Grenada', airport: 'GND', lat: 12.1165, lng: -61.679, requirements: 'Visa-free for business visits up to 3 months.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16900 },
-            { name: 'Guatemala', airport: 'GUA', lat: 15.783471, lng: -90.230759, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14600 },
-            { name: 'Guinea', airport: 'CKY', lat: 9.945587, lng: -9.696645, requirements: 'e-Visa required in advance.', cost: '~ $120', simplicity: 'Medium', warning: 'Reconsider your need to travel', level: 3, distance: 18000 },
-            { name: 'Guinea-Bissau', airport: 'OXB', lat: 11.803749, lng: -15.180413, requirements: 'e-Visa or visa on arrival available.', cost: '~ $100', simplicity: 'Medium', warning: 'Reconsider your need to travel', level: 3, distance: 18200 },
-            { name: 'Guyana', airport: 'GEO', lat: 4.860416, lng: -58.93018, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 16500 },
-            { name: 'Haiti', airport: 'PAP', lat: 18.971187, lng: -72.285215, requirements: 'Visa-free for 90 days, but travel not advised.', cost: 'Free', simplicity: 'Easy', warning: 'Do not travel', level: 4, distance: 15800 },
-            { name: 'Honduras', airport: 'TGU', lat: 15.199999, lng: -86.241905, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14700 },
-            { name: 'Hungary', airport: 'BUD', lat: 47.162494, lng: 19.503304, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15700 },
-            { name: 'Iceland', airport: 'KEF', lat: 64.963051, lng: -19.020835, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16000 },
-            { name: 'India', airport: 'DEL', lat: 20.593684, lng: 78.96288, requirements: 'e-Business Visa required in advance. Must be obtained online.', cost: '~ $120', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 9950 },
-            { name: 'Indonesia', airport: 'CGK', lat: -0.789275, lng: 113.921327, requirements: 'Visa on arrival available for business meetings (30 days).', cost: '~ $50', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 4780 },
-            { name: 'Iran', airport: 'IKA', lat: 32.427908, lng: 53.688046, requirements: 'Visa required in advance. Complex process.', cost: '~ $150+', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 12300 },
-            { name: 'Iraq', airport: 'BGW', lat: 33.223191, lng: 43.679291, requirements: 'Visa required in advance. Very difficult to obtain.', cost: 'Variable', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 13100 },
-            { name: 'Ireland', airport: 'DUB', lat: 53.41291, lng: -8.24389, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16850 },
-            { name: 'Israel', airport: 'TLV', lat: 31.046051, lng: 34.851612, requirements: 'Visa-free for business visits up to 3 months.', cost: 'Free', simplicity: 'Easy', warning: 'Reconsider your need to travel', level: 3, distance: 13400 },
-            { name: 'Italy', airport: 'FCO', lat: 41.87194, lng: 12.56738, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16330 },
-            { name: 'Jamaica', airport: 'KIN', lat: 18.109581, lng: -77.297508, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 16000 },
-            { name: 'Japan', airport: 'NRT', lat: 36.204824, lng: 138.252924, requirements: 'Visa exemption for short-term business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 7140 },
-            { name: 'Jordan', airport: 'AMM', lat: 30.585164, lng: 36.238414, requirements: 'Visa on arrival available.', cost: '~ $80', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 13600 },
-            { name: 'Kazakhstan', airport: 'ALA', lat: 48.019573, lng: 66.923684, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 10500 },
-            { name: 'Kenya', airport: 'NBO', lat: -0.023559, lng: 37.906193, requirements: 'eTA (Electronic Travel Authorisation) required before travel.', cost: '~ $50', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 12900 },
-            { name: 'Kiribati', airport: 'TRW', lat: -3.370417, lng: -168.734039, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 4300 },
-            { name: 'Kuwait', airport: 'KWI', lat: 29.31166, lng: 47.481766, requirements: 'e-Visa or visa on arrival available.', cost: '~ $15', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 12600 },
-            { name: 'Kyrgyzstan', airport: 'FRU', lat: 41.20438, lng: 74.766098, requirements: 'Visa-free for business visits up to 60 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 10000 },
-            { name: 'Laos', airport: 'VTE', lat: 19.85627, lng: 102.495496, requirements: 'e-Visa or visa on arrival available.', cost: '~ $75', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 7200 },
-            { name: 'Latvia', airport: 'RIX', lat: 56.879635, lng: 24.603189, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15200 },
-            { name: 'Lebanon', airport: 'BEY', lat: 33.854721, lng: 35.862285, requirements: 'Visa on arrival for business purposes (conditions apply).', cost: 'Free', simplicity: 'Medium', warning: 'Reconsider your need to travel', level: 3, distance: 13800 },
-            { name: 'Lesotho', airport: 'MSU', lat: -29.609988, lng: 28.233608, requirements: 'Visa-free for business visits up to 14 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11400 },
-            { name: 'Liberia', airport: 'ROB', lat: 6.428055, lng: -9.429499, requirements: 'Visa required in advance.', cost: '~ $150', simplicity: 'Hard', warning: 'Reconsider your need to travel', level: 3, distance: 17600 },
-            { name: 'Libya', airport: 'TIP', lat: 26.3351, lng: 17.228331, requirements: 'Visa required in advance. Extremely difficult.', cost: 'Variable', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 15600 },
-            { name: 'Liechtenstein', airport: 'None', lat: 47.166, lng: 9.555373, requirements: 'Visa-free (entry via Switzerland - Schengen rules apply).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16300 },
-            { name: 'Lithuania', airport: 'VNO', lat: 55.169438, lng: 23.881275, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15200 },
-            { name: 'Luxembourg', airport: 'LUX', lat: 49.815273, lng: 6.129583, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16500 },
-            { name: 'Madagascar', airport: 'TNR', lat: -18.766947, lng: 46.869107, requirements: 'e-Visa or visa on arrival available.', cost: '~ $55', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 10800 },
-            { name: 'Malawi', airport: 'LLW', lat: -13.254308, lng: 34.301525, requirements: 'e-Visa required in advance.', cost: '~ $110', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 12300 },
-            { name: 'Malaysia', airport: 'KUL', lat: 4.210484, lng: 101.975766, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 6380 },
-            { name: 'Maldives', airport: 'MLE', lat: 3.202778, lng: 73.22068, requirements: 'Visa on arrival for 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 8800 },
-            { name: 'Mali', airport: 'BKO', lat: 17.570692, lng: -3.996166, requirements: 'Visa required in advance.', cost: '~ $180', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 17800 },
-            { name: 'Malta', airport: 'MLA', lat: 35.937496, lng: 14.375416, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16400 },
-            { name: 'Marshall Islands', airport: 'MAJ', lat: 7.131474, lng: 171.184478, requirements: 'Visa on arrival for 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 4500 },
-            { name: 'Mauritania', airport: 'NKC', lat: 21.00789, lng: -10.940835, requirements: 'Visa on arrival available.', cost: '~ $85', simplicity: 'Easy', warning: 'Do not travel', level: 4, distance: 18500 },
-            { name: 'Mauritius', airport: 'MRU', lat: -20.348404, lng: 57.552152, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 9900 },
-            { name: 'Mexico', airport: 'MEX', lat: 23.634501, lng: -102.552784, requirements: 'Visa-free for business visits up to 180 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 13340 },
-            { name: 'Micronesia', airport: 'PNI', lat: 7.425554, lng: 150.550812, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 3800 },
-            { name: 'Moldova', airport: 'KIV', lat: 47.411631, lng: 28.369885, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14900 },
-            { name: 'Monaco', airport: 'None', lat: 43.738418, lng: 7.424616, requirements: 'Visa-free (entry via France - Schengen rules apply).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16700 },
-            { name: 'Mongolia', airport: 'UBN', lat: 46.862496, lng: 103.846656, requirements: 'e-Visa available for business travel up to 30 days.', cost: '~ $80', simplicity: 'Medium', warning: 'Exercise normal safety precautions', level: 1, distance: 8800 },
-            { name: 'Montenegro', airport: 'TGD', lat: 42.708678, lng: 19.37439, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 15600 },
-            { name: 'Morocco', airport: 'CMN', lat: 31.791702, lng: -7.09262, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 17900 },
-            { name: 'Mozambique', airport: 'MPM', lat: -18.665695, lng: 35.529562, requirements: 'e-Visa or visa on arrival available.', cost: '~ $100', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 11600 },
-            { name: 'Myanmar', airport: 'RGN', lat: 21.913965, lng: 95.956223, requirements: 'Business visa required in advance. Process can be difficult.', cost: '~ $100', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 7900 },
-            { name: 'Namibia', airport: 'WDH', lat: -22.95764, lng: 18.49041, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 12400 },
-            { name: 'Nauru', airport: 'INU', lat: -0.522778, lng: 166.931503, requirements: 'Visa required in advance.', cost: '~ $100', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 3900 },
-            { name: 'Nepal', airport: 'KTM', lat: 28.394857, lng: 84.124008, requirements: 'Visa on arrival available for business purposes.', cost: '~ $75 (30 days)', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 9400 },
-            { name: 'Netherlands', airport: 'AMS', lat: 52.132633, lng: 5.291266, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16300 },
-            { name: 'New Zealand', airport: 'AKL', lat: -40.900557, lng: 174.885971, requirements: 'NZeTA required for short business trips. Allows stays up to 3 months.', cost: '~ $25 (NZeTA)', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 2290 },
-            { name: 'Nicaragua', airport: 'MGA', lat: 12.865416, lng: -85.207229, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Reconsider your need to travel', level: 3, distance: 14800 },
-            { name: 'Niger', airport: 'NIM', lat: 17.607789, lng: 8.081666, requirements: 'Visa required in advance.', cost: '~ $200', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 16500 },
-            { name: 'Nigeria', airport: 'LOS', lat: 9.081999, lng: 8.675277, requirements: 'Visa required in advance. Business visa requires invitation.', cost: '~ $250+', simplicity: 'Hard', warning: 'Reconsider your need to travel', level: 3, distance: 15900 },
-            { name: 'North Korea', airport: 'FNJ', lat: 40.339852, lng: 127.510093, requirements: 'Visa required. Extremely difficult. Only via approved tours.', cost: 'Variable', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 8000 },
-            { name: 'North Macedonia', airport: 'SKP', lat: 41.608635, lng: 21.745275, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 15400 },
-            { name: 'Norway', airport: 'OSL', lat: 60.472024, lng: 8.468946, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15500 },
-            { name: 'Oman', airport: 'MCT', lat: 21.512583, lng: 55.923255, requirements: 'e-Visa required in advance for business travel.', cost: '~ $80', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11800 },
-            { name: 'Pakistan', airport: 'ISB', lat: 30.375321, lng: 69.345116, requirements: 'Visa required in advance. Online visa portal available.', cost: '~ $90+', simplicity: 'Hard', warning: 'Reconsider your need to travel', level: 3, distance: 10900 },
-            { name: 'Palau', airport: 'ROR', lat: 7.51498, lng: 134.58252, requirements: 'Visa on arrival for 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 4100 },
-            { name: 'Panama', airport: 'PTY', lat: 8.537981, lng: -80.782127, requirements: 'Visa-free for business visits up to 180 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 15300 },
-            { name: 'Papua New Guinea', airport: 'POM', lat: -6.314993, lng: 143.95555, requirements: 'Visa required in advance. e-Visa available.', cost: '~ $70 (e-Visa)', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 2130 },
-            { name: 'Paraguay', airport: 'ASU', lat: -23.442503, lng: -58.443832, requirements: 'Visa on arrival available.', cost: '~ $230', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 14000 },
-            { name: 'Peru', airport: 'LIM', lat: -9.189967, lng: -75.015152, requirements: 'Visa-free for business visits up to 180 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 13400 },
-            { name: 'Philippines', airport: 'MNL', lat: 12.879721, lng: 121.774017, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 5820 },
-            { name: 'Poland', airport: 'WAW', lat: 51.919438, lng: 19.145136, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15400 },
-            { name: 'Portugal', airport: 'LIS', lat: 39.399872, lng: -8.224454, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 17900 },
-            { name: 'Qatar', airport: 'DOH', lat: 25.354826, lng: 51.183884, requirements: 'Visa-free entry for 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 12300 },
-            { name: 'Romania', airport: 'OTP', lat: 45.943161, lng: 24.96676, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15200 },
-            { name: 'Russia', airport: 'SVO', lat: 61.52401, lng: 105.318756, requirements: 'Business visa required in advance. Complex process with invitation letter.', cost: '~ $200+', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 11450 },
-            { name: 'Rwanda', airport: 'KGL', lat: -1.940278, lng: 29.873888, requirements: 'Visa on arrival available.', cost: '~ $75', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 13400 },
-            { name: 'Saint Kitts and Nevis', airport: 'SKB', lat: 17.357822, lng: -62.782998, requirements: 'Visa-free for business visits up to 3 months.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16600 },
-            { name: 'Saint Lucia', airport: 'UVF', lat: 13.909444, lng: -60.978893, requirements: 'Visa-free for business visits up to 6 weeks.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16900 },
-            { name: 'Saint Vincent and the Grenadines', airport: 'SVD', lat: 12.984305, lng: -61.287228, requirements: 'Visa-free for business visits up to 1 month.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 17000 },
-            { name: 'Samoa', airport: 'APW', lat: -13.759029, lng: -172.104629, requirements: 'Visa on arrival for business visits up to 60 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 3750 },
-            { name: 'San Marino', airport: 'None', lat: 43.94236, lng: 12.457777, requirements: 'Visa-free (entry via Italy - Schengen rules apply).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16400 },
-            { name: 'Sao Tome and Principe', airport: 'TMS', lat: 0.18636, lng: 6.613081, requirements: 'Visa-free for business visits up to 15 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 15800 },
-            { name: 'Saudi Arabia', airport: 'RUH', lat: 23.885942, lng: 45.079162, requirements: 'Business visa required in advance. Requires sponsorship.', cost: '~ $250+', simplicity: 'Hard', warning: 'Exercise a high degree of caution', level: 2, distance: 12800 },
-            { name: 'Senegal', airport: 'DSS', lat: 14.497401, lng: -14.452362, requirements: 'Visa required in advance for business purposes.', cost: '~ $120', simplicity: 'Hard', warning: 'Exercise a high degree of caution', level: 2, distance: 18200 },
-            { name: 'Serbia', airport: 'BEG', lat: 44.016521, lng: 21.005859, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15500 },
-            { name: 'Seychelles', airport: 'SEZ', lat: -4.679574, lng: 55.491977, requirements: 'Visa-free for business visits up to 3 months.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 10600 },
-            { name: 'Sierra Leone', airport: 'FNA', lat: 8.460555, lng: -11.779889, requirements: 'Visa on arrival available.', cost: '~ $120', simplicity: 'Easy', warning: 'Reconsider your need to travel', level: 3, distance: 17800 },
-            { name: 'Singapore', airport: 'SIN', lat: 1.352083, lng: 103.819836, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 6140 },
-            { name: 'Slovakia', airport: 'BTS', lat: 48.669026, lng: 19.699024, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15800 },
-            { name: 'Slovenia', airport: 'LJU', lat: 46.151241, lng: 14.995463, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15900 },
-            { name: 'Solomon Islands', airport: 'HIR', lat: -9.64571, lng: 160.156194, requirements: 'Visa on arrival for 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 2200 },
-            { name: 'Somalia', airport: 'MGQ', lat: 5.152149, lng: 46.199616, requirements: 'Visa required in advance. Extremely difficult.', cost: 'Variable', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 12900 },
-            { name: 'South Africa', airport: 'JNB', lat: -30.559482, lng: 22.937506, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11250 },
-            { name: 'South Korea', airport: 'ICN', lat: 35.907757, lng: 127.766922, requirements: 'K-ETA required for visa-free business visits up to 90 days.', cost: '~ $12', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 7700 },
-            { name: 'South Sudan', airport: 'JUB', lat: 6.876965, lng: 31.306979, requirements: 'Visa required in advance.', cost: '~ $150+', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 14200 },
-            { name: 'Spain', airport: 'MAD', lat: 40.463667, lng: -3.74922, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 17450 },
-            { name: 'Sri Lanka', airport: 'CMB', lat: 7.873054, lng: 80.771797, requirements: 'ETA required for short business visits. Apply online.', cost: '~ $75', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 8300 },
-            { name: 'Sudan', airport: 'KRT', lat: 12.862807, lng: 30.217636, requirements: 'Visa required in advance.', cost: '~ $200', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 14200 },
-            { name: 'Suriname', airport: 'PBM', lat: 3.919305, lng: -56.027783, requirements: 'e-Visa or e-Tourist card required.', cost: '~ $80', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 16800 },
-            { name: 'Sweden', airport: 'ARN', lat: 60.128161, lng: 18.643501, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15600 },
-            { name: 'Switzerland', airport: 'ZRH', lat: 46.818188, lng: 8.227512, requirements: 'Visa-free for business travel up to 90 days within 180 days (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16400 },
-            { name: 'Syria', airport: 'DAM', lat: 34.802075, lng: 38.996815, requirements: 'Visa required in advance. Consular services suspended.', cost: 'N/A', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 13700 },
-            { name: 'Taiwan', airport: 'TPE', lat: 23.69781, lng: 120.960515, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 6800 },
-            { name: 'Tajikistan', airport: 'DYU', lat: 38.861034, lng: 71.276093, requirements: 'e-Visa required in advance.', cost: '~ $75', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 10400 },
-            { name: 'Tanzania', airport: 'DAR', lat: -6.369028, lng: 34.888822, requirements: 'e-Visa or visa on arrival for business.', cost: '~ $150', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 12700 },
-            { name: 'Thailand', airport: 'BKK', lat: 15.870032, lng: 100.992541, requirements: 'Visa exemption for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 7280 },
-            { name: 'Timor-Leste', airport: 'DIL', lat: -8.874217, lng: 125.727539, requirements: 'Visa on arrival available.', cost: '~ $45', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 3400 },
-            { name: 'Togo', airport: 'LFW', lat: 8.619543, lng: 0.824782, requirements: 'Visa on arrival available.', cost: '~ $35', simplicity: 'Easy', warning: 'Reconsider your need to travel', level: 3, distance: 16700 },
-            { name: 'Tonga', airport: 'TBU', lat: -21.178986, lng: -175.198242, requirements: 'Visa on arrival for 31 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 3250 },
-            { name: 'Trinidad and Tobago', airport: 'POS', lat: 10.691803, lng: -61.222503, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 17000 },
-            { name: 'Tunisia', airport: 'TUN', lat: 33.886917, lng: 9.537499, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 16600 },
-            { name: 'Turkey', airport: 'IST', lat: 38.963745, lng: 35.243322, requirements: 'e-Visa required for business visits up to 90 days.', cost: '~ $90', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14750 },
-            { name: 'Turkmenistan', airport: 'ASB', lat: 38.969719, lng: 59.556278, requirements: 'Visa required in advance. Invitation letter needed.', cost: '~ $120', simplicity: 'Very Hard', warning: 'Reconsider your need to travel', level: 3, distance: 11500 },
-            { name: 'Tuvalu', airport: 'FUN', lat: -7.109535, lng: 177.64933, requirements: 'Visa on arrival for 1 month.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 3500 },
-            { name: 'Uganda', airport: 'EBB', lat: 1.373333, lng: 32.290275, requirements: 'e-Visa required in advance.', cost: '~ $75', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 13400 },
-            { name: 'Ukraine', airport: 'KBP', lat: 48.379433, lng: 31.16558, requirements: 'Visa required in advance. e-Visa system suspended.', cost: 'Variable', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 14700 },
-            { name: 'United Arab Emirates', airport: 'DXB', lat: 23.424076, lng: 53.847818, requirements: 'Visa on arrival for 30 days for business purposes.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11980 },
-            { name: 'United Kingdom', airport: 'LHR', lat: 55.378051, lng: -3.435973, requirements: 'Visa-free for business visitor activities up to 6 months.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 16530 },
-            { name: 'United States', airport: 'LAX', lat: 37.09024, lng: -95.712891, requirements: 'ESTA required under Visa Waiver Program for stays up to 90 days.', cost: '~ $30 (ESTA)', simplicity: 'Easy (ESTA)', warning: 'Exercise normal safety precautions', level: 1, distance: 11540 },
-            { name: 'Uruguay', airport: 'MVD', lat: -32.522779, lng: -55.765835, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 13200 },
-            { name: 'Uzbekistan', airport: 'TAS', lat: 41.377491, lng: 64.585262, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11000 },
-            { name: 'Vanuatu', airport: 'VLI', lat: -15.376706, lng: 166.959158, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 2000 },
-            { name: 'Vatican City', airport: 'None', lat: 41.902916, lng: 12.453389, requirements: 'Entry via Italy (Schengen Area rules apply).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16330 },
-            { name: 'Venezuela', airport: 'CCS', lat: 6.42375, lng: -66.58973, requirements: 'Visa required in advance. Complex process.', cost: '~ $90', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 15900 },
-            { name: 'Vietnam', airport: 'SGN', lat: 14.058324, lng: 108.277199, requirements: 'e-Visa required for business purposes, valid for 90 days.', cost: '~ $40', simplicity: 'Medium', warning: 'Exercise normal safety precautions', level: 1, distance: 6840 },
-            { name: 'Yemen', airport: 'SAH', lat: 15.552727, lng: 48.516388, requirements: 'Visa required in advance. Very difficult to obtain.', cost: 'Variable', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 13500 },
-            { name: 'Zambia', airport: 'LUN', lat: -13.133897, lng: 27.849332, requirements: 'e-Visa available for business travel.', cost: '~ $75', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 12400 },
-            { name: 'Zimbabwe', airport: 'HRE', lat: -19.015438, lng: 29.154857, requirements: 'e-Visa or visa on arrival available.', cost: '~ $70', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11900 }
-        ];
-
-        const embassyData = [
-            { country: 'Afghanistan', city: 'Canberra', type: 'Embassy', address: '4 Beale Crescent, Deakin ACT 2600', website: 'http://www.canberra.mfa.af' },
-            { country: 'Argentina', city: 'Canberra', type: 'Embassy', address: 'Suite 2, Level 2, 15 National Circuit, Barton ACT 2600', website: 'https://caust.cancilleria.gob.ar/en' },
-            { country: 'Argentina', city: 'Sydney', type: 'Consulate-General', address: 'Suite 202, Level 2, 309 Kent Street, Sydney NSW 2000', website: 'https://csidn.cancilleria.gob.ar/en' },
-            { country: 'Austria', city: 'Canberra', type: 'Embassy', address: '12 Talbot Street, Forrest ACT 2603', website: 'https://www.bmeia.gv.at/en/austrian-embassy-canberra/' },
-            { country: 'Bangladesh', city: 'Canberra', type: 'High Commission', address: '57 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://www.bhcanberra.com' },
-            { country: 'Brazil', city: 'Canberra', type: 'Embassy', address: '19 Forster Crescent, Yarralumla ACT 2600', website: 'http://camberra.itamaraty.gov.br/en-us/' },
-            { country: 'Brazil', city: 'Sydney', type: 'Consulate-General', address: 'Level 6, 45 Clarence Street, Sydney NSW 2000', website: 'http://sydney.itamaraty.gov.br/en-us/' },
-            { country: 'Canada', city: 'Canberra', type: 'High Commission', address: 'Commonwealth Avenue, Yarralumla ACT 2600', website: 'https://www.international.gc.ca/country-pays/australia-australie/' },
-            { country: 'Canada', city: 'Sydney', type: 'Consulate-General', address: 'Level 5, 111 Harrington Street, Sydney NSW 2000', website: 'https://www.international.gc.ca/country-pays/australia-australie/' },
-            { country: 'Chile', city: 'Canberra', type: 'Embassy', address: '10 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://chile.gob.cl/australia/en/' },
-            { country: 'Chile', city: 'Melbourne', type: 'Consulate-General', address: 'Level 13, 390 St Kilda Road, Melbourne VIC 3004', website: 'https://www.consulado.gob.cl/servicios/tramites-para-extranjeros' },
-            { country: 'China', city: 'Canberra', type: 'Embassy', address: '15 Coronation Drive, Yarralumla ACT 2600', website: 'http://au.china-embassy.gov.cn/eng/' },
-            { country: 'China', city: 'Sydney', type: 'Consulate-General', address: '39 Dunblane Street, Camperdown NSW 2050', website: 'http://sydney.china-consulate.gov.cn/eng/' },
-            { country: 'China', city: 'Melbourne', type: 'Consulate-General', address: '75-77 Irving Road, Toorak VIC 3142', website: 'http://melbourne.china-consulate.gov.cn/eng/' },
-            { country: 'China', city: 'Brisbane', type: 'Consulate-General', address: 'Level 9, 79 Adelaide Street, Brisbane QLD 4000', website: 'http://brisbane.china-consulate.gov.cn/eng/' },
-            { country: 'China', city: 'Perth', type: 'Consulate-General', address: '45 Brown Street, East Perth WA 6004', website: 'http://perth.china-consulate.gov.cn/eng/' },
-            { country: 'China', city: 'Adelaide', type: 'Consulate-General', address: '110 Crittenden Road, Findon SA 5023', website: 'http://adelaide.china-consulate.gov.cn/eng/' },
-            { country: 'Egypt', city: 'Canberra', type: 'Embassy', address: '1 Darwin Avenue, Yarralumla ACT 2600', website: 'https://mfa.gov.eg/english/embassies/egyptian_embassy_canberra' },
-            { country: 'Fiji', city: 'Canberra', type: 'High Commission', address: '19 Beale Crescent, Deakin ACT 2600', website: 'https://www.fiji.org.au/' },
-            { country: 'France', city: 'Canberra', type: 'Embassy', address: '6 Perth Avenue, Yarralumla ACT 2600', website: 'https://au.ambafrance.org/' },
-            { country: 'Germany', city: 'Canberra', type: 'Embassy', address: '119 Empire Circuit, Yarralumla ACT 2600', website: 'https://australien.diplo.de/' },
-            { country: 'Germany', city: 'Sydney', type: 'Consulate-General', address: 'Level 17, 100 William Street, Woolloomooloo NSW 2011', website: 'https://australien.diplo.de/au-en/service/sydney-consulate' },
-            { country: 'India', city: 'Canberra', type: 'High Commission', address: '3-5 Moonah Place, Yarralumla ACT 2600', website: 'https://www.hcicanberra.gov.in/' },
-            { country: 'India', city: 'Sydney', type: 'Consulate-General', address: 'Level 1, 265 Castlereagh Street, Sydney NSW 2000', website: 'https://www.cgisydney.gov.in/' },
-            { country: 'India', city: 'Melbourne', type: 'Consulate-General', address: '344 St Kilda Road, Melbourne VIC 3004', website: 'https://www.cgimelbourne.gov.in/' },
-            { country: 'India', city: 'Perth', type: 'Consulate-General', address: 'Level 7, 12 St Georges Terrace, Perth WA 6000', website: 'https://www.cgiperth.gov.in/' },
-            { country: 'Indonesia', city: 'Canberra', type: 'Embassy', address: '8 Darwin Avenue, Yarralumla ACT 2600', website: 'https://kemlu.go.id/canberra/en' },
-            { country: 'Ireland', city: 'Canberra', type: 'Embassy', address: '20 Arkana Street, Yarralumla ACT 2600', website: 'https://www.dfa.ie/australia/' },
-            { country: 'Italy', city: 'Canberra', type: 'Embassy', address: '12 Grey Street, Deakin ACT 2600', website: 'https://ambcanberra.esteri.it/en/' },
-            { country: 'Japan', city: 'Canberra', type: 'Embassy', address: '112 Empire Circuit, Yarralumla ACT 2600', website: 'https://www.au.emb-japan.go.jp/' },
-            { country: 'Malaysia', city: 'Canberra', type: 'High Commission', address: '7 Perth Avenue, Yarralumla ACT 2600', website: 'https://www.kln.gov.my/web/aus_canberra/' },
-            { country: 'Netherlands', city: 'Canberra', type: 'Embassy', address: '120 Empire Circuit, Yarralumla ACT 2600', website: 'https://www.netherlandsworldwide.nl/countries/australia' },
-            { country: 'New Zealand', city: 'Canberra', type: 'High Commission', address: '140 Commonwealth Avenue, Yarralumla ACT 2600', website: 'https://www.mfat.govt.nz/en/countries-and-regions/australia-and-pacific/australia/' },
-            { country: 'Pakistan', city: 'Canberra', type: 'High Commission', address: '4 Timbarra Crescent, O\'Malley ACT 2606', website: 'https://www.pakistan.org.au/' },
-            { country: 'Papua New Guinea', city: 'Canberra', type: 'High Commission', address: '39-41 Forster Crescent, Yarralumla ACT 2600', website: 'https://www.pngcanberra.org/' },
-            { country: 'Philippines', city: 'Canberra', type: 'Embassy', address: '1 Moonah Place, Yarralumla ACT 2600', website: 'https://www.philembassy.org.au/' },
-            { country: 'Russia', city: 'Canberra', type: 'Embassy', address: '78 Canberra Avenue, Griffith ACT 2603', website: 'https://australia.mid.ru/en/' },
-            { country: 'Singapore', city: 'Canberra', type: 'High Commission', address: '17 Forster Crescent, Yarralumla ACT 2600', website: 'https://www.mfa.gov.sg/canberra' },
-            { country: 'South Africa', city: 'Canberra', type: 'High Commission', address: 'Cnr State Circle & Rhodes Place, Yarralumla ACT 2600', website: 'https://dirco1.azurewebsites.net/canberra/' },
-            { country: 'Spain', city: 'Canberra', type: 'Embassy', address: '15 Arkana Street, Yarralumla ACT 2600', website: 'https://www.exteriores.gob.es/Embajadas/canberra/en/Paginas/index.aspx' },
-            { country: 'Sri Lanka', city: 'Canberra', type: 'High Commission', address: '61 Hampton Circuit, Yarralumla ACT 2600', website: 'https://www.slhcaustralia.org/' },
-            { country: 'Switzerland', city: 'Canberra', type: 'Embassy', address: '7 Melbourne Avenue, Forrest ACT 2603', website: 'https://www.eda.admin.ch/canberra' },
-            { country: 'Thailand', city: 'Canberra', type: 'Embassy', address: '111 Empire Circuit, Yarralumla ACT 2600', website: 'https://canberra.thaiembassy.org/' },
-            { country: 'Turkey', city: 'Canberra', type: 'Embassy', address: '60 Mugga Way, Red Hill ACT 2603', website: 'http://canberra.emb.mfa.gov.tr' },
-            { country: 'United Arab Emirates', city: 'Canberra', type: 'Embassy', address: '12 Bulwarra Close, O\'Malley ACT 2606', website: 'https://www.mofa.gov.ae/en/missions/canberra' },
-            { country: 'United Kingdom', city: 'Canberra', type: 'High Commission', address: 'Commonwealth Avenue, Yarralumla ACT 2600', website: 'https://www.gov.uk/world/australia' },
-            { country: 'United States', city: 'Canberra', type: 'Embassy', address: 'Moonah Place, Yarralumla ACT 2600', website: 'https://au.usembassy.gov/' },
-            { country: 'United States', city: 'Sydney', type: 'Consulate-General', address: 'Level 10, 48 Miller Street, North Sydney NSW 2060', website: 'https://au.usembassy.gov/embassy-consulates/sydney/' },
-            { country: 'United States', city: 'Melbourne', type: 'Consulate-General', address: '553 St Kilda Road, Melbourne VIC 3004', website: 'https://au.usembassy.gov/embassy-consulates/melbourne/' },
-            { country: 'United States', city: 'Perth', type: 'Consulate-General', address: 'Ground Floor, 16 St Georges Terrace, Perth WA 6000', website: 'https://au.usembassy.gov/embassy-consulates/perth/' },
-            { country: 'Vietnam', city: 'Canberra', type: 'Embassy', address: '6 Timbarra Crescent, O\'Malley ACT 2606', website: 'https://vietnamembassy.org.au/' },
+            { name: 'Afghanistan', cities: [{name: 'Kabul', airport: 'KBL', isCapital: true}], lat: 33.93911, lng: 67.709953, requirements: 'Visa required. Extremely difficult to obtain. Not advised.', cost: 'Variable', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 10950 },
+            { name: 'Albania', cities: [{name: 'Tirana', airport: 'TIA', isCapital: true}], lat: 41.153332, lng: 20.168331, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 15500 },
+            { name: 'Algeria', cities: [{name: 'Algiers', airport: 'ALG', isCapital: true}], lat: 28.033886, lng: 1.659626, requirements: 'Visa required in advance. Requires invitation letter.', cost: '~ $125', simplicity: 'Hard', warning: 'Reconsider your need to travel', level: 3, distance: 16900 },
+            { name: 'Andorra', cities: [{name: 'Andorra la Vella', airport: 'None', isCapital: true}], lat: 42.506285, lng: 1.521801, requirements: 'Visa-free (entry via France or Spain - Schengen rules apply).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 17000 },
+            { name: 'Angola', cities: [{name: 'Luanda', airport: 'LAD', isCapital: true}], lat: -11.202692, lng: 17.873887, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14000 },
+            { name: 'Antigua and Barbuda', cities: [{name: "St. John's", airport: 'ANU', isCapital: true}], lat: 17.060816, lng: -61.796428, requirements: 'Visa-free for business visits up to 1 month.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16500 },
+            { name: 'Argentina', cities: [{name: 'Buenos Aires', airport: 'EZE', isCapital: true}, {name: 'Cordoba', airport: 'COR'}, {name: 'Mendoza', airport: 'MDZ'}], lat: -38.416097, lng: -63.616672, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 12850 },
+            { name: 'Armenia', cities: [{name: 'Yerevan', airport: 'EVN', isCapital: true}], lat: 40.069099, lng: 45.038189, requirements: 'Visa-free for business visits up to 180 days per year.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 13500 },
+            { name: 'Austria', cities: [{name: 'Vienna', airport: 'VIE', isCapital: true}, {name: 'Salzburg', airport: 'SZG'}], lat: 47.516231, lng: 14.550072, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16000 },
+            { name: 'Azerbaijan', cities: [{name: 'Baku', airport: 'GYD', isCapital: true}], lat: 40.143105, lng: 47.576927, requirements: 'e-Visa required in advance. Apply online.', cost: '~ $40', simplicity: 'Easy', warning: 'Reconsider your need to travel', level: 3, distance: 12900 },
+            { name: 'Bahamas', cities: [{name: 'Nassau', airport: 'NAS', isCapital: true}], lat: 25.03428, lng: -77.39628, requirements: 'Visa-free for business visits up to 3 months.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 15800 },
+            { name: 'Bahrain', cities: [{name: 'Manama', airport: 'BAH', isCapital: true}], lat: 25.930414, lng: 50.637772, requirements: 'e-Visa or visa on arrival available.', cost: '~ $45', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 12400 },
+            { name: 'Bangladesh', cities: [{name: 'Dhaka', airport: 'DAC', isCapital: true}], lat: 23.685, lng: 90.3563, requirements: 'Visa on arrival available for business travelers.', cost: '~ $75', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 8900 },
+            { name: 'Barbados', cities: [{name: 'Bridgetown', airport: 'BGI', isCapital: true}], lat: 13.193887, lng: -59.543198, requirements: 'Visa-free for business visits up to 6 months.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 17000 },
+            { name: 'Belarus', cities: [{name: 'Minsk', airport: 'MSQ', isCapital: true}], lat: 53.709807, lng: 27.953389, requirements: 'Visa-free for 30 days via Minsk airport. Restrictions apply.', cost: 'Free (conditions apply)', simplicity: 'Medium', warning: 'Do not travel', level: 4, distance: 14800 },
+            { name: 'Belgium', cities: [{name: 'Brussels', airport: 'BRU', isCapital: true}], lat: 50.503887, lng: 4.469936, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16450 },
+            { name: 'Belize', cities: [{name: 'Belmopan', airport: 'BZE', isCapital: true}], lat: 17.189877, lng: -88.49765, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 15000 },
+            { name: 'Benin', cities: [{name: 'Porto-Novo', airport: 'COO', isCapital: true}], lat: 9.30769, lng: 2.315834, requirements: 'e-Visa required in advance.', cost: '~ $110', simplicity: 'Medium', warning: 'Reconsider your need to travel', level: 3, distance: 16900 },
+            { name: 'Bhutan', cities: [{name: 'Thimphu', airport: 'PBH', isCapital: true}], lat: 27.514162, lng: 90.433601, requirements: 'Visa must be arranged through a licensed tour operator.', cost: 'High (daily fee applies)', simplicity: 'Hard', warning: 'Exercise normal safety precautions', level: 1, distance: 9200 },
+            { name: 'Bolivia', cities: [{name: 'Sucre', airport: 'VVI', isCapital: true}], lat: -16.290154, lng: -63.588653, requirements: 'Visa required in advance. Must apply at consulate.', cost: '~ $150', simplicity: 'Hard', warning: 'Exercise a high degree of caution', level: 2, distance: 13900 },
+            { name: 'Bosnia and Herzegovina', cities: [{name: 'Sarajevo', airport: 'SJJ', isCapital: true}], lat: 43.915886, lng: 17.679076, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 15600 },
+            { name: 'Botswana', cities: [{name: 'Gaborone', airport: 'GBE', isCapital: true}], lat: -22.328474, lng: 24.684866, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11800 },
+            { name: 'Brazil', cities: [{name: 'Brasília', airport: 'BSB', isCapital: true}, {name: 'São Paulo', airport: 'GRU'}, {name: 'Rio de Janeiro', airport: 'GIG'}], lat: -14.235004, lng: -51.92528, requirements: 'e-Visa required starting April 2025.', cost: '~ $120', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 14830 },
+            { name: 'Brunei', cities: [{name: 'Bandar Seri Begawan', airport: 'BWN', isCapital: true}], lat: 4.535277, lng: 114.727669, requirements: 'Visa on arrival for business visits up to 30 days.', cost: '~ $30', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 5900 },
+            { name: 'Bulgaria', cities: [{name: 'Sofia', airport: 'SOF', isCapital: true}], lat: 42.733883, lng: 25.48583, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15000 },
+            { name: 'Burkina Faso', cities: [{name: 'Ouagadougou', airport: 'OUA', isCapital: true}], lat: 12.238333, lng: -1.561593, requirements: 'Visa required in advance.', cost: '~ $150', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 17400 },
+            { name: 'Burundi', cities: [{name: 'Gitega', airport: 'BJM', isCapital: true}], lat: -3.373056, lng: 29.918886, requirements: 'Visa required in advance.', cost: '~ $130', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 13200 },
+            { name: 'Cabo Verde', cities: [{name: 'Praia', airport: 'RAI', isCapital: true}], lat: 16.5388, lng: -23.0418, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 18800 },
+            { name: 'Cambodia', cities: [{name: 'Phnom Penh', airport: 'PNH', isCapital: true}], lat: 12.565679, lng: 104.990963, requirements: 'e-Visa or Visa on arrival available for business.', cost: '~ $55', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 6950 },
+            { name: 'Cameroon', cities: [{name: 'Yaoundé', airport: 'NSI', isCapital: true}], lat: 7.369722, lng: 12.354722, requirements: 'Visa required in advance.', cost: '~ $200', simplicity: 'Hard', warning: 'Reconsider your need to travel', level: 3, distance: 15900 },
+            { name: 'Canada', cities: [{name: 'Ottawa', airport: 'YOW', isCapital: true}, {name: 'Toronto', airport: 'YYZ'}, {name: 'Vancouver', airport: 'YVR'}, {name: 'Montreal', airport: 'YUL'}], lat: 56.130366, lng: -106.346771, requirements: 'eTA required for air travel.', cost: '~ $7 CAD', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 12450 },
+            { name: 'Central African Republic', cities: [{name: 'Bangui', airport: 'BGF', isCapital: true}], lat: 6.611111, lng: 20.939444, requirements: 'Visa required in advance.', cost: '~ $220', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 15200 },
+            { name: 'Chad', cities: [{name: "N'Djamena", airport: 'NDJ', isCapital: true}], lat: 15.454166, lng: 18.732207, requirements: 'Visa required in advance.', cost: '~ $250', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 15700 },
+            { name: 'Chile', cities: [{name: 'Santiago', airport: 'SCL', isCapital: true}], lat: -35.675147, lng: -71.542969, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11950 },
+            { name: 'China', cities: [{name: 'Beijing', airport: 'PEK', isCapital: true}, {name: 'Shanghai', airport: 'PVG'}, {name: 'Guangzhou', airport: 'CAN'}, {name: 'Chengdu', airport: 'TFU'}], lat: 35.86166, lng: 104.195397, requirements: 'Business (M) visa required in advance.', cost: '~ $110 + fee', simplicity: 'Hard', warning: 'Exercise a high degree of caution', level: 2, distance: 7850 },
+            { name: 'Colombia', cities: [{name: 'Bogotá', airport: 'BOG', isCapital: true}], lat: 4.570868, lng: -74.297333, requirements: 'Visa-free for business visits up to 90 days, extendable.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14900 },
+            { name: 'Comoros', cities: [{name: 'Moroni', airport: 'HAH', isCapital: true}], lat: -11.875001, lng: 43.872219, requirements: 'Visa on arrival available.', cost: '~ $75', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11500 },
+            { name: 'Congo, Dem. Rep.', cities: [{name: 'Kinshasa', airport: 'FIH', isCapital: true}], lat: -4.038333, lng: 21.758664, requirements: 'Visa required in advance.', cost: '~ $200', simplicity: 'Hard', warning: 'Reconsider your need to travel', level: 3, distance: 14300 },
+            { name: 'Congo, Rep.', cities: [{name: 'Brazzaville', airport: 'BZV', isCapital: true}], lat: -0.228021, lng: 15.827659, requirements: 'Visa required in advance.', cost: '~ $150', simplicity: 'Hard', warning: 'Exercise a high degree of caution', level: 2, distance: 14700 },
+            { name: 'Costa Rica', cities: [{name: 'San José', airport: 'SJO', isCapital: true}], lat: 9.748917, lng: -83.753428, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14800 },
+            { name: 'Croatia', cities: [{name: 'Zagreb', airport: 'ZAG', isCapital: true}], lat: 45.1, lng: 15.2, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15800 },
+            { name: 'Cuba', cities: [{name: 'Havana', airport: 'HAV', isCapital: true}], lat: 21.521757, lng: -77.781167, requirements: 'Tourist card (visa) required in advance.', cost: '~ $100+', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 16100 },
+            { name: 'Cyprus', cities: [{name: 'Nicosia', airport: 'LCA', isCapital: true}], lat: 35.126413, lng: 33.429859, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14200 },
+            { name: 'Czech Republic', cities: [{name: 'Prague', airport: 'PRG', isCapital: true}], lat: 49.817492, lng: 15.472962, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15900 },
+            { name: 'Denmark', cities: [{name: 'Copenhagen', airport: 'CPH', isCapital: true}], lat: 56.26392, lng: 9.501785, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15950 },
+            { name: 'Djibouti', cities: [{name: 'Djibouti', airport: 'JIB', isCapital: true}], lat: 11.825138, lng: 42.590275, requirements: 'e-Visa required in advance.', cost: '~ $90', simplicity: 'Medium', warning: 'Reconsider your need to travel', level: 3, distance: 13200 },
+            { name: 'Dominica', cities: [{name: 'Roseau', airport: 'DOM', isCapital: true}], lat: 15.414999, lng: -61.370976, requirements: 'Visa-free for business visits up to 6 months.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16800 },
+            { name: 'Dominican Republic', cities: [{name: 'Santo Domingo', airport: 'SDQ', isCapital: true}], lat: 18.735693, lng: -70.162651, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 16200 },
+            { name: 'Ecuador', cities: [{name: 'Quito', airport: 'UIO', isCapital: true}], lat: -1.831239, lng: -78.183406, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14200 },
+            { name: 'Egypt', cities: [{name: 'Cairo', airport: 'CAI', isCapital: true}, {name: 'Luxor', airport: 'LXR'}], lat: 26.820553, lng: 30.802498, requirements: 'Visa required (on arrival or e-Visa).', cost: '~ $40', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 14000 },
+            { name: 'El Salvador', cities: [{name: 'San Salvador', airport: 'SAL', isCapital: true}], lat: 13.794185, lng: -88.89653, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14500 },
+            { name: 'Equatorial Guinea', cities: [{name: 'Malabo', airport: 'SSG', isCapital: true}], lat: 1.650801, lng: 10.267895, requirements: 'Visa required in advance.', cost: '~ $150', simplicity: 'Hard', warning: 'Exercise a high degree of caution', level: 2, distance: 15600 },
+            { name: 'Eritrea', cities: [{name: 'Asmara', airport: 'ASM', isCapital: true}], lat: 15.179384, lng: 39.782334, requirements: 'Visa required in advance.', cost: '~ $100', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 13600 },
+            { name: 'Estonia', cities: [{name: 'Tallinn', airport: 'TLL', isCapital: true}], lat: 58.595272, lng: 25.013607, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15000 },
+            { name: 'Eswatini', cities: [{name: 'Mbabane', airport: 'SHO', isCapital: true}], lat: -26.522503, lng: 31.465866, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11500 },
+            { name: 'Ethiopia', cities: [{name: 'Addis Ababa', airport: 'ADD', isCapital: true}], lat: 9.145, lng: 40.489673, requirements: 'e-Visa required for business travelers. Apply online before trip.', cost: '~ $125', simplicity: 'Medium', warning: 'Reconsider your need to travel', level: 3, distance: 13300 },
+            { name: 'Fiji', cities: [{name: 'Suva', airport: 'SUV', isCapital: true}, {name: 'Nadi', airport: 'NAN'}], lat: -17.713371, lng: 178.065032, requirements: 'Visa-free for business visits up to 14 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 2750 },
+            { name: 'Finland', cities: [{name: 'Helsinki', airport: 'HEL', isCapital: true}], lat: 61.92411, lng: 25.748151, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 14900 },
+            { name: 'France', cities: [{name: 'Paris', airport: 'CDG', isCapital: true}, {name: 'Nice', airport: 'NCE'}, {name: 'Lyon', airport: 'LYS'}], lat: 46.227638, lng: 2.213749, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 16650 },
+            { name: 'Gabon', cities: [{name: 'Libreville', airport: 'LBV', isCapital: true}], lat: -0.803689, lng: 11.609444, requirements: 'e-Visa or visa on arrival available.', cost: '~ $120', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 15100 },
+            { name: 'Gambia', cities: [{name: 'Banjul', airport: 'BJL', isCapital: true}], lat: 13.443182, lng: -15.310139, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 18100 },
+            { name: 'Georgia', cities: [{name: 'Tbilisi', airport: 'TBS', isCapital: true}], lat: 42.315407, lng: 43.356892, requirements: 'Visa-free for business visits up to 1 year.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 13300 },
+            { name: 'Germany', cities: [{name: 'Berlin', airport: 'BER', isCapital: true}, {name: 'Frankfurt', airport: 'FRA'}, {name: 'Munich', airport: 'MUC'}], lat: 51.165691, lng: 10.451526, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16120 },
+            { name: 'Ghana', cities: [{name: 'Accra', airport: 'ACC', isCapital: true}], lat: 7.946527, lng: -1.023194, requirements: 'Visa required in advance. Apply at embassy/consulate.', cost: '~ $100+', simplicity: 'Hard', warning: 'Exercise a high degree of caution', level: 2, distance: 16800 },
+            { name: 'Greece', cities: [{name: 'Athens', airport: 'ATH', isCapital: true}], lat: 39.074208, lng: 21.824312, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15200 },
+            { name: 'Grenada', cities: [{name: "St. George's", airport: 'GND', isCapital: true}], lat: 12.1165, lng: -61.679, requirements: 'Visa-free for business visits up to 3 months.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16900 },
+            { name: 'Guatemala', cities: [{name: 'Guatemala City', airport: 'GUA', isCapital: true}], lat: 15.783471, lng: -90.230759, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14600 },
+            { name: 'Guinea', cities: [{name: 'Conakry', airport: 'CKY', isCapital: true}], lat: 9.945587, lng: -9.696645, requirements: 'e-Visa required in advance.', cost: '~ $120', simplicity: 'Medium', warning: 'Reconsider your need to travel', level: 3, distance: 18000 },
+            { name: 'Guinea-Bissau', cities: [{name: 'Bissau', airport: 'OXB', isCapital: true}], lat: 11.803749, lng: -15.180413, requirements: 'e-Visa or visa on arrival available.', cost: '~ $100', simplicity: 'Medium', warning: 'Reconsider your need to travel', level: 3, distance: 18200 },
+            { name: 'Guyana', cities: [{name: 'Georgetown', airport: 'GEO', isCapital: true}], lat: 4.860416, lng: -58.93018, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 16500 },
+            { name: 'Haiti', cities: [{name: 'Port-au-Prince', airport: 'PAP', isCapital: true}], lat: 18.971187, lng: -72.285215, requirements: 'Visa-free for 90 days, but travel not advised.', cost: 'Free', simplicity: 'Easy', warning: 'Do not travel', level: 4, distance: 15800 },
+            { name: 'Honduras', cities: [{name: 'Tegucigalpa', airport: 'TGU', isCapital: true}], lat: 15.199999, lng: -86.241905, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14700 },
+            { name: 'Hungary', cities: [{name: 'Budapest', airport: 'BUD', isCapital: true}], lat: 47.162494, lng: 19.503304, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15700 },
+            { name: 'Iceland', cities: [{name: 'Reykjavik', airport: 'KEF', isCapital: true}], lat: 64.963051, lng: -19.020835, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16000 },
+            { name: 'India', cities: [{name: 'New Delhi', airport: 'DEL', isCapital: true}, {name: 'Mumbai', airport: 'BOM'}, {name: 'Bengaluru', airport: 'BLR'}], lat: 20.593684, lng: 78.96288, requirements: 'e-Business Visa required in advance.', cost: '~ $120', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 9950 },
+            { name: 'Indonesia', cities: [{name: 'Jakarta', airport: 'CGK', isCapital: true}, {name: 'Denpasar (Bali)', airport: 'DPS'}], lat: -0.789275, lng: 113.921327, requirements: 'Visa on arrival available.', cost: '~ $50', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 4780 },
+            { name: 'Iran', cities: [{name: 'Tehran', airport: 'IKA', isCapital: true}], lat: 32.427908, lng: 53.688046, requirements: 'Visa required in advance. Complex process.', cost: '~ $150+', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 12300 },
+            { name: 'Iraq', cities: [{name: 'Baghdad', airport: 'BGW', isCapital: true}], lat: 33.223191, lng: 43.679291, requirements: 'Visa required in advance. Very difficult to obtain.', cost: 'Variable', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 13100 },
+            { name: 'Ireland', cities: [{name: 'Dublin', airport: 'DUB', isCapital: true}], lat: 53.41291, lng: -8.24389, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16850 },
+            { name: 'Israel', cities: [{name: 'Jerusalem', airport: 'TLV', isCapital: true}], lat: 31.046051, lng: 34.851612, requirements: 'Visa-free for business visits up to 3 months.', cost: 'Free', simplicity: 'Easy', warning: 'Reconsider your need to travel', level: 3, distance: 13400 },
+            { name: 'Italy', cities: [{name: 'Rome', airport: 'FCO', isCapital: true}, {name: 'Milan', airport: 'MXP'}, {name: 'Venice', airport: 'VCE'}], lat: 41.87194, lng: 12.56738, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16330 },
+            { name: 'Jamaica', cities: [{name: 'Kingston', airport: 'KIN', isCapital: true}], lat: 18.109581, lng: -77.297508, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 16000 },
+            { name: 'Japan', cities: [{name: 'Tokyo', airport: 'NRT', isCapital: true}, {name: 'Osaka', airport: 'KIX'}, {name: 'Fukuoka', airport: 'FUK'}], lat: 36.204824, lng: 138.252924, requirements: 'Visa exemption for up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 7140 },
+            { name: 'Jordan', cities: [{name: 'Amman', airport: 'AMM', isCapital: true}], lat: 30.585164, lng: 36.238414, requirements: 'Visa on arrival available.', cost: '~ $80', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 13600 },
+            { name: 'Kazakhstan', cities: [{name: 'Astana', airport: 'NQZ', isCapital: true}], lat: 48.019573, lng: 66.923684, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 10500 },
+            { name: 'Kenya', cities: [{name: 'Nairobi', airport: 'NBO', isCapital: true}], lat: -0.023559, lng: 37.906193, requirements: 'eTA required before travel.', cost: '~ $50', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 12900 },
+            { name: 'Kiribati', cities: [{name: 'South Tarawa', airport: 'TRW', isCapital: true}], lat: -3.370417, lng: -168.734039, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 4300 },
+            { name: 'Kuwait', cities: [{name: 'Kuwait City', airport: 'KWI', isCapital: true}], lat: 29.31166, lng: 47.481766, requirements: 'e-Visa or visa on arrival available.', cost: '~ $15', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 12600 },
+            { name: 'Kyrgyzstan', cities: [{name: 'Bishkek', airport: 'FRU', isCapital: true}], lat: 41.20438, lng: 74.766098, requirements: 'Visa-free for business visits up to 60 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 10000 },
+            { name: 'Laos', cities: [{name: 'Vientiane', airport: 'VTE', isCapital: true}], lat: 19.85627, lng: 102.495496, requirements: 'e-Visa or visa on arrival available.', cost: '~ $75', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 7200 },
+            { name: 'Latvia', cities: [{name: 'Riga', airport: 'RIX', isCapital: true}], lat: 56.879635, lng: 24.603189, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15200 },
+            { name: 'Lebanon', cities: [{name: 'Beirut', airport: 'BEY', isCapital: true}], lat: 33.854721, lng: 35.862285, requirements: 'Visa on arrival for business purposes (conditions apply).', cost: 'Free', simplicity: 'Medium', warning: 'Reconsider your need to travel', level: 3, distance: 13800 },
+            { name: 'Lesotho', cities: [{name: 'Maseru', airport: 'MSU', isCapital: true}], lat: -29.609988, lng: 28.233608, requirements: 'Visa-free for business visits up to 14 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11400 },
+            { name: 'Liberia', cities: [{name: 'Monrovia', airport: 'ROB', isCapital: true}], lat: 6.428055, lng: -9.429499, requirements: 'Visa required in advance.', cost: '~ $150', simplicity: 'Hard', warning: 'Reconsider your need to travel', level: 3, distance: 17600 },
+            { name: 'Libya', cities: [{name: 'Tripoli', airport: 'TIP', isCapital: true}], lat: 26.3351, lng: 17.228331, requirements: 'Visa required in advance. Extremely difficult.', cost: 'Variable', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 15600 },
+            { name: 'Liechtenstein', cities: [{name: 'Vaduz', airport: 'None', isCapital: true}], lat: 47.166, lng: 9.555373, requirements: 'Visa-free (entry via Switzerland - Schengen rules apply).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16300 },
+            { name: 'Lithuania', cities: [{name: 'Vilnius', airport: 'VNO', isCapital: true}], lat: 55.169438, lng: 23.881275, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15200 },
+            { name: 'Luxembourg', cities: [{name: 'Luxembourg', airport: 'LUX', isCapital: true}], lat: 49.815273, lng: 6.129583, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16500 },
+            { name: 'Madagascar', cities: [{name: 'Antananarivo', airport: 'TNR', isCapital: true}], lat: -18.766947, lng: 46.869107, requirements: 'e-Visa or visa on arrival available.', cost: '~ $55', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 10800 },
+            { name: 'Malawi', cities: [{name: 'Lilongwe', airport: 'LLW', isCapital: true}], lat: -13.254308, lng: 34.301525, requirements: 'e-Visa required in advance.', cost: '~ $110', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 12300 },
+            { name: 'Malaysia', cities: [{name: 'Kuala Lumpur', airport: 'KUL', isCapital: true}], lat: 4.210484, lng: 101.975766, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 6380 },
+            { name: 'Maldives', cities: [{name: 'Malé', airport: 'MLE', isCapital: true}], lat: 3.202778, lng: 73.22068, requirements: 'Visa on arrival for 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 8800 },
+            { name: 'Mali', cities: [{name: 'Bamako', airport: 'BKO', isCapital: true}], lat: 17.570692, lng: -3.996166, requirements: 'Visa required in advance.', cost: '~ $180', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 17800 },
+            { name: 'Malta', cities: [{name: 'Valletta', airport: 'MLA', isCapital: true}], lat: 35.937496, lng: 14.375416, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16400 },
+            { name: 'Marshall Islands', cities: [{name: 'Majuro', airport: 'MAJ', isCapital: true}], lat: 7.131474, lng: 171.184478, requirements: 'Visa on arrival for 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 4500 },
+            { name: 'Mauritania', cities: [{name: 'Nouakchott', airport: 'NKC', isCapital: true}], lat: 21.00789, lng: -10.940835, requirements: 'Visa on arrival available.', cost: '~ $85', simplicity: 'Easy', warning: 'Do not travel', level: 4, distance: 18500 },
+            { name: 'Mauritius', cities: [{name: 'Port Louis', airport: 'MRU', isCapital: true}], lat: -20.348404, lng: 57.552152, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 9900 },
+            { name: 'Mexico', cities: [{name: 'Mexico City', airport: 'MEX', isCapital: true}], lat: 23.634501, lng: -102.552784, requirements: 'Visa-free for business visits up to 180 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 13340 },
+            { name: 'Micronesia', cities: [{name: 'Palikir', airport: 'PNI', isCapital: true}], lat: 7.425554, lng: 150.550812, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 3800 },
+            { name: 'Moldova', cities: [{name: 'Chișinău', airport: 'KIV', isCapital: true}], lat: 47.411631, lng: 28.369885, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14900 },
+            { name: 'Monaco', cities: [{name: 'Monaco', airport: 'None', isCapital: true}], lat: 43.738418, lng: 7.424616, requirements: 'Visa-free (entry via France - Schengen rules apply).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16700 },
+            { name: 'Mongolia', cities: [{name: 'Ulaanbaatar', airport: 'UBN', isCapital: true}], lat: 46.862496, lng: 103.846656, requirements: 'e-Visa available for business travel up to 30 days.', cost: '~ $80', simplicity: 'Medium', warning: 'Exercise normal safety precautions', level: 1, distance: 8800 },
+            { name: 'Montenegro', cities: [{name: 'Podgorica', airport: 'TGD', isCapital: true}], lat: 42.708678, lng: 19.37439, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 15600 },
+            { name: 'Morocco', cities: [{name: 'Rabat', airport: 'RBA', isCapital: true}, {name: 'Casablanca', airport: 'CMN'}], lat: 31.791702, lng: -7.09262, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 17900 },
+            { name: 'Mozambique', cities: [{name: 'Maputo', airport: 'MPM', isCapital: true}], lat: -18.665695, lng: 35.529562, requirements: 'e-Visa or visa on arrival available.', cost: '~ $100', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 11600 },
+            { name: 'Myanmar', cities: [{name: 'Naypyidaw', airport: 'NYT', isCapital: true}], lat: 21.913965, lng: 95.956223, requirements: 'Business visa required in advance. Process can be difficult.', cost: '~ $100', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 7900 },
+            { name: 'Namibia', cities: [{name: 'Windhoek', airport: 'WDH', isCapital: true}], lat: -22.95764, lng: 18.49041, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 12400 },
+            { name: 'Nauru', cities: [{name: 'Yaren', airport: 'INU', isCapital: true}], lat: -0.522778, lng: 166.931503, requirements: 'Visa required in advance.', cost: '~ $100', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 3900 },
+            { name: 'Nepal', cities: [{name: 'Kathmandu', airport: 'KTM', isCapital: true}], lat: 28.394857, lng: 84.124008, requirements: 'Visa on arrival available for business purposes.', cost: '~ $75 (30 days)', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 9400 },
+            { name: 'Netherlands', cities: [{name: 'Amsterdam', airport: 'AMS', isCapital: true}], lat: 52.132633, lng: 5.291266, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16300 },
+            { name: 'New Zealand', cities: [{name: 'Wellington', airport: 'WLG', isCapital: true}, {name: 'Auckland', airport: 'AKL'}, {name: 'Christchurch', airport: 'CHC'}], lat: -40.900557, lng: 174.885971, requirements: 'NZeTA required.', cost: '~ $25 (NZeTA)', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 2290 },
+            { name: 'Nicaragua', cities: [{name: 'Managua', airport: 'MGA', isCapital: true}], lat: 12.865416, lng: -85.207229, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Reconsider your need to travel', level: 3, distance: 14800 },
+            { name: 'Niger', cities: [{name: 'Niamey', airport: 'NIM', isCapital: true}], lat: 17.607789, lng: 8.081666, requirements: 'Visa required in advance.', cost: '~ $200', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 16500 },
+            { name: 'Nigeria', cities: [{name: 'Abuja', airport: 'ABV', isCapital: true}, {name: 'Lagos', airport: 'LOS'}], lat: 9.081999, lng: 8.675277, requirements: 'Visa required in advance. Business visa requires invitation.', cost: '~ $250+', simplicity: 'Hard', warning: 'Reconsider your need to travel', level: 3, distance: 15900 },
+            { name: 'North Korea', cities: [{name: 'Pyongyang', airport: 'FNJ', isCapital: true}], lat: 40.339852, lng: 127.510093, requirements: 'Visa required. Extremely difficult. Only via approved tours.', cost: 'Variable', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 8000 },
+            { name: 'North Macedonia', cities: [{name: 'Skopje', airport: 'SKP', isCapital: true}], lat: 41.608635, lng: 21.745275, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 15400 },
+            { name: 'Norway', cities: [{name: 'Oslo', airport: 'OSL', isCapital: true}], lat: 60.472024, lng: 8.468946, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15500 },
+            { name: 'Oman', cities: [{name: 'Muscat', airport: 'MCT', isCapital: true}], lat: 21.512583, lng: 55.923255, requirements: 'e-Visa required in advance for business travel.', cost: '~ $80', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11800 },
+            { name: 'Pakistan', cities: [{name: 'Islamabad', airport: 'ISB', isCapital: true}], lat: 30.375321, lng: 69.345116, requirements: 'Visa required in advance. Online visa portal available.', cost: '~ $90+', simplicity: 'Hard', warning: 'Reconsider your need to travel', level: 3, distance: 10900 },
+            { name: 'Palau', cities: [{name: 'Ngerulmud', airport: 'ROR', isCapital: true}], lat: 7.51498, lng: 134.58252, requirements: 'Visa on arrival for 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 4100 },
+            { name: 'Panama', cities: [{name: 'Panama City', airport: 'PTY', isCapital: true}], lat: 8.537981, lng: -80.782127, requirements: 'Visa-free for business visits up to 180 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 15300 },
+            { name: 'Papua New Guinea', cities: [{name: 'Port Moresby', airport: 'POM', isCapital: true}], lat: -6.314993, lng: 143.95555, requirements: 'Visa required in advance. e-Visa available.', cost: '~ $70 (e-Visa)', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 2130 },
+            { name: 'Paraguay', cities: [{name: 'Asunción', airport: 'ASU', isCapital: true}], lat: -23.442503, lng: -58.443832, requirements: 'Visa on arrival available.', cost: '~ $230', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 14000 },
+            { name: 'Peru', cities: [{name: 'Lima', airport: 'LIM', isCapital: true}], lat: -9.189967, lng: -75.015152, requirements: 'Visa-free for business visits up to 180 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 13400 },
+            { name: 'Philippines', cities: [{name: 'Manila', airport: 'MNL', isCapital: true}], lat: 12.879721, lng: 121.774017, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 5820 },
+            { name: 'Poland', cities: [{name: 'Warsaw', airport: 'WAW', isCapital: true}], lat: 51.919438, lng: 19.145136, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15400 },
+            { name: 'Portugal', cities: [{name: 'Lisbon', airport: 'LIS', isCapital: true}], lat: 39.399872, lng: -8.224454, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 17900 },
+            { name: 'Qatar', cities: [{name: 'Doha', airport: 'DOH', isCapital: true}], lat: 25.354826, lng: 51.183884, requirements: 'Visa-free entry for 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 12300 },
+            { name: 'Romania', cities: [{name: 'Bucharest', airport: 'OTP', isCapital: true}], lat: 45.943161, lng: 24.96676, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15200 },
+            { name: 'Russia', cities: [{name: 'Moscow', airport: 'SVO', isCapital: true}], lat: 61.52401, lng: 105.318756, requirements: 'Business visa required in advance. Complex process with invitation letter.', cost: '~ $200+', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 11450 },
+            { name: 'Rwanda', cities: [{name: 'Kigali', airport: 'KGL', isCapital: true}], lat: -1.940278, lng: 29.873888, requirements: 'Visa on arrival available.', cost: '~ $75', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 13400 },
+            { name: 'Saint Kitts and Nevis', cities: [{name: 'Basseterre', airport: 'SKB', isCapital: true}], lat: 17.357822, lng: -62.782998, requirements: 'Visa-free for business visits up to 3 months.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16600 },
+            { name: 'Saint Lucia', cities: [{name: 'Castries', airport: 'UVF', isCapital: true}], lat: 13.909444, lng: -60.978893, requirements: 'Visa-free for business visits up to 6 weeks.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16900 },
+            { name: 'Saint Vincent and the Grenadines', cities: [{name: 'Kingstown', airport: 'SVD', isCapital: true}], lat: 12.984305, lng: -61.287228, requirements: 'Visa-free for business visits up to 1 month.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 17000 },
+            { name: 'Samoa', cities: [{name: 'Apia', airport: 'APW', isCapital: true}], lat: -13.759029, lng: -172.104629, requirements: 'Visa on arrival for business visits up to 60 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 3750 },
+            { name: 'San Marino', cities: [{name: 'San Marino', airport: 'None', isCapital: true}], lat: 43.94236, lng: 12.457777, requirements: 'Visa-free (entry via Italy - Schengen rules apply).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16400 },
+            { name: 'Sao Tome and Principe', cities: [{name: 'São Tomé', airport: 'TMS', isCapital: true}], lat: 0.18636, lng: 6.613081, requirements: 'Visa-free for business visits up to 15 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 15800 },
+            { name: 'Saudi Arabia', cities: [{name: 'Riyadh', airport: 'RUH', isCapital: true}], lat: 23.885942, lng: 45.079162, requirements: 'Business visa required in advance. Requires sponsorship.', cost: '~ $250+', simplicity: 'Hard', warning: 'Exercise a high degree of caution', level: 2, distance: 12800 },
+            { name: 'Senegal', cities: [{name: 'Dakar', airport: 'DSS', isCapital: true}], lat: 14.497401, lng: -14.452362, requirements: 'Visa required in advance for business purposes.', cost: '~ $120', simplicity: 'Hard', warning: 'Exercise a high degree of caution', level: 2, distance: 18200 },
+            { name: 'Serbia', cities: [{name: 'Belgrade', airport: 'BEG', isCapital: true}], lat: 44.016521, lng: 21.005859, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15500 },
+            { name: 'Seychelles', cities: [{name: 'Victoria', airport: 'SEZ', isCapital: true}], lat: -4.679574, lng: 55.491977, requirements: 'Visa-free for business visits up to 3 months.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 10600 },
+            { name: 'Sierra Leone', cities: [{name: 'Freetown', airport: 'FNA', isCapital: true}], lat: 8.460555, lng: -11.779889, requirements: 'Visa on arrival available.', cost: '~ $120', simplicity: 'Easy', warning: 'Reconsider your need to travel', level: 3, distance: 17800 },
+            { name: 'Singapore', cities: [{name: 'Singapore', airport: 'SIN', isCapital: true}], lat: 1.352083, lng: 103.819836, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 6140 },
+            { name: 'Slovakia', cities: [{name: 'Bratislava', airport: 'BTS', isCapital: true}], lat: 48.669026, lng: 19.699024, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15800 },
+            { name: 'Slovenia', cities: [{name: 'Ljubljana', airport: 'LJU', isCapital: true}], lat: 46.151241, lng: 14.995463, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15900 },
+            { name: 'Solomon Islands', cities: [{name: 'Honiara', airport: 'HIR', isCapital: true}], lat: -9.64571, lng: 160.156194, requirements: 'Visa on arrival for 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 2200 },
+            { name: 'Somalia', cities: [{name: 'Mogadishu', airport: 'MGQ', isCapital: true}], lat: 5.152149, lng: 46.199616, requirements: 'Visa required in advance. Extremely difficult.', cost: 'Variable', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 12900 },
+            { name: 'South Africa', cities: [{name: 'Pretoria', airport: 'JNB', isCapital: true}, {name: 'Cape Town', airport: 'CPT'}, {name: 'Durban', airport: 'DUR'}], lat: -30.559482, lng: 22.937506, requirements: 'Visa-free for up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11250 },
+            { name: 'South Korea', cities: [{name: 'Seoul', airport: 'ICN', isCapital: true}], lat: 35.907757, lng: 127.766922, requirements: 'K-ETA required for visa-free business visits up to 90 days.', cost: '~ $12', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 7700 },
+            { name: 'South Sudan', cities: [{name: 'Juba', airport: 'JUB', isCapital: true}], lat: 6.876965, lng: 31.306979, requirements: 'Visa required in advance.', cost: '~ $150+', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 14200 },
+            { name: 'Spain', cities: [{name: 'Madrid', airport: 'MAD', isCapital: true}, {name: 'Barcelona', airport: 'BCN'}], lat: 40.463667, lng: -3.74922, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 17450 },
+            { name: 'Sri Lanka', cities: [{name: 'Colombo', airport: 'CMB', isCapital: true}], lat: 7.873054, lng: 80.771797, requirements: 'ETA required for short business visits. Apply online.', cost: '~ $75', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 8300 },
+            { name: 'Sudan', cities: [{name: 'Khartoum', airport: 'KRT', isCapital: true}], lat: 12.862807, lng: 30.217636, requirements: 'Visa required in advance.', cost: '~ $200', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 14200 },
+            { name: 'Suriname', cities: [{name: 'Paramaribo', airport: 'PBM', isCapital: true}], lat: 3.919305, lng: -56.027783, requirements: 'e-Visa or e-Tourist card required.', cost: '~ $80', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 16800 },
+            { name: 'Sweden', cities: [{name: 'Stockholm', airport: 'ARN', isCapital: true}], lat: 60.128161, lng: 18.643501, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 15600 },
+            { name: 'Switzerland', cities: [{name: 'Bern', airport: 'ZRH', isCapital: true}], lat: 46.818188, lng: 8.227512, requirements: 'Visa-free (Schengen Area).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16400 },
+            { name: 'Syria', cities: [{name: 'Damascus', airport: 'DAM', isCapital: true}], lat: 34.802075, lng: 38.996815, requirements: 'Visa required in advance. Consular services suspended.', cost: 'N/A', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 13700 },
+            { name: 'Taiwan', cities: [{name: 'Taipei', airport: 'TPE', isCapital: true}], lat: 23.69781, lng: 120.960515, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 6800 },
+            { name: 'Tajikistan', cities: [{name: 'Dushanbe', airport: 'DYU', isCapital: true}], lat: 38.861034, lng: 71.276093, requirements: 'e-Visa required in advance.', cost: '~ $75', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 10400 },
+            { name: 'Tanzania', cities: [{name: 'Dodoma', airport: 'DAR', isCapital: true}], lat: -6.369028, lng: 34.888822, requirements: 'e-Visa or visa on arrival for business.', cost: '~ $150', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 12700 },
+            { name: 'Thailand', cities: [{name: 'Bangkok', airport: 'BKK', isCapital: true}, {name: 'Phuket', airport: 'HKT'}, {name: 'Chiang Mai', airport: 'CNX'}], lat: 15.870032, lng: 100.992541, requirements: 'Visa exemption for up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 7280 },
+            { name: 'Timor-Leste', cities: [{name: 'Dili', airport: 'DIL', isCapital: true}], lat: -8.874217, lng: 125.727539, requirements: 'Visa on arrival available.', cost: '~ $45', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 3400 },
+            { name: 'Togo', cities: [{name: 'Lomé', airport: 'LFW', isCapital: true}], lat: 8.619543, lng: 0.824782, requirements: 'Visa on arrival available.', cost: '~ $35', simplicity: 'Easy', warning: 'Reconsider your need to travel', level: 3, distance: 16700 },
+            { name: 'Tonga', cities: [{name: "Nuku'alofa", airport: 'TBU', isCapital: true}], lat: -21.178986, lng: -175.198242, requirements: 'Visa on arrival for 31 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 3250 },
+            { name: 'Trinidad and Tobago', cities: [{name: 'Port of Spain', airport: 'POS', isCapital: true}], lat: 10.691803, lng: -61.222503, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 17000 },
+            { name: 'Tunisia', cities: [{name: 'Tunis', airport: 'TUN', isCapital: true}], lat: 33.886917, lng: 9.537499, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 16600 },
+            { name: 'Turkey', cities: [{name: 'Ankara', airport: 'ESB', isCapital: true}, {name: 'Istanbul', airport: 'IST'}], lat: 38.963745, lng: 35.243322, requirements: 'e-Visa required for business visits up to 90 days.', cost: '~ $90', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 14750 },
+            { name: 'Turkmenistan', cities: [{name: 'Ashgabat', airport: 'ASB', isCapital: true}], lat: 38.969719, lng: 59.556278, requirements: 'Visa required in advance. Invitation letter needed.', cost: '~ $120', simplicity: 'Very Hard', warning: 'Reconsider your need to travel', level: 3, distance: 11500 },
+            { name: 'Tuvalu', cities: [{name: 'Funafuti', airport: 'FUN', isCapital: true}], lat: -7.109535, lng: 177.64933, requirements: 'Visa on arrival for 1 month.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 3500 },
+            { name: 'Uganda', cities: [{name: 'Kampala', airport: 'EBB', isCapital: true}], lat: 1.373333, lng: 32.290275, requirements: 'e-Visa required in advance.', cost: '~ $75', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 13400 },
+            { name: 'Ukraine', cities: [{name: 'Kyiv', airport: 'KBP', isCapital: true}], lat: 48.379433, lng: 31.16558, requirements: 'Visa required in advance. e-Visa system suspended.', cost: 'Variable', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 14700 },
+            { name: 'United Arab Emirates', cities: [{name: 'Abu Dhabi', airport: 'AUH', isCapital: true}, {name: 'Dubai', airport: 'DXB'}], lat: 23.424076, lng: 53.847818, requirements: 'Visa on arrival for 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11980 },
+            { name: 'United Kingdom', cities: [{name: 'London', airport: 'LHR', isCapital: true}, {name: 'Manchester', airport: 'MAN'}, {name: 'Edinburgh', airport: 'EDI'}], lat: 55.378051, lng: -3.435973, requirements: 'Visa-free for up to 6 months.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 16530 },
+            { name: 'United States', cities: [{name: 'Washington, D.C.', airport: 'IAD', isCapital: true}, {name: 'New York', airport: 'JFK'}, {name: 'Los Angeles', airport: 'LAX'}, {name: 'Chicago', airport: 'ORD'}], lat: 37.09024, lng: -95.712891, requirements: 'ESTA required.', cost: '~ $30 (ESTA)', simplicity: 'Easy (ESTA)', warning: 'Exercise normal safety precautions', level: 1, distance: 11540 },
+            { name: 'Uruguay', cities: [{name: 'Montevideo', airport: 'MVD', isCapital: true}], lat: -32.522779, lng: -55.765835, requirements: 'Visa-free for business visits up to 90 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 13200 },
+            { name: 'Uzbekistan', cities: [{name: 'Tashkent', airport: 'TAS', isCapital: true}], lat: 41.377491, lng: 64.585262, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11000 },
+            { name: 'Vanuatu', cities: [{name: 'Port Vila', airport: 'VLI', isCapital: true}], lat: -15.376706, lng: 166.959158, requirements: 'Visa-free for business visits up to 30 days.', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 2000 },
+            { name: 'Vatican City', cities: [{name: 'Vatican City', airport: 'None', isCapital: true}], lat: 41.902916, lng: 12.453389, requirements: 'Entry via Italy (Schengen Area rules apply).', cost: 'Free', simplicity: 'Easy', warning: 'Exercise normal safety precautions', level: 1, distance: 16330 },
+            { name: 'Venezuela', cities: [{name: 'Caracas', airport: 'CCS', isCapital: true}], lat: 6.42375, lng: -66.58973, requirements: 'Visa required in advance. Complex process.', cost: '~ $90', simplicity: 'Hard', warning: 'Do not travel', level: 4, distance: 15900 },
+            { name: 'Vietnam', cities: [{name: 'Hanoi', airport: 'HAN', isCapital: true}, {name: 'Ho Chi Minh City', airport: 'SGN'}], lat: 14.058324, lng: 108.277199, requirements: 'e-Visa required (90 days).', cost: '~ $40', simplicity: 'Medium', warning: 'Exercise normal safety precautions', level: 1, distance: 6840 },
+            { name: 'Yemen', cities: [{name: "Sana'a", airport: 'SAH', isCapital: true}], lat: 15.552727, lng: 48.516388, requirements: 'Visa required in advance. Very difficult to obtain.', cost: 'Variable', simplicity: 'Very Hard', warning: 'Do not travel', level: 4, distance: 13500 },
+            { name: 'Zambia', cities: [{name: 'Lusaka', airport: 'LUN', isCapital: true}], lat: -13.133897, lng: 27.849332, requirements: 'e-Visa available for business travel.', cost: '~ $75', simplicity: 'Medium', warning: 'Exercise a high degree of caution', level: 2, distance: 12400 },
+            { name: 'Zimbabwe', cities: [{name: 'Harare', airport: 'HRE', isCapital: true}], lat: -19.015438, lng: 29.154857, requirements: 'e-Visa or visa on arrival available.', cost: '~ $70', simplicity: 'Easy', warning: 'Exercise a high degree of caution', level: 2, distance: 11900 }
         ];
 
         let map;
@@ -421,36 +357,35 @@
             const tableBody = document.querySelector('#countryTable tbody');
             tableBody.innerHTML = ''; // Clear existing rows
             countryData.forEach(country => {
-                const row = `
-                    <tr class="border-b border-gray-200 hover:bg-gray-50">
-                        <td class="p-4"><input type="checkbox" class="country-checkbox" data-country-name="${country.name}" onchange="updateTripPlanner()"></td>
-                        <td class="p-4 font-medium">${country.name}</td>
-                        <td class="p-4 font-semibold text-gray-500">${country.airport}</td>
-                        <td class="p-4">${country.requirements}</td>
-                        <td class="p-4">${country.cost}</td>
-                        <td class="p-4">${country.simplicity}</td>
-                        <td class="p-4"><span class="px-2 py-1 rounded-full text-sm font-medium ${getWarningClass(country.level)}">${country.warning}</span></td>
-                        <td class="p-4">${country.distance.toLocaleString()}</td>
-                    </tr>
-                `;
-                tableBody.innerHTML += row;
-            });
-        }
+                const selectEl = document.createElement('select');
+                selectEl.className = 'city-select';
+                selectEl.dataset.countryName = country.name;
+                selectEl.onchange = () => updateTripPlanner();
 
-        function populateEmbassyTable() {
-            const tableBody = document.querySelector('#embassyTable tbody');
-            tableBody.innerHTML = '';
-            embassyData.forEach(mission => {
-                const row = `
-                    <tr class="border-b border-gray-200 hover:bg-gray-50">
-                        <td class="p-4 font-medium">${mission.country}</td>
-                        <td class="p-4">${mission.city}</td>
-                        <td class="p-4">${mission.type}</td>
-                        <td class="p-4">${mission.address}</td>
-                        <td class="p-4"><a href="${mission.website}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Official Site</a></td>
-                    </tr>
+                country.cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.airport;
+                    option.textContent = `${city.name} ${city.isCapital ? '(c)' : ''} (${city.airport})`;
+                    if (city.isCapital) {
+                        option.selected = true;
+                    }
+                    selectEl.appendChild(option);
+                });
+
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200 hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="p-4"><input type="checkbox" class="country-checkbox" data-country-name="${country.name}" onchange="updateTripPlanner()"></td>
+                    <td class="p-4 font-medium">${country.name}</td>
+                    <td class="p-4"></td>
+                    <td class="p-4">${country.requirements}</td>
+                    <td class="p-4">${country.cost}</td>
+                    <td class="p-4">${country.simplicity}</td>
+                    <td class="p-4"><span class="px-2 py-1 rounded-full text-sm font-medium ${getWarningClass(country.level)}">${country.warning}</span></td>
+                    <td class="p-4">${country.distance.toLocaleString()}</td>
                 `;
-                tableBody.innerHTML += row;
+                row.cells[2].appendChild(selectEl);
+                tableBody.appendChild(row);
             });
         }
 
@@ -462,11 +397,11 @@
 
             for (let i = 1; i < tr.length; i++) { // Start from 1 to skip header row
                 const countryTd = tr[i].getElementsByTagName('td')[1];
-                const airportTd = tr[i].getElementsByTagName('td')[2];
-                if (countryTd || airportTd) {
+                const airportsTd = tr[i].getElementsByTagName('td')[2];
+                if (countryTd || airportsTd) {
                     const countryTxt = countryTd.textContent || countryTd.innerText;
-                    const airportTxt = airportTd.textContent || airportTd.innerText;
-                    if (countryTxt.toUpperCase().indexOf(filter) > -1 || airportTxt.toUpperCase().indexOf(filter) > -1) {
+                    const airportsTxt = airportsTd.textContent || airportsTd.innerText;
+                    if (countryTxt.toUpperCase().indexOf(filter) > -1 || airportsTxt.toUpperCase().indexOf(filter) > -1) {
                         tr[i].style.display = '';
                     } else {
                         tr[i].style.display = 'none';
@@ -500,52 +435,13 @@
                     valB = countryB ? countryB.level : 0;
                 }
 
-                if (valA < valB) {
-                    return direction === 'asc' ? -1 : 1;
-                }
-                if (valA > valB) {
-                    return direction === 'asc' ? 1 : -1;
-                }
-                return 0;
-            });
-
-            rows.forEach(row => tbody.appendChild(row));
-            
-            for(let i = 0; i < headers.length; i++) {
-                let arrow = headers[i].querySelector('.sort-arrow');
-                if (arrow) {
-                    arrow.classList.remove('active');
-                    arrow.innerHTML = '';
-                    if(i === columnIndex) {
-                        arrow.innerHTML = direction === 'asc' ? ' ▲' : ' ▼';
-                        arrow.classList.add('active');
-                    }
-                }
-            }
-        }
-
-        let embassySortDirections = {};
-        function sortEmbassyTable(columnIndex) {
-            const table = document.getElementById('embassyTable');
-            const tbody = table.tBodies[0];
-            const rows = Array.from(tbody.rows);
-            const headers = table.tHead.rows[0].cells;
-
-            const direction = embassySortDirections[columnIndex] === 'asc' ? 'desc' : 'asc';
-            Object.keys(embassySortDirections).forEach(key => delete embassySortDirections[key]);
-            embassySortDirections[columnIndex] = direction;
-
-            rows.sort((a, b) => {
-                let valA = a.cells[columnIndex].innerText.trim();
-                let valB = b.cells[columnIndex].innerText.trim();
-                
                 if (valA < valB) return direction === 'asc' ? -1 : 1;
                 if (valA > valB) return direction === 'asc' ? 1 : -1;
                 return 0;
             });
 
             rows.forEach(row => tbody.appendChild(row));
-
+            
             for(let i = 0; i < headers.length; i++) {
                 let arrow = headers[i].querySelector('.sort-arrow');
                 if (arrow) {
@@ -562,27 +458,30 @@
         function updateTripPlanner() {
             const checkboxes = document.querySelectorAll('.country-checkbox:checked');
             const tripPlannerDiv = document.getElementById('tripPlanner');
-            const embassySection = document.getElementById('embassySection');
             const goToPlannerBtn = document.getElementById('goToPlanner');
             const selectedList = document.querySelector('#selectedCountriesList ul');
             const totalCostEl = document.getElementById('totalCost');
             
             let totalCost = 0;
-            let selectedCountries = [];
+            let selectedDestinations = [];
             
             markers.forEach(marker => map.removeLayer(marker));
             markers = [];
-
             selectedList.innerHTML = '';
 
             checkboxes.forEach(cb => {
                 const countryName = cb.dataset.countryName;
-                selectedCountries.push(countryName);
                 const country = countryData.find(c => c.name === countryName);
-                
                 if (country) {
+                    const select = cb.closest('tr').querySelector('.city-select');
+                    const selectedOption = select.options[select.selectedIndex];
+                    const airportCode = select.value;
+                    const cityName = selectedOption.text.split(' (')[0];
+
+                    selectedDestinations.push({ name: countryName, city: cityName, airport: airportCode });
+                    
                     const listItem = document.createElement('li');
-                    listItem.textContent = `${country.name} (${country.airport})`;
+                    listItem.textContent = `${cityName}, ${countryName} (${airportCode})`;
                     selectedList.appendChild(listItem);
 
                     let costString = country.cost.replace(/[^0-9.]/g, '');
@@ -592,15 +491,14 @@
                     
                     if (country.lat && country.lng) {
                         const marker = L.marker([country.lat, country.lng]).addTo(map)
-                            .bindPopup(`${country.name} (${country.airport})`);
+                            .bindPopup(`${cityName}, ${countryName} (${airportCode})`);
                         markers.push(marker);
                     }
                 }
             });
 
-            if (selectedCountries.length > 0) {
+            if (selectedDestinations.length > 0) {
                 tripPlannerDiv.style.display = 'block';
-                embassySection.style.display = 'block';
                 goToPlannerBtn.style.display = 'block';
                 if (markers.length === 1) {
                     map.setView(markers[0].getLatLng(), 4);
@@ -610,7 +508,6 @@
                 }
             } else {
                 tripPlannerDiv.style.display = 'none';
-                embassySection.style.display = 'none';
                 goToPlannerBtn.style.display = 'none';
                 map.setView([20, 0], 2);
             }
@@ -622,10 +519,12 @@
             const checkboxes = document.querySelectorAll('.country-checkbox:checked');
             let exportItems = [];
             checkboxes.forEach(cb => {
-                const country = countryData.find(c => c.name === cb.dataset.countryName);
-                if (country) {
-                    exportItems.push(`${country.name} (${country.airport})`);
-                }
+                const countryName = cb.dataset.countryName;
+                const select = cb.closest('tr').querySelector('.city-select');
+                const selectedOption = select.options[select.selectedIndex];
+                const airportCode = select.value;
+                const cityName = selectedOption.text.split(' (')[0];
+                exportItems.push(`${cityName}, ${countryName} (${airportCode})`);
             });
             
             const listString = exportItems.join(', ');
@@ -673,9 +572,7 @@
 
         window.onload = () => {
             populateTable();
-            populateEmbassyTable();
             sortTable(1);
-            sortEmbassyTable(0);
             
             map = L.map('map').setView([20, 0], 2);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
