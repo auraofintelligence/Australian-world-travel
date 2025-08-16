@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diplomatic Missions in Australia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .mission-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .mission-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900">Diplomatic Missions in Australia</h1>
+            <p class="mt-2 text-lg text-gray-600">Find embassies, high commissions, and consulates across the country.</p>
+        </header>
+
+        <!-- Filters -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 p-4 bg-white rounded-lg shadow-sm">
+            <div class="flex-grow w-full">
+                <label for="searchInput" class="block text-sm font-medium text-gray-700">Search by Country</label>
+                <input type="text" id="searchInput" onkeyup="filterMissions()" placeholder="e.g., Canada" class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="flex-grow w-full">
+                <label for="cityFilter" class="block text-sm font-medium text-gray-700">Filter by City</label>
+                <select id="cityFilter" onchange="filterMissions()" class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                    <option value="All">All Cities</option>
+                    <option value="Canberra">Canberra</option>
+                    <option value="Sydney">Sydney</option>
+                    <option value="Melbourne">Melbourne</option>
+                    <option value="Perth">Perth</option>
+                    <option value="Brisbane">Brisbane</option>
+                    <option value="Adelaide">Adelaide</option>
+                    <option value="Hobart">Hobart</option>
+                    <option value="Darwin">Darwin</option>
+                </select>
+            </div>
+            <div class="flex-grow w-full">
+                <label for="typeFilter" class="block text-sm font-medium text-gray-700">Filter by Type</label>
+                <select id="typeFilter" onchange="filterMissions()" class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                    <option value="All">All Types</option>
+                    <option value="Embassy">Embassy</option>
+                    <option value="High Commission">High Commission</option>
+                    <option value="Consulate-General">Consulate-General</option>
+                    <option value="Consulate">Consulate</option>
+                    <option value="Apostolic Nunciature">Apostolic Nunciature</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Missions Grid -->
+        <div id="missionsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Mission cards will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script>
+        const missionsData = [
+            { country: 'Afghanistan', city: 'Canberra', type: 'Embassy', address: '4 Beale Crescent, Deakin ACT 2600', website: 'http://www.afghanembassy.com.au/' },
+            { country: 'Albania', city: 'Canberra', type: 'Embassy', address: '13 Culgoa Circuit, O\'Malley ACT 2606', website: 'http://www.ambasadat.gov.al/australia/en/' },
+            { country: 'Algeria', city: 'Canberra', type: 'Embassy', address: '29 Cobbadah Street, O\'Malley ACT 2606', website: 'http://www.algeriaemb.org.au/' },
+            { country: 'Argentina', city: 'Canberra', type: 'Embassy', address: 'John McEwen House, Level 2, 7 National Circuit, Barton ACT 2600', website: 'https://eaust.cancilleria.gob.ar/' },
+            { country: 'Argentina', city: 'Sydney', type: 'Consulate-General', address: 'Suite 2, Level 20, 44 Market Street, Sydney NSW 2000', website: 'https://csidn.cancilleria.gob.ar/' },
+            { country: 'Austria', city: 'Canberra', type: 'Embassy', address: '12 Talbot Street, Forrest ACT 2603', website: 'https://www.bmeia.gv.at/en/austrian-embassy-canberra/' },
+            { country: 'Austria', city: 'Sydney', type: 'Consulate-General', address: 'Suite 2201, Level 22, 1 York Street, Sydney NSW 2000', website: 'https://www.bmeia.gv.at/en/austrian-consulate-general-sydney/' },
+            { country: 'Bangladesh', city: 'Canberra', type: 'High Commission', address: '57 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://www.bhcanberra.com/' },
+            { country: 'Belgium', city: 'Canberra', type: 'Embassy', address: '19 Arkana Street, Yarralumla ACT 2600', website: 'https://australia.diplomatie.belgium.be/en' },
+            { country: 'Bosnia and Herzegovina', city: 'Canberra', type: 'Embassy', address: '50 Knox Street, Watson ACT 2602', website: 'http://www.bihembassy.org/' },
+            { country: 'Botswana', city: 'Canberra', type: 'High Commission', address: '112 State Circle, Yarralumla ACT 2600', website: 'https://www.botswanahighcom.org.au/' },
+            { country: 'Brazil', city: 'Canberra', type: 'Embassy', address: '19 Forster Crescent, Yarralumla ACT 2600', website: 'http://camberra.itamaraty.gov.br/en-us/' },
+            { country: 'Brazil', city: 'Sydney', type: 'Consulate-General', address: 'Level 6, 45 Clarence Street, Sydney NSW 2000', website: 'http://sydney.itamaraty.gov.br/en-us/' },
+            { country: 'Brunei', city: 'Canberra', type: 'High Commission', address: '10 Beale Crescent, Deakin ACT 2600', website: 'http://www.mfa.gov.bn/brunei-canberra' },
+            { country: 'Bulgaria', city: 'Canberra', type: 'Embassy', address: '29 Pindari Crescent, O\'Malley ACT 2606', website: 'https://www.mfa.bg/en/embassies/australia' },
+            { country: 'Cambodia', city: 'Canberra', type: 'Embassy', address: '5 Canterbury Crescent, Deakin ACT 2600', website: 'https://www.embassyofcambodia.org.au/' },
+            { country: 'Canada', city: 'Canberra', type: 'High Commission', address: 'Commonwealth Avenue, Yarralumla ACT 2600', website: 'https://www.international.gc.ca/country-pays/australia-australie/' },
+            { country: 'Canada', city: 'Sydney', type: 'Consulate-General', address: 'Level 5, 111 Harrington Street, Sydney NSW 2000', website: 'https://www.international.gc.ca/country-pays/australia-australie/sydney.aspx?lang=eng' },
+            { country: 'Chile', city: 'Canberra', type: 'Embassy', address: '10 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://chile.gob.cl/australia/' },
+            { country: 'Chile', city: 'Melbourne', type: 'Consulate-General', address: 'Level 13, 390 St Kilda Road, Melbourne VIC 3004', website: 'https://www.consulado.gob.cl/consulados/melbourne' },
+            { country: 'Chile', city: 'Sydney', type: 'Consulate-General', address: 'Level 18, 44 Market Street, Sydney NSW 2000', website: 'https://www.consulado.gob.cl/consulados/sydney' },
+            { country: 'China', city: 'Canberra', type: 'Embassy', address: '15 Coronation Drive, Yarralumla ACT 2600', website: 'http://au.china-embassy.gov.cn/eng/' },
+            { country: 'China', city: 'Sydney', type: 'Consulate-General', address: '39 Dunblane Street, Camperdown NSW 2050', website: 'http://sydney.china-consulate.gov.cn/eng/' },
+            { country: 'China', city: 'Melbourne', type: 'Consulate-General', address: '75-77 Irving Road, Toorak VIC 3142', website: 'http://melbourne.china-consulate.gov.cn/eng/' },
+            { country: 'China', city: 'Perth', type: 'Consulate-General', address: '45 Brown Street, East Perth WA 6004', website: 'http://perth.china-consulate.gov.cn/eng/' },
+            { country: 'China', city: 'Brisbane', type: 'Consulate-General', address: 'Level 9, 79 Adelaide Street, Brisbane QLD 4000', website: 'http://brisbane.china-consulate.gov.cn/eng/' },
+            { country: 'China', city: 'Adelaide', type: 'Consulate-General', address: '52-54 Anzac Highway, Everard Park SA 5035', website: 'http://adelaide.china-consulate.gov.cn/eng/' },
+            { country: 'Colombia', city: 'Canberra', type: 'Embassy', address: 'Level 2, 40 Macquarie Street, Barton ACT 2600', website: 'https://australia.embajada.gov.co/' },
+            { country: 'Croatia', city: 'Canberra', type: 'Embassy', address: '14 Jindalee Crescent, O\'Malley ACT 2606', website: 'https://mvep.gov.hr/au' },
+            { country: 'Cuba', city: 'Canberra', type: 'Embassy', address: '7 Terrigal Crescent, O\'Malley ACT 2606', website: 'http://misiones.minrex.gob.cu/en/australia' },
+            { country: 'Cyprus', city: 'Canberra', type: 'High Commission', address: '30 Beale Crescent, Deakin ACT 2600', website: 'https://mfa.gov.cy/hccanberra.nsf/index_en/index_en?OpenDocument' },
+            { country: 'Czech Republic', city: 'Canberra', type: 'Embassy', address: '8 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://www.mzv.cz/canberra' },
+            { country: 'Denmark', city: 'Canberra', type: 'Embassy', address: '11 Hunter Street, Yarralumla ACT 2600', website: 'https://australien.um.dk/en' },
+            { country: 'Ecuador', city: 'Canberra', type: 'Embassy', address: '38, 188 Collins Street, Melbourne VIC 3000', website: 'https://www.cancilleria.gob.ec/australia/' },
+            { country: 'Egypt', city: 'Canberra', type: 'Embassy', address: '1 Darwin Avenue, Yarralumla ACT 2600', website: 'https://mfa.gov.eg/english/embassies/egyptian_embassy_canberra/pages/default.aspx' },
+            { country: 'El Salvador', city: 'Canberra', type: 'Embassy', address: 'Level 10, 300 Queen Street, Brisbane QLD 4000', website: 'https://www.rree.gob.sv/' },
+            { country: 'Estonia', city: 'Canberra', type: 'Embassy', address: '120 Empire Circuit, Yarralumla ACT 2600', website: 'https://canberra.mfa.ee/' },
+            { country: 'Ethiopia', city: 'Canberra', type: 'Embassy', address: '14 LUMEAH St, Narrabundah, ACT 2604', website: 'https://ethiopianembassy.net/' },
+            { country: 'Fiji', city: 'Canberra', type: 'High Commission', address: '19 Beale Crescent, Deakin ACT 2600', website: 'https://www.fijihighcommission.org.au/' },
+            { country: 'Finland', city: 'Canberra', type: 'Embassy', address: '12 Darwin Avenue, Yarralumla ACT 2600', website: 'https://finlandabroad.fi/web/aus/frontpage' },
+            { country: 'France', city: 'Canberra', type: 'Embassy', address: '6 Perth Avenue, Yarralumla ACT 2600', website: 'https://au.ambafrance.org/' },
+            { country: 'France', city: 'Sydney', type: 'Consulate-General', address: 'Level 26, St Martins Tower, 31 Market Street, Sydney NSW 2000', website: 'https://sydney.consulfrance.org/' },
+            { country: 'Georgia', city: 'Canberra', type: 'Embassy', address: '22 Mulley Street, Holder ACT 2611', website: 'https://australia.mfa.gov.ge/' },
+            { country: 'Germany', city: 'Canberra', type: 'Embassy', address: '119 Empire Circuit, Yarralumla ACT 2600', website: 'https://australien.diplo.de/' },
+            { country: 'Germany', city: 'Sydney', type: 'Consulate-General', address: 'Level 17, 100 William Street, Woolloomooloo NSW 2011', website: 'https://australien.diplo.de/au-en/vertretungen/generalkonsulat1' },
+            { country: 'Ghana', city: 'Canberra', type: 'High Commission', address: '24 Akame Circuit, O\'Malley ACT 2606', website: 'https://www.ghanahighcomcan.org.au/' },
+            { country: 'Greece', city: 'Canberra', type: 'Embassy', address: '9 Turrana Street, Yarralumla ACT 2600', website: 'https://www.mfa.gr/australia/en/' },
+            { country: 'Greece', city: 'Adelaide', type: 'Consulate-General', address: 'Level 4, 32-34 Grenfell Street, Adelaide SA 5000', website: 'https://www.mfa.gr/australia/en/consulate-general-adelaide/' },
+            { country: 'Greece', city: 'Melbourne', type: 'Consulate-General', address: '37-39 Albert Road, Melbourne VIC 3004', website: 'https://www.mfa.gr/australia/en/consulate-general-melbourne/' },
+            { country: 'Greece', city: 'Sydney', type: 'Consulate-General', address: 'Suite 2, Level 2, 219-223 Castlereagh Street, Sydney NSW 2000', website: 'https://www.mfa.gr/australia/en/consulate-general-sydney/' },
+            { country: 'Holy See', city: 'Canberra', type: 'Apostolic Nunciature', address: '2 Vancouver Street, Red Hill ACT 2603', website: 'https://www.vatican.va/' },
+            { country: 'Hungary', city: 'Canberra', type: 'Embassy', address: '17 Beale Crescent, Deakin ACT 2600', website: 'https://canberra.mfa.gov.hu/' },
+            { country: 'India', city: 'Canberra', type: 'High Commission', address: '3-5 Moonah Place, Yarralumla ACT 2600', website: 'https://www.hcicanberra.gov.in/' },
+            { country: 'India', city: 'Melbourne', type: 'Consulate-General', address: '344 St Kilda Road, Melbourne VIC 3004', website: 'https://www.cgimelbourne.gov.in/' },
+            { country: 'India', city: 'Sydney', type: 'Consulate-General', address: 'Level 1, 265 Castlereagh Street, Sydney NSW 2000', website: 'https://www.cgisydney.gov.in/' },
+            { country: 'India', city: 'Perth', type: 'Consulate-General', address: 'Level 7, 12 St Georges Terrace, Perth WA 6000', website: 'https://www.cgiperth.gov.in/' },
+            { country: 'Indonesia', city: 'Canberra', type: 'Embassy', address: '8 Darwin Avenue, Yarralumla ACT 2600', website: 'https://kemlu.go.id/canberra/en' },
+            { country: 'Indonesia', city: 'Sydney', type: 'Consulate-General', address: '236-238 Maroubra Road, Maroubra NSW 2035', website: 'https://kemlu.go.id/sydney/en' },
+            { country: 'Indonesia', city: 'Melbourne', type: 'Consulate-General', address: '72 Queens Road, Melbourne VIC 3004', website: 'https://kemlu.go.id/melbourne/en' },
+            { country: 'Indonesia', city: 'Perth', type: 'Consulate-General', address: '134 Adelaide Terrace, East Perth WA 6004', website: 'https://kemlu.go.id/perth/en' },
+            { country: 'Iran', city: 'Canberra', type: 'Embassy', address: '25 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://australia.mfa.ir/en' },
+            { country: 'Iraq', city: 'Canberra', type: 'Embassy', address: '48 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://www.mofa.gov.iq/canberra/' },
+            { country: 'Ireland', city: 'Canberra', type: 'Embassy', address: '20 Arkana Street, Yarralumla ACT 2600', website: 'https://www.dfa.ie/australia/' },
+            { country: 'Israel', city: 'Canberra', type: 'Embassy', address: '6 Turrana Street, Yarralumla ACT 2600', website: 'https://embassies.gov.il/canberra' },
+            { country: 'Italy', city: 'Canberra', type: 'Embassy', address: '12 Grey Street, Deakin ACT 2600', website: 'https://ambcanberra.esteri.it/en/' },
+            { country: 'Italy', city: 'Adelaide', type: 'Consulate', address: '398 Payneham Road, Payneham SA 5070', website: 'https://consadelaide.esteri.it/en/' },
+            { country: 'Italy', city: 'Brisbane', type: 'Consulate', address: 'Level 8, 199 George Street, Brisbane QLD 4000', website: 'https://consbrisbane.esteri.it/en/' },
+            { country: 'Italy', city: 'Melbourne', type: 'Consulate-General', address: '509 St Kilda Road, Melbourne VIC 3004', website: 'https://consmelbourne.esteri.it/en/' },
+            { country: 'Italy', city: 'Perth', type: 'Consulate', address: 'Level 2, 1292 Hay Street, West Perth WA 6005', website: 'https://consperth.esteri.it/en/' },
+            { country: 'Italy', city: 'Sydney', type: 'Consulate-General', address: 'Level 4, 100 William Street, Woolloomooloo NSW 2011', website: 'https://conssydney.esteri.it/en/' },
+            { country: 'Japan', city: 'Canberra', type: 'Embassy', address: '112 Empire Circuit, Yarralumla ACT 2600', website: 'https://www.au.emb-japan.go.jp/' },
+            { country: 'Japan', city: 'Sydney', type: 'Consulate-General', address: 'Level 12, 1 O\'Connell Street, Sydney NSW 2000', website: 'https://www.sydney.au.emb-japan.go.jp/' },
+            { country: 'Japan', city: 'Melbourne', type: 'Consulate-General', address: 'Level 25, 570 Bourke Street, Melbourne VIC 3000', website: 'https://www.melbourne.au.emb-japan.go.jp/' },
+            { country: 'Japan', city: 'Perth', type: 'Consulate-General', address: 'U22/Level 2, 111 St Georges Terrace, Perth WA 6000', website: 'https://www.perth.au.emb-japan.go.jp/' },
+            { country: 'Japan', city: 'Brisbane', type: 'Consulate-General', address: 'Level 17, 12 Creek Street, Brisbane QLD 4000', website: 'https://www.brisbane.au.emb-japan.go.jp/' },
+            { country: 'Jordan', city: 'Canberra', type: 'Embassy', address: '17 Cobbadah Street, O\'Malley ACT 2606', website: 'http://www.jordanembassy.org.au/' },
+            { country: 'Kazakhstan', city: 'Canberra', type: 'Embassy', address: 'Level 2, 243 Northbourne Avenue, Lyneham ACT 2602', website: 'https://www.gov.kz/memleket/entities/mfa-canberra' },
+            { country: 'Kenya', city: 'Canberra', type: 'High Commission', address: '33-35 Ainslie Avenue, Canberra ACT 2601', website: 'https://kenya.asn.au/' },
+            { country: 'Kuwait', city: 'Canberra', type: 'Embassy', address: '5 Callemonda Rise, O\'Malley ACT 2606', website: 'http://kuwaitembassy.com.au/' },
+            { country: 'Laos', city: 'Canberra', type: 'Embassy', address: '1 Dalman Crescent, O\'Malley ACT 2606', website: 'https://www.laoembassy.net/' },
+            { country: 'Latvia', city: 'Canberra', type: 'Embassy', address: '9 Turrana Street, Yarralumla ACT 2600', website: 'https://www2.mfa.gov.lv/en/australia' },
+            { country: 'Lebanon', city: 'Canberra', type: 'Embassy', address: '27 Endeavour Street, Red Hill ACT 2603', website: 'http://www.lebanonembassyus.org/embassy/in-australia.htm' },
+            { country: 'Lesotho', city: 'Canberra', type: 'High Commission', address: '3rd Floor, 39 Empire Circuit, Forrest ACT 2603', website: 'https://www.foreign.gov.ls/missions/' },
+            { country: 'Libya', city: 'Canberra', type: 'Embassy', address: '13 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://foreign.gov.ly/' },
+            { country: 'Lithuania', city: 'Canberra', type: 'Embassy', address: '2 Daly street, Deakin ACT 2600', website: 'https://jp.mfa.lt/jp/en/embassy-to-australia' },
+            { country: 'Malaysia', city: 'Canberra', type: 'High Commission', address: '7 Perth Avenue, Yarralumla ACT 2600', website: 'https://www.kln.gov.my/web/aus_canberra/home' },
+            { country: 'Malaysia', city: 'Perth', type: 'Consulate-General', address: '252 Adelaide Terrace, Perth WA 6000', website: 'https://www.kln.gov.my/web/aus_perth/home' },
+            { country: 'Malta', city: 'Canberra', type: 'High Commission', address: '38 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://foreign.gov.mt/en/Embassies/Hc_Canberra/Pages/Hc_Canberra.aspx' },
+            { country: 'Mauritius', city: 'Canberra', type: 'High Commission', address: '2 Beale Crescent, Deakin ACT 2600', website: 'https://mauritius-canberra.com/' },
+            { country: 'Mexico', city: 'Canberra', type: 'Embassy', address: '14 Perth Avenue, Yarralumla ACT 2600', website: 'https://embamex.sre.gob.mx/australia/' },
+            { country: 'Mongolia', city: 'Canberra', type: 'Embassy', address: '27-29 Curlewis Crescent, Garran ACT 2605', website: 'http://www.mongolianembassy.org.au/' },
+            { country: 'Morocco', city: 'Canberra', type: 'Embassy', address: '9 Terrigal Crescent, O\'Malley ACT 2606', website: 'https://www.moroccanembassy.net.au/' },
+            { country: 'Myanmar', city: 'Canberra', type: 'Embassy', address: '22 Arkana Street, Yarralumla ACT 2600', website: 'https://www.mecanberra.org.mm/' },
+            { country: 'Nepal', city: 'Canberra', type: 'Embassy', address: 'Suite 2.02, Level 2, 24 Marcus Clarke Street, Canberra ACT 2601', website: 'https://au.nepalembassy.gov.np/' },
+            { country: 'Netherlands', city: 'Canberra', type: 'Embassy', address: '120 Empire Circuit, Yarralumla ACT 2600', website: 'https://www.netherlandsandyou.nl/your-country-and-the-netherlands/australia' },
+            { country: 'New Zealand', city: 'Canberra', type: 'High Commission', address: '140 Commonwealth Avenue, Yarralumla ACT 2600', website: 'https://www.mfat.govt.nz/en/countries-and-regions/australia-and-pacific/australia/new-zealand-high-commission/' },
+            { country: 'New Zealand', city: 'Sydney', type: 'Consulate-General', address: 'Level 10, 55 Hunter Street, Sydney NSW 2000', website: 'https://www.mfat.govt.nz/en/countries-and-regions/australia-and-pacific/australia/new-zealand-consulate-general-sydney/' },
+            { country: 'Nigeria', city: 'Canberra', type: 'High Commission', address: '26 Guilfoyle Street, Yarralumla ACT 2600', website: 'https://nigeria-canberra.org/' },
+            { country: 'North Macedonia', city: 'Canberra', type: 'Embassy', address: '74 Pethebridge Street, Pearce ACT 2607', website: 'https://canberra.mfa.gov.mk/' },
+            { country: 'Norway', city: 'Canberra', type: 'Embassy', address: '17 Hunter Street, Yarralumla ACT 2600', website: 'https://www.norway.no/en/australia/' },
+            { country: 'Oman', city: 'Canberra', type: 'Embassy', address: '184 Melbourne Avenue, Deakin ACT 2600', website: 'https://www.fm.gov.om/missions/australia/' },
+            { country: 'Pakistan', city: 'Canberra', type: 'High Commission', address: '4 Timbarra Crescent, O\'Malley ACT 2606', website: 'https://www.pakistan.org.au/' },
+            { country: 'Palestine', city: 'Canberra', type: 'Embassy', address: '176 Mugga Way, Red Hill ACT 2603', website: 'http://www.palestine-australia.com/' },
+            { country: 'Papua New Guinea', city: 'Canberra', type: 'High Commission', address: '39-41 Forster Crescent, Yarralumla ACT 2600', website: 'https://www.pngcanberra.org/' },
+            { country: 'Peru', city: 'Canberra', type: 'Embassy', address: '40 Brisbane Avenue, Barton ACT 2600', website: 'http://www.embassyofperu.org.au/' },
+            { country: 'Philippines', city: 'Canberra', type: 'Embassy', address: '1 Moonah Place, Yarralumla ACT 2600', website: 'https://www.philembassy.org.au/' },
+            { country: 'Poland', city: 'Canberra', type: 'Embassy', address: '7 Turrana Street, Yarralumla ACT 2600', website: 'https://www.gov.pl/web/australia' },
+            { country: 'Portugal', city: 'Canberra', type: 'Embassy', address: 'Suite 2, Level 2, 201-203 London Circuit, Canberra ACT 2601', website: 'https://camberra.embaixadaportugal.mne.gov.pt/en/' },
+            { country: 'Qatar', city: 'Canberra', type: 'Embassy', address: '10 Akame Circuit, O\'Malley ACT 2606', website: 'https://canberra.embassy.qa/en' },
+            { country: 'Romania', city: 'Canberra', type: 'Embassy', address: '41 Empire Circuit, Forrest ACT 2603', website: 'https://canberra.mae.ro/' },
+            { country: 'Russia', city: 'Canberra', type: 'Embassy', address: '78 Canberra Avenue, Griffith ACT 2603', website: 'https://australia.mid.ru/en/' },
+            { country: 'Saudi Arabia', city: 'Canberra', type: 'Embassy', address: '38 Guilfoyle Street, Yarralumla ACT 2600', website: 'https://embassies.mofa.gov.sa/sites/australia' },
+            { country: 'Serbia', city: 'Canberra', type: 'Embassy', address: '169 Dominion Circuit, Forrest ACT 2603', website: 'http://www.canberra.mfa.gov.rs/' },
+            { country: 'Singapore', city: 'Canberra', type: 'High Commission', address: '17 Forster Crescent, Yarralumla ACT 2600', website: 'https://www.mfa.gov.sg/canberra' },
+            { country: 'Slovakia', city: 'Canberra', type: 'Embassy', address: '47 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://www.mzv.sk/web/canberra-en' },
+            { country: 'Slovenia', city: 'Canberra', type: 'Embassy', address: 'Level 6, St. George\'s Building, 60 Marcus Clarke Street, Canberra ACT 2601', website: 'http://www.canberra.embassy.si/' },
+            { country: 'Solomon Islands', city: 'Canberra', type: 'High Commission', address: '3 Timbarra Crescent, O\'Malley ACT 2606', website: 'https://www.sihcaussi.org/' },
+            { country: 'South Africa', city: 'Canberra', type: 'High Commission', address: 'Cnr State Circle & Rhodes Place, Yarralumla ACT 2600', website: 'https://dirco1.azurewebsites.net/canberra/' },
+            { country: 'South Korea', city: 'Canberra', type: 'Embassy', address: '113 Empire Circuit, Yarralumla ACT 2600', website: 'https://overseas.mofa.go.kr/au-en/index.do' },
+            { country: 'Spain', city: 'Canberra', type: 'Embassy', address: '15 Arkana Street, Yarralumla ACT 2600', website: 'https://www.exteriores.gob.es/Embajadas/canberra/en/Paginas/index.aspx' },
+            { country: 'Sri Lanka', city: 'Canberra', type: 'High Commission', address: '61 Hampton Circuit, Yarralumla ACT 2600', website: 'https://www.slhcaust.org/' },
+            { country: 'Sweden', city: 'Canberra', type: 'Embassy', address: '5 Turrana Street, Yarralumla ACT 2600', website: 'https://www.swedenabroad.se/en/embassies/australia-canberra/' },
+            { country: 'Switzerland', city: 'Canberra', type: 'Embassy', address: '7 Melbourne Avenue, Forrest ACT 2603', website: 'https://www.eda.admin.ch/canberra' },
+            { country: 'Thailand', city: 'Canberra', type: 'Embassy', address: '111 Empire Circuit, Yarralumla ACT 2600', website: 'https://canberra.thaiembassy.org/' },
+            { country: 'Timor-Leste', city: 'Canberra', type: 'Embassy', address: '75 Dominion Circuit, Forrest ACT 2603', website: 'https://www.embtlcanberra.org/' },
+            { country: 'Tonga', city: 'Canberra', type: 'High Commission', address: '31 Endeavour Street, Red Hill ACT 2603', website: 'https://tongahighcommission.com.au/' },
+            { country: 'Turkey', city: 'Canberra', type: 'Embassy', address: '60 Mugga Way, Red Hill ACT 2603', website: 'http://canberra.emb.mfa.gov.tr' },
+            { country: 'Uganda', city: 'Canberra', type: 'High Commission', address: '22 Pindari Crescent, O\'Malley ACT 2606', website: 'https://canberra.mofa.go.ug/' },
+            { country: 'Ukraine', city: 'Canberra', type: 'Embassy', address: 'Level 12, St George Centre, 60 Marcus Clarke Street, Canberra ACT 2601', website: 'https://australia.mfa.gov.ua/en' },
+            { country: 'United Arab Emirates', city: 'Canberra', type: 'Embassy', address: '12 Bulwarra Close, O\'Malley ACT 2606', website: 'https://www.mofa.gov.ae/en/missions/canberra' },
+            { country: 'United Kingdom', city: 'Canberra', type: 'High Commission', address: 'Commonwealth Avenue, Yarralumla ACT 2600', website: 'https://www.gov.uk/world/organisations/british-high-commission-canberra' },
+            { country: 'United Kingdom', city: 'Sydney', type: 'Consulate-General', address: 'Level 16, Gateway Building, 1 Macquarie Place, Sydney NSW 2000', website: 'https://www.gov.uk/world/organisations/british-consulate-general-sydney' },
+            { country: 'United States', city: 'Canberra', type: 'Embassy', address: 'Moonah Place, Yarralumla ACT 2600', website: 'https://au.usembassy.gov/' },
+            { country: 'United States', city: 'Sydney', type: 'Consulate-General', address: 'Level 10, 48 Miller Street, North Sydney NSW 2060', website: 'https://au.usembassy.gov/embassy-consulates/sydney/' },
+            { country: 'United States', city: 'Melbourne', type: 'Consulate-General', address: '553 St Kilda Road, Melbourne VIC 3004', website: 'https://au.usembassy.gov/embassy-consulates/melbourne/' },
+            { country: 'United States', city: 'Perth', type: 'Consulate-General', address: 'Level 4, 16 St Georges Terrace, Perth WA 6000', website: 'https://au.usembassy.gov/embassy-consulates/perth/' },
+            { country: 'Uruguay', city: 'Canberra', type: 'Embassy', address: 'Suite 2, Level 4, 13 London Circuit, Canberra ACT 2601', website: 'https://www.uruguay.org.au/' },
+            { country: 'Vanuatu', city: 'Canberra', type: 'High Commission', address: '3rd Floor, 39 Empire Circuit, Forrest ACT 2603', website: 'https://vanuatuhighcommission.gov.vu/' },
+            { country: 'Venezuela', city: 'Canberra', type: 'Embassy', address: '7 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://embassy-finder.com/venezuela_in_canberra_australia' },
+            { country: 'Vietnam', city: 'Canberra', type: 'Embassy', address: '6 Timbarra Crescent, O\'Malley ACT 2606', website: 'https://vietnamembassy.org.au/' },
+            { country: 'Zimbabwe', city: 'Canberra', type: 'Embassy', address: '7 Timbarra Crescent, O\'Malley ACT 2606', website: 'https://www.zimbabweembassy.org.au/' },
+        ];
+
+        function populateMissions() {
+            const missionsGrid = document.getElementById('missionsGrid');
+            missionsGrid.innerHTML = '';
+            const cityFilter = document.getElementById('cityFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+            const searchFilter = document.getElementById('searchInput').value.toUpperCase();
+
+            const filteredMissions = missionsData.filter(mission => {
+                const cityMatch = (cityFilter === 'All' || mission.city === cityFilter);
+                const typeMatch = (typeFilter === 'All' || mission.type === typeFilter);
+                const searchMatch = (mission.country.toUpperCase().includes(searchFilter));
+                return cityMatch && typeMatch && searchMatch;
+            });
+
+            if (filteredMissions.length === 0) {
+                missionsGrid.innerHTML = `<p class="text-gray-500 col-span-full text-center">No missions found matching your criteria.</p>`;
+                return;
+            }
+
+            filteredMissions.forEach(mission => {
+                const missionCard = document.createElement('div');
+                missionCard.className = 'mission-card bg-white p-6 rounded-lg border border-gray-200 flex flex-col';
+                missionCard.innerHTML = `
+                    <h3 class="font-bold text-xl text-gray-800">${mission.country}</h3>
+                    <p class="text-gray-600 font-medium">${mission.type} in ${mission.city}</p>
+                    <p class="text-sm text-gray-500 mt-2 flex-grow">${mission.address}</p>
+                    <a href="${mission.website}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline text-sm mt-4 inline-block self-start">
+                        Visit Website →
+                    </a>
+                `;
+                missionsGrid.appendChild(missionCard);
+            });
+        }
+
+        function filterMissions() {
+            populateMissions();
+        }
+
+        window.onload = () => {
+            populateMissions();
+        };
+    </script>
+</body>
+</html>
