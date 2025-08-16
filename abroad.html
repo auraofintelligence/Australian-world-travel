@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth; /* Ensures smooth scrolling */
+            scroll-behavior: smooth;
         }
         #map {
             height: 500px;
@@ -321,7 +321,7 @@
             initializeFilters();
             renderMissions();
             
-            // --- Scroll Button Logic ---
+            // --- Scroll Button Visibility Logic ---
             const goToTopBtn = document.getElementById('goToTopBtn');
             const goToBottomBtn = document.getElementById('goToBottomBtn');
     
@@ -344,16 +344,17 @@
                     goToBottomBtn.classList.remove('hidden');
                 }
             };
-    
-            function scrollToTop() {
-                window.scrollTo({top: 0, behavior: 'smooth'});
-            }
-    
-            function scrollToBottom() {
-                // This function scrolls to the very end of the page
-                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-            }
         });
+
+        // --- Scroll Button Click Functions (GLOBAL SCOPE) ---
+        function scrollToTop() {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function scrollToBottom() {
+            // This function scrolls to the very end of the page
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
     </script>
 </body>
 </html>
