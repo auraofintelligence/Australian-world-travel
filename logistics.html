@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Logistics Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .modal { display: none; }
+        .modal.active { display: flex; }
+        .no-print { display: block; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Universal Navigation Bar -->
+    <nav class="bg-gray-800 text-white shadow-md no-print">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-center h-16">
+                <div class="flex space-x-4">
+                    <a href="index.html" class="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Visa Guide</a>
+                    <a href="missions.html" class="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Missions</a>
+                    <a href="documents.html" class="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Documents</a>
+                    <a href="logistics.html" class="bg-gray-900 px-3 py-2 rounded-md text-sm font-medium">Logistics</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mt-4">Master Logistics Tracker</h1>
+            <p class="mt-2 text-lg text-gray-600">Manage and track your visa application pipeline.</p>
+        </header>
+
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold">Visa Application Pipeline</h2>
+            <div>
+                <button onclick="openModal()" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">Add New Entry</button>
+                <button onclick="exportToCSV()" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300 ml-2">Export to CSV</button>
+            </div>
+        </div>
+
+        <!-- Logistics Table -->
+        <div class="overflow-x-auto bg-white rounded-lg shadow">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="p-4 font-semibold text-sm">Flag</th>
+                        <th class="p-4 font-semibold text-sm">Entity</th>
+                        <th class="p-4 font-semibold text-sm">Visa Required</th>
+                        <th class="p-4 font-semibold text-sm">VFI</th>
+                        <th class="p-4 font-semibold text-sm">Visa Type</th>
+                        <th class="p-4 font-semibold text-sm">Status</th>
+                        <th class="p-4 font-semibold text-sm">Target Date</th>
+                        <th class="p-4 font-semibold text-sm">Cost (AUD)</th>
+                        <th class="p-4 font-semibold text-sm text-center">Details</th>
+                    </tr>
+                </thead>
+                <tbody id="logistics-table-body">
+                    <!-- Data will be populated here by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="logistics-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-50 items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-4xl max-h-full overflow-y-auto">
+            <h2 id="modal-title" class="text-2xl font-bold mb-6">Add New Logistics Entry</h2>
+            <form id="logistics-form">
+                <input type="hidden" id="entry-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Core Fields -->
+                    <div>
+                        <label class="block text-sm font-medium">Entity</label>
+                        <select id="entity-select" class="mt-1 w-full p-2 border rounded-md bg-white"></select>
+                        <input type="text" id="entity-other" class="mt-2 w-full p-2 border rounded-md hidden" placeholder="Enter custom entity name">
+                    </div>
+                    <div><label class="block text-sm font-medium">Visa Required</label><select id="visa-required" class="mt-1 w-full p-2 border rounded-md bg-white"><option>Yes</option><option>No</option></select></div>
+                    <div><label class="block text-sm font-medium">Visa Friction Index (1-5)</label><input type="number" id="vfi" min="1" max="5" class="mt-1 w-full p-2 border rounded-md"></div>
+                    <div><label class="block text-sm font-medium">Visa Type Needed</label><input type="text" id="visa-type" class="mt-1 w-full p-2 border rounded-md"></div>
+                    <div><label class="block text-sm font-medium">Dossier Components</label><input type="text" id="dossier-components" placeholder="e.g., 1a, 2b, 3c" class="mt-1 w-full p-2 border rounded-md"></div>
+                    <div><label class="block text-sm font-medium">Status</label><input type="text" id="status" class="mt-1 w-full p-2 border rounded-md"></div>
+                    <!-- Dates -->
+                    <div><label class="block text-sm font-medium">Target Submission Date</label><input type="date" id="target-submission-date" class="mt-1 w-full p-2 border rounded-md"></div>
+                    <div><label class="block text-sm font-medium">Submitted to Agency</label><input type="date" id="submitted-to-agency" class="mt-1 w-full p-2 border rounded-md"></div>
+                    <div><label class="block text-sm font-medium">Submitted to Consulate</label><input type="date" id="submitted-to-consulate" class="mt-1 w-full p-2 border rounded-md"></div>
+                    <div><label class="block text-sm font-medium">Est. Return Date</label><input type="date" id="est-return-date" class="mt-1 w-full p-2 border rounded-md"></div>
+                    <div><label class="block text-sm font-medium">Actual Return Date</label><input type="date" id="actual-return-date" class="mt-1 w-full p-2 border rounded-md"></div>
+                    <!-- Visa Details -->
+                    <div><label class="block text-sm font-medium">Passport Used (A/B)</label><input type="text" id="passport-used" class="mt-1 w-full p-2 border rounded-md"></div>
+                    <div><label class="block text-sm font-medium">Visa Valid From</label><input type="date" id="visa-valid-from" class="mt-1 w-full p-2 border rounded-md"></div>
+                    <div><label class="block text-sm font-medium">Visa Valid To</label><input type="date" id="visa-valid-to" class="mt-1 w-full p-2 border rounded-md"></div>
+                    <div><label class="block text-sm font-medium">Max Stay Allowed (Days)</label><input type="text" id="max-stay" class="mt-1 w-full p-2 border rounded-md"></div>
+                    <div><label class="block text-sm font-medium">Cost (AUD)</label><input type="number" step="0.01" id="cost-aud" class="mt-1 w-full p-2 border rounded-md"></div>
+                    <!-- Notes -->
+                    <div class="md:col-span-2 lg:col-span-3"><label class="block text-sm font-medium">Notes</label><textarea id="notes" rows="3" class="mt-1 w-full p-2 border rounded-md"></textarea></div>
+                </div>
+                <div class="mt-6 flex justify-end gap-4">
+                    <button type="button" onclick="closeModal()" class="bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Save Entry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const logisticsForm = document.getElementById('logistics-form');
+        const modal = document.getElementById('logistics-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const entryIdField = document.getElementById('entry-id');
+        const entitySelect = document.getElementById('entity-select');
+        const entityOtherInput = document.getElementById('entity-other');
+
+        // Data for country dropdown and flags
+        const countryList = [
+            { name: 'Afghanistan', code: 'af' }, { name: 'Albania', code: 'al' }, { name: 'Algeria', code: 'dz' }, { name: 'Andorra', code: 'ad' }, { name: 'Angola', code: 'ao' },
+            { name: 'Antigua and Barbuda', code: 'ag' }, { name: 'Argentina', code: 'ar' }, { name: 'Armenia', code: 'am' }, { name: 'Australia', code: 'au' }, { name: 'Austria', code: 'at' },
+            { name: 'Azerbaijan', code: 'az' }, { name: 'Bahamas', code: 'bs' }, { name: 'Bahrain', code: 'bh' }, { name: 'Bangladesh', code: 'bd' }, { name: 'Barbados', code: 'bb' },
+            { name: 'Belarus', code: 'by' }, { name: 'Belgium', code: 'be' }, { name: 'Belize', code: 'bz' }, { name: 'Benin', code: 'bj' }, { name: 'Bhutan', code: 'bt' },
+            { name: 'Bolivia', code: 'bo' }, { name: 'Bosnia and Herzegovina', code: 'ba' }, { name: 'Botswana', code: 'bw' }, { name: 'Brazil', code: 'br' }, { name: 'Brunei', code: 'bn' },
+            { name: 'Bulgaria', code: 'bg' }, { name: 'Burkina Faso', code: 'bf' }, { name: 'Burundi', code: 'bi' }, { name: 'Cabo Verde', code: 'cv' }, { name: 'Cambodia', code: 'kh' },
+            { name: 'Cameroon', code: 'cm' }, { name: 'Canada', code: 'ca' }, { name: 'Central African Republic', code: 'cf' }, { name: 'Chad', code: 'td' }, { name: 'Chile', code: 'cl' },
+            { name: 'China', code: 'cn' }, { name: 'Colombia', code: 'co' }, { name: 'Comoros', code: 'km' }, { name: 'Congo, Dem. Rep.', code: 'cd' }, { name: 'Congo, Rep.', code: 'cg' },
+            { name: 'Costa Rica', code: 'cr' }, { name: 'Croatia', code: 'hr' }, { name: 'Cuba', code: 'cu' }, { name: 'Cyprus', code: 'cy' }, { name: 'Czech Republic', code: 'cz' },
+            { name: 'Denmark', code: 'dk' }, { name: 'Djibouti', code: 'dj' }, { name: 'Dominica', code: 'dm' }, { name: 'Dominican Republic', code: 'do' }, { name: 'Ecuador', code: 'ec' },
+            { name: 'Egypt', code: 'eg' }, { name: 'El Salvador', code: 'sv' }, { name: 'Equatorial Guinea', code: 'gq' }, { name: 'Eritrea', code: 'er' }, { name: 'Estonia', code: 'ee' },
+            { name: 'Eswatini', code: 'sz' }, { name: 'Ethiopia', code: 'et' }, { name: 'Fiji', code: 'fj' }, { name: 'Finland', code: 'fi' }, { name: 'France', code: 'fr' },
+            { name: 'Gabon', code: 'ga' }, { name: 'Gambia', code: 'gm' }, { name: 'Georgia', code: 'ge' }, { name: 'Germany', code: 'de' }, { name: 'Ghana', code: 'gh' },
+            { name: 'Greece', code: 'gr' }, { name: 'Grenada', code: 'gd' }, { name: 'Guatemala', code: 'gt' }, { name: 'Guinea', code: 'gn' }, { name: 'Guinea-Bissau', code: 'gw' },
+            { name: 'Guyana', code: 'gy' }, { name: 'Haiti', code: 'ht' }, { name: 'Honduras', code: 'hn' }, { name: 'Hungary', code: 'hu' }, { name: 'Iceland', code: 'is' },
+            { name: 'India', code: 'in' }, { name: 'Indonesia', code: 'id' }, { name: 'Iran', code: 'ir' }, { name: 'Iraq', code: 'iq' }, { name: 'Ireland', code: 'ie' },
+            { name: 'Israel', code: 'il' }, { name: 'Italy', code: 'it' }, { name: 'Jamaica', code: 'jm' }, { name: 'Japan', code: 'jp' }, { name: 'Jordan', code: 'jo' },
+            { name: 'Kazakhstan', code: 'kz' }, { name: 'Kenya', code: 'ke' }, { name: 'Kiribati', code: 'ki' }, { name: 'Kuwait', code: 'kw' }, { name: 'Kyrgyzstan', code: 'kg' },
+            { name: 'Laos', code: 'la' }, { name: 'Latvia', code: 'lv' }, { name: 'Lebanon', code: 'lb' }, { name: 'Lesotho', code: 'ls' }, { name: 'Liberia', code: 'lr' },
+            { name: 'Libya', code: 'ly' }, { name: 'Liechtenstein', code: 'li' }, { name: 'Lithuania', code: 'lt' }, { name: 'Luxembourg', code: 'lu' }, { name: 'Madagascar', code: 'mg' },
+            { name: 'Malawi', code: 'mw' }, { name: 'Malaysia', code: 'my' }, { name: 'Maldives', code: 'mv' }, { name: 'Mali', code: 'ml' }, { name: 'Malta', code: 'mt' },
+            { name: 'Marshall Islands', code: 'mh' }, { name: 'Mauritania', code: 'mr' }, { name: 'Mauritius', code: 'mu' }, { name: 'Mexico', code: 'mx' }, { name: 'Micronesia', code: 'fm' },
+            { name: 'Moldova', code: 'md' }, { name: 'Monaco', code: 'mc' }, { name: 'Mongolia', code: 'mn' }, { name: 'Montenegro', code: 'me' }, { name: 'Morocco', code: 'ma' },
+            { name: 'Mozambique', code: 'mz' }, { name: 'Myanmar', code: 'mm' }, { name: 'Namibia', code: 'na' }, { name: 'Nauru', code: 'nr' }, { name: 'Nepal', code: 'np' },
+            { name: 'Netherlands', code: 'nl' }, { name: 'New Zealand', code: 'nz' }, { name: 'Nicaragua', code: 'ni' }, { name: 'Niger', code: 'ne' }, { name: 'Nigeria', code: 'ng' },
+            { name: 'North Korea', code: 'kp' }, { name: 'North Macedonia', code: 'mk' }, { name: 'Norway', code: 'no' }, { name: 'Oman', code: 'om' }, { name: 'Pakistan', code: 'pk' },
+            { name: 'Palau', code: 'pw' }, { name: 'Panama', code: 'pa' }, { name: 'Papua New Guinea', code: 'pg' }, { name: 'Paraguay', code: 'py' }, { name: 'Peru', code: 'pe' },
+            { name: 'Philippines', code: 'ph' }, { name: 'Poland', code: 'pl' }, { name: 'Portugal', code: 'pt' }, { name: 'Qatar', code: 'qa' }, { name: 'Romania', code: 'ro' },
+            { name: 'Russia', code: 'ru' }, { name: 'Rwanda', code: 'rw' }, { name: 'Saint Kitts and Nevis', code: 'kn' }, { name: 'Saint Lucia', code: 'lc' }, { name: 'Saint Vincent and the Grenadines', code: 'vc' },
+            { name: 'Samoa', code: 'ws' }, { name: 'San Marino', code: 'sm' }, { name: 'Sao Tome and Principe', code: 'st' }, { name: 'Saudi Arabia', code: 'sa' }, { name: 'Senegal', code: 'sn' },
+            { name: 'Serbia', code: 'rs' }, { name: 'Seychelles', code: 'sc' }, { name: 'Sierra Leone', code: 'sl' }, { name: 'Singapore', code: 'sg' }, { name: 'Slovakia', code: 'sk' },
+            { name: 'Slovenia', code: 'si' }, { name: 'Solomon Islands', code: 'sb' }, { name: 'Somalia', code: 'so' }, { name: 'South Africa', code: 'za' }, { name: 'South Korea', code: 'kr' },
+            { name: 'South Sudan', code: 'ss' }, { name: 'Spain', code: 'es' }, { name: 'Sri Lanka', code: 'lk' }, { name: 'Sudan', code: 'sd' }, { name: 'Suriname', code: 'sr' },
+            { name: 'Sweden', code: 'se' }, { name: 'Switzerland', code: 'ch' }, { name: 'Syria', code: 'sy' }, { name: 'Taiwan', code: 'tw' }, { name: 'Tajikistan', code: 'tj' },
+            { name: 'Tanzania', code: 'tz' }, { name: 'Thailand', code: 'th' }, { name: 'Timor-Leste', code: 'tl' }, { name: 'Togo', code: 'tg' }, { name: 'Tonga', code: 'to' },
+            { name: 'Trinidad and Tobago', code: 'tt' }, { name: 'Tunisia', code: 'tn' }, { name: 'Turkey', code: 'tr' }, { name: 'Turkmenistan', code: 'tm' }, { name: 'Tuvalu', code: 'tv' },
+            { name: 'Uganda', code: 'ug' }, { name: 'Ukraine', code: 'ua' }, { name: 'United Arab Emirates', code: 'ae' }, { name: 'United Kingdom', code: 'gb' }, { name: 'United States', code: 'us' },
+            { name: 'Uruguay', code: 'uy' }, { name: 'Uzbekistan', code: 'uz' }, { name: 'Vanuatu', code: 'vu' }, { name: 'Vatican City', code: 'va' }, { name: 'Venezuela', code: 've' },
+            { name: 'Vietnam', code: 'vn' }, { name: 'Yemen', code: 'ye' }, { name: 'Zambia', code: 'zm' }, { name: 'Zimbabwe', code: 'zw' }
+        ];
+
+        function populateCountryDropdown() {
+            entitySelect.innerHTML = '<option value="">Select a country...</option>';
+            countryList.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country.name;
+                option.textContent = country.name;
+                entitySelect.appendChild(option);
+            });
+            entitySelect.innerHTML += '<option value="Other">-- Other --</option>';
+        }
+
+        entitySelect.addEventListener('change', () => {
+            if (entitySelect.value === 'Other') {
+                entityOtherInput.classList.remove('hidden');
+            } else {
+                entityOtherInput.classList.add('hidden');
+            }
+        });
+
+        // --- Database Simulation using localStorage ---
+        let logisticsDB = JSON.parse(localStorage.getItem('logisticsDB')) || [];
+
+        const ghanaExample = {
+            id: 1,
+            entity: 'Ghana',
+            visaRequired: 'Yes',
+            vfi: 4,
+            visaType: 'Business Visa (B-1)',
+            dossierComponents: '1a, 1b, 1g, 2a, 2f, 3c, 3d',
+            targetSubmissionDate: '2026-04-01',
+            submittedToAgency: '',
+            submittedToConsulate: '',
+            status: 'Preparation',
+            estReturnDate: '',
+            actualReturnDate: '',
+            passportUsed: '',
+            visaValidFrom: '',
+            visaValidTo: '',
+            maxStay: '90 Days',
+            costAUD: 150.00,
+            notes: 'Requires invitation from Ghanaian company. Must be on their letterhead.'
+        };
+
+        if (logisticsDB.length === 0) {
+            logisticsDB.push(ghanaExample);
+            saveDB();
+        }
+
+        function saveDB() {
+            localStorage.setItem('logisticsDB', JSON.stringify(logisticsDB));
+        }
+
+        function renderTable() {
+            const tableBody = document.getElementById('logistics-table-body');
+            tableBody.innerHTML = '';
+            if (logisticsDB.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="9" class="text-center p-8 text-gray-500">No entries yet. Click 'Add New Entry' to start.</td></tr>`;
+                return;
+            }
+            logisticsDB.forEach(entry => {
+                const country = countryList.find(c => c.name === entry.entity);
+                const flagHtml = country 
+                    ? `<img src="https://flagcdn.com/w20/${country.code}.png" alt="${entry.entity} flag" class="h-4 rounded-sm">`
+                    : `<div class="h-4 w-6 bg-gray-200 rounded-sm" title="Custom Entity"></div>`;
+
+                const notesIcon = (entry.notes && entry.notes.trim() !== '') 
+                    ? `<span title="This entry has notes">🗨️</span>` 
+                    : '';
+
+                const row = `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-4">${flagHtml}</td>
+                        <td class="p-4 font-medium">${entry.entity}</td>
+                        <td class="p-4">${entry.visaRequired}</td>
+                        <td class="p-4">${entry.vfi}</td>
+                        <td class="p-4">${entry.visaType}</td>
+                        <td class="p-4">${entry.status}</td>
+                        <td class="p-4">${entry.targetSubmissionDate}</td>
+                        <td class="p-4">$${entry.costAUD ? parseFloat(entry.costAUD).toFixed(2) : '0.00'}</td>
+                        <td class="p-4 text-center">
+                            ${notesIcon}
+                            <button onclick="editEntry(${entry.id})" class="text-blue-600 hover:underline text-sm ml-1">View / Edit</button>
+                            <button onclick="deleteEntry(${entry.id})" class="text-red-600 hover:underline text-sm ml-2">Delete</button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        // --- Modal & Form Logic ---
+        function openModal() {
+            logisticsForm.reset();
+            entryIdField.value = '';
+            modalTitle.textContent = 'Add New Logistics Entry';
+            entityOtherInput.classList.add('hidden');
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        logisticsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = entryIdField.value;
+            const entityValue = entitySelect.value === 'Other' ? entityOtherInput.value : entitySelect.value;
+
+            const entryData = {
+                entity: entityValue,
+                visaRequired: document.getElementById('visa-required').value,
+                vfi: document.getElementById('vfi').value,
+                visaType: document.getElementById('visa-type').value,
+                dossierComponents: document.getElementById('dossier-components').value,
+                targetSubmissionDate: document.getElementById('target-submission-date').value,
+                submittedToAgency: document.getElementById('submitted-to-agency').value,
+                submittedToConsulate: document.getElementById('submitted-to-consulate').value,
+                status: document.getElementById('status').value,
+                estReturnDate: document.getElementById('est-return-date').value,
+                actualReturnDate: document.getElementById('actual-return-date').value,
+                passportUsed: document.getElementById('passport-used').value,
+                visaValidFrom: document.getElementById('visa-valid-from').value,
+                visaValidTo: document.getElementById('visa-valid-to').value,
+                maxStay: document.getElementById('max-stay').value,
+                costAUD: document.getElementById('cost-aud').value,
+                notes: document.getElementById('notes').value
+            };
+
+            if (id) { // Editing existing entry
+                const index = logisticsDB.findIndex(entry => entry.id == id);
+                entryData.id = parseInt(id);
+                logisticsDB[index] = entryData;
+            } else { // Creating new entry
+                entryData.id = Date.now(); // Simple unique ID
+                logisticsDB.push(entryData);
+            }
+
+            saveDB();
+            renderTable();
+            closeModal();
+        });
+
+        function editEntry(id) {
+            const entry = logisticsDB.find(e => e.id === id);
+            if (!entry) return;
+
+            modalTitle.textContent = `Edit Entry for ${entry.entity}`;
+            entryIdField.value = entry.id;
+            
+            const isStandardCountry = countryList.some(c => c.name === entry.entity);
+            if (isStandardCountry) {
+                entitySelect.value = entry.entity;
+                entityOtherInput.classList.add('hidden');
+            } else {
+                entitySelect.value = 'Other';
+                entityOtherInput.value = entry.entity;
+                entityOtherInput.classList.remove('hidden');
+            }
+            
+            document.getElementById('visa-required').value = entry.visaRequired;
+            document.getElementById('vfi').value = entry.vfi;
+            document.getElementById('visa-type').value = entry.visaType;
+            document.getElementById('dossier-components').value = entry.dossierComponents;
+            document.getElementById('target-submission-date').value = entry.targetSubmissionDate;
+            document.getElementById('submitted-to-agency').value = entry.submittedToAgency;
+            document.getElementById('submitted-to-consulate').value = entry.submittedToConsulate;
+            document.getElementById('status').value = entry.status;
+            document.getElementById('est-return-date').value = entry.estReturnDate;
+            document.getElementById('actual-return-date').value = entry.actualReturnDate;
+            document.getElementById('passport-used').value = entry.passportUsed;
+            document.getElementById('visa-valid-from').value = entry.visaValidFrom;
+            document.getElementById('visa-valid-to').value = entry.visaValidTo;
+            document.getElementById('max-stay').value = entry.maxStay;
+            document.getElementById('cost-aud').value = entry.costAUD;
+            document.getElementById('notes').value = entry.notes;
+
+            modal.classList.add('active');
+        }
+
+        function deleteEntry(id) {
+            if (confirm('Are you sure you want to delete this entry?')) {
+                logisticsDB = logisticsDB.filter(entry => entry.id !== id);
+                saveDB();
+                renderTable();
+            }
+        }
+
+        // --- CSV Export ---
+        function exportToCSV() {
+            if (logisticsDB.length === 0) {
+                alert("No data to export.");
+                return;
+            }
+            const headers = Object.keys(logisticsDB[0]);
+            const csvRows = [headers.join(',')];
+
+            for (const row of logisticsDB) {
+                const values = headers.map(header => {
+                    const escaped = (''+row[header]).replace(/"/g, '\\"');
+                    return `"${escaped}"`;
+                });
+                csvRows.push(values.join(','));
+            }
+
+            const csvString = csvRows.join('\n');
+            const blob = new Blob([csvString], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'master_logistics_tracker.csv');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        window.onload = () => {
+            populateCountryDropdown();
+            renderTable();
+        };
+    </script>
+</body>
+</html>
