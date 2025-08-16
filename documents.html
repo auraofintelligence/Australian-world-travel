@@ -6,7 +6,6 @@
     <title>Document Compliance Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- jsPDF and html2canvas for PDF export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -34,35 +33,6 @@
         .status-ready { background-color: #22c55e; } /* green-500 */
         .status-requires-update { background-color: #3b82f6; } /* blue-500 */
 
-        .floating-btn {
-            position: fixed;
-            background-color: #1f2937;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            display: none;
-            z-index: 1000;
-            text-align: center;
-            line-height: 50px;
-            transition: opacity 0.3s, transform 0.3s;
-        }
-        .floating-btn:hover {
-            transform: scale(1.1);
-        }
-        #returnToTop {
-            bottom: 20px;
-            right: 20px;
-        }
-        #goToBottom {
-            bottom: 20px;
-            left: 20px;
-        }
-
         @media print {
             .no-print { display: none; }
             body { margin: 0; }
@@ -74,7 +44,6 @@
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <!-- Universal Navigation Bar -->
     <nav class="bg-gray-800 text-white shadow-md no-print">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-center h-16">
@@ -89,9 +58,7 @@
             </div>
         </div>
     </nav>
-<body class="bg-gray-100 text-gray-800">
 
-    <!-- Top Navigation Bar -->
     <nav class="no-print sticky top-0 bg-white/90 backdrop-blur-sm shadow-md z-50">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-center items-center h-16">
@@ -112,10 +79,8 @@
         </header>
 
         <div id="document-categories">
-            <!-- Document cards will be dynamically inserted here -->
-        </div>
+            </div>
 
-        <!-- Translation and Notarization Hub -->
         <div id="translation-hub" class="mt-8 p-6 bg-white rounded-lg shadow-md">
             <h2 class="text-2xl font-bold mb-4 border-b pb-2">Translation & Notarization Hub</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -152,14 +117,12 @@
         </button>
     </footer>
 
-    <div class="fixed bottom-5 w-full px-5 z-20 flex justify-between">
-        <button id="goToBottomBtn" title="Go to bottom" class="hidden w-12 h-12 bg-green-600 text-white rounded-full shadow-lg items-center justify-center hover:bg-green-700 transition-all text-2xl font-bold">
-            &#8595;
-        </button>
-        <button id="goToTopBtn" title="Go to top" class="hidden w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg items-center justify-center hover:bg-blue-700 transition-all text-2xl font-bold">
-            &#8593;
-        </button>
-    </div>
+    <button onclick="scrollToBottom()" id="goToBottomBtn" title="Go to Bottom" class="fixed bottom-5 left-5 w-12 h-12 bg-green-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-green-700 transition-all text-2xl font-bold z-20 no-print">
+        &#8595;
+    </button>
+    <button onclick="scrollToTop()" id="goToTopBtn" title="Go to top" class="fixed hidden bottom-5 right-5 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-all text-2xl font-bold z-20 no-print">
+        &#8593;
+    </button>
 
     <script>
         const documentData = [
@@ -299,26 +262,41 @@
             });
         }
 
-        const topButton = document.getElementById('returnToTop');
-        const bottomButton = document.getElementById('goToBottom');
-
-        window.onscroll = function() {
-            const isAtBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100;
-            const isAtTop = window.scrollY < 100;
-            
-            topButton.style.display = isAtTop ? "none" : "block";
-            bottomButton.style.display = isAtBottom ? "none" : "block";
-        };
-
         function scrollToTop() {
-            window.scrollTo({top: 0});
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
+
         function scrollToBottom() {
-            document.getElementById('page-footer').scrollIntoView();
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
 
         window.onload = () => {
             populateDocuments();
+
+            // --- Scroll Button Logic ---
+            const goToTopBtn = document.getElementById('goToTopBtn');
+            const goToBottomBtn = document.getElementById('goToBottomBtn');
+    
+            window.onscroll = function() {
+                const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+                const pageHeight = document.documentElement.scrollHeight;
+                const viewportHeight = window.innerHeight;
+    
+                // Show "Go to Top" button only when scrolled down
+                if (scrollPosition > 100) {
+                    goToTopBtn.classList.remove('hidden');
+                } else {
+                    goToTopBtn.classList.add('hidden');
+                }
+    
+                // Show "Go to Bottom" button unless you're at the very bottom
+                if (scrollPosition + viewportHeight >= pageHeight - 100) { // Hides 100px from bottom
+                    goToBottomBtn.classList.add('hidden');
+                } else {
+                    goToBottomBtn.classList.remove('hidden');
+                }
+            };
+            
             // Initial check for scroll button visibility
             window.dispatchEvent(new Event('scroll'));
         };
