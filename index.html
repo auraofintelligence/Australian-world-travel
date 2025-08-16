@@ -6,7 +6,6 @@
     <title>Business Visa Evaluator for an Australian Citizen</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Leaflet CSS for the map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <style>
         body {
@@ -41,31 +40,6 @@
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             margin-bottom: 2rem;
         }
-        .floating-btn {
-            position: fixed;
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            display: none; /* Hidden by default */
-            z-index: 1000;
-            text-align: center;
-            line-height: 50px;
-        }
-        #returnToTop {
-            bottom: 20px;
-            right: 20px;
-        }
-        #goToPlanner {
-            bottom: 20px;
-            left: 20px;
-            background-color: #16a34a; /* Green color */
-        }
         .city-select {
             min-width: 180px;
             padding: 0.5rem;
@@ -79,7 +53,6 @@
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <!-- Universal Navigation Bar -->
     <nav class="bg-gray-800 text-white shadow-md no-print">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-center h-16">
@@ -108,7 +81,6 @@
             <p>Visa requirements, costs, and travel advisories change frequently. This information is for preliminary guidance only. <strong class="font-semibold">ALWAYS</strong> confirm details with the official embassy or consulate of your destination country before making any travel arrangements. Data last updated: August 16, 2025.</p>
         </div>
 
-        <!-- Interactive Map -->
         <div id="map"></div>
 
         <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
@@ -160,16 +132,13 @@
 
     </div>
 
-     <div class="fixed bottom-5 w-full px-5 z-20 flex justify-between">
-        <button id="goToBottomBtn" title="Go to bottom" class="hidden w-12 h-12 bg-green-600 text-white rounded-full shadow-lg items-center justify-center hover:bg-green-700 transition-all text-2xl font-bold">
-            &#8595;
-        </button>
-        <button id="goToTopBtn" title="Go to top" class="hidden w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg items-center justify-center hover:bg-blue-700 transition-all text-2xl font-bold">
-            &#8593;
-        </button>
-    </div>
+    <button onclick="scrollToBottom()" id="goToBottomBtn" title="Go to Bottom" class="fixed bottom-5 left-5 w-12 h-12 bg-green-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-green-700 transition-all text-2xl font-bold z-20">
+        &#8595;
+    </button>
+    <button onclick="scrollToTop()" id="goToTopBtn" title="Go to top" class="fixed hidden bottom-5 right-5 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-all text-2xl font-bold z-20">
+        &#8593;
+    </button>
 
-    <!-- Leaflet JS for the map -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
         const countryData = [
@@ -480,7 +449,6 @@
         function updateTripPlanner() {
             const checkboxes = document.querySelectorAll('.country-checkbox:checked');
             const tripPlannerDiv = document.getElementById('tripPlanner');
-            const goToPlannerBtn = document.getElementById('goToPlanner');
             const selectedList = document.querySelector('#selectedCountriesList ul');
             const totalCostEl = document.getElementById('totalCost');
             
@@ -521,7 +489,6 @@
 
             if (selectedDestinations.length > 0) {
                 tripPlannerDiv.style.display = 'block';
-                goToPlannerBtn.style.display = 'block';
                 if (markers.length === 1) {
                     map.setView(markers[0].getLatLng(), 4);
                 } else if (markers.length > 1) {
@@ -530,7 +497,6 @@
                 }
             } else {
                 tripPlannerDiv.style.display = 'none';
-                goToPlannerBtn.style.display = 'none';
                 map.setView([20, 0], 2);
             }
 
@@ -577,19 +543,36 @@
             updateTripPlanner();
         }
 
-        const topButton = document.getElementById('returnToTop');
+        const goToTopBtn = document.getElementById('goToTopBtn');
+        const goToBottomBtn = document.getElementById('goToBottomBtn');
+
         window.onscroll = function() {
-            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-                topButton.style.display = "block";
+            const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+            const pageHeight = document.documentElement.scrollHeight;
+            const viewportHeight = window.innerHeight;
+
+            // Show "Go to Top" button only when scrolled down
+            if (scrollPosition > 100) {
+                goToTopBtn.classList.remove('hidden');
             } else {
-                topButton.style.display = "none";
+                goToTopBtn.classList.add('hidden');
+            }
+
+            // Show "Go to Bottom" button unless you're at the very bottom
+            if (scrollPosition + viewportHeight >= pageHeight - 100) { // Hides 100px from bottom
+                goToBottomBtn.classList.add('hidden');
+            } else {
+                goToBottomBtn.classList.remove('hidden');
             }
         };
+
         function scrollToTop() {
-            window.scrollTo({top: 0});
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
-        function scrollToPlanner() {
-            document.getElementById('tripPlanner').scrollIntoView();
+
+        function scrollToBottom() {
+            // This function scrolls to the very end of the page
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
 
         window.onload = () => {
