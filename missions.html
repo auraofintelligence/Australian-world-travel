@@ -9,6 +9,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth; /* Ensures smooth scrolling */
         }
         .mission-card {
             transition: transform 0.2s, box-shadow 0.2s;
@@ -21,7 +22,6 @@
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <!-- Universal Navigation Bar -->
     <nav class="bg-gray-800 text-white shadow-md no-print">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-center h-16">
@@ -36,15 +36,13 @@
             </div>
         </div>
     </nav>
-    <body class="bg-gray-100 text-gray-800">
-
+    
     <div class="container mx-auto p-4 sm:p-6 lg:p-8">
         <header class="text-center mb-8">
             <h1 class="text-4xl font-bold text-gray-900">Diplomatic Missions in Australia</h1>
             <p class="mt-2 text-lg text-gray-600">Find embassies, high commissions, and consulates across the country.</p>
         </header>
 
-        <!-- Filters -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 p-4 bg-white rounded-lg shadow-sm">
             <div class="flex-grow w-full">
                 <label for="searchInput" class="block text-sm font-medium text-gray-700">Search by Country</label>
@@ -77,19 +75,17 @@
             </div>
         </div>
 
-        <!-- Missions Grid -->
         <div id="missionsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Mission cards will be dynamically inserted here -->
-        </div>
+            </div>
     </div>
-    <div class="fixed bottom-5 w-full px-5 z-20 flex justify-between">
-        <button id="goToBottomBtn" title="Go to bottom" class="hidden w-12 h-12 bg-green-600 text-white rounded-full shadow-lg items-center justify-center hover:bg-green-700 transition-all text-2xl font-bold">
-            &#8595;
-        </button>
-        <button id="goToTopBtn" title="Go to top" class="hidden w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg items-center justify-center hover:bg-blue-700 transition-all text-2xl font-bold">
-            &#8593;
-        </button>
-    </div>
+
+    <button onclick="scrollToBottom()" id="goToBottomBtn" title="Go to Bottom" class="fixed bottom-5 left-5 w-12 h-12 bg-green-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-green-700 transition-all text-2xl font-bold z-20">
+        &#8595;
+    </button>
+    <button onclick="scrollToTop()" id="goToTopBtn" title="Go to top" class="fixed hidden bottom-5 right-5 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-all text-2xl font-bold z-20">
+        &#8593;
+    </button>
+    
     <script>
         const missionsData = [
             { country: 'Afghanistan', city: 'Canberra', type: 'Embassy', address: '4 Beale Crescent, Deakin ACT 2600', website: 'http://www.afghanembassy.com.au/' },
@@ -271,6 +267,39 @@
 
         function filterMissions() {
             populateMissions();
+        }
+
+        // --- Scroll Button Logic ---
+        const goToTopBtn = document.getElementById('goToTopBtn');
+        const goToBottomBtn = document.getElementById('goToBottomBtn');
+
+        window.onscroll = function() {
+            const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+            const pageHeight = document.documentElement.scrollHeight;
+            const viewportHeight = window.innerHeight;
+
+            // Show "Go to Top" button only when scrolled down
+            if (scrollPosition > 100) {
+                goToTopBtn.classList.remove('hidden');
+            } else {
+                goToTopBtn.classList.add('hidden');
+            }
+
+            // Show "Go to Bottom" button unless you're at the very bottom
+            if (scrollPosition + viewportHeight >= pageHeight - 100) { // Hides 100px from bottom
+                goToBottomBtn.classList.add('hidden');
+            } else {
+                goToBottomBtn.classList.remove('hidden');
+            }
+        };
+
+        function scrollToTop() {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function scrollToBottom() {
+            // This function scrolls to the very end of the page
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
 
         window.onload = () => {
