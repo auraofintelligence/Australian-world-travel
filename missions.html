@@ -3,308 +3,380 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diplomatic Missions in Australia</title>
+    <title>Australian Diplomatic Missions Abroad</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
         body {
             font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth; /* Ensures smooth scrolling */
         }
-        .mission-card {
-            transition: transform 0.2s, box-shadow 0.2s;
+        #map {
+            height: 500px;
+            border-radius: 0.75rem;
+            z-index: 0;
         }
-        .mission-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #64748b;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
         }
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: A dashboard-style SPA is used to present the data. The structure includes a header, a control panel for user interaction (filters, search, sort), an interactive map, and a responsive grid for displaying mission details as cards. This structure was chosen to transform a static data table into an engaging, user-driven exploration tool. It prioritizes usability by allowing users to quickly find and compare information both textually and geographically. The map provides immediate visual context that updates with user filters. -->
+    <!-- Visualization & Content Choices: Report Info: List of missions -> Goal: Organize & Inform -> Presentation: Interactive card grid -> Interaction: The grid dynamically updates based on user filtering, sorting, and searching. Report Info: Geographic location of missions -> Goal: Organize & Compare -> Viz Method: Interactive Map (Leaflet.js) with markers -> Interaction: Markers on the map are filtered in real-time based on the user's selections in the control panel, providing a direct visual link between the filtered data and their locations. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-slate-50 text-slate-800">
 
-    <nav class="bg-gray-800 text-white shadow-md no-print">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-center h-16">
-                <div class="flex space-x-4">
-                    <a href="index.html" class="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Visa Guide</a>
-                    <a href="missions.html" class="bg-gray-900 px-3 py-2 rounded-md text-sm font-medium">Missions</a>
-                    <a href="abroad.html" class="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Abroad</a>
-                    <a href="strategy.html" class="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Strategy</a>
-                    <a href="documents.html" class="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Documents</a>
-                    <a href="logistics.html" class="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Logistics</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-    
     <div class="container mx-auto p-4 sm:p-6 lg:p-8">
         <header class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-900">Diplomatic Missions in Australia</h1>
-            <p class="mt-2 text-lg text-gray-600">Find embassies, high commissions, and consulates across the country.</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900">Australian Diplomatic Missions Abroad</h1>
+            <p class="mt-2 text-lg text-slate-600">An interactive directory to explore Australia's global diplomatic presence.</p>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 p-4 bg-white rounded-lg shadow-sm">
-            <div class="flex-grow w-full">
-                <label for="searchInput" class="block text-sm font-medium text-gray-700">Search by Country</label>
-                <input type="text" id="searchInput" onkeyup="filterMissions()" placeholder="e.g., Canada" class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <main>
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8">
+                <p class="text-slate-700 mb-6">
+                    This tool allows you to explore Australia's network of embassies, high commissions, consulates, and other diplomatic offices around the world. Use the filters to narrow down the list by country or mission type, sort the results, or use the search bar to find a specific location. The map and list will update automatically.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                        <label for="countryFilter" class="block text-sm font-medium text-slate-700">Filter by Country</label>
+                        <select id="countryFilter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm rounded-md">
+                            <option value="all">All Countries</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="typeFilter" class="block text-sm font-medium text-slate-700">Filter by Mission Type</label>
+                        <select id="typeFilter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm rounded-md">
+                            <option value="all">All Types</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="search" class="block text-sm font-medium text-slate-700">Search</label>
+                        <input type="text" id="search" placeholder="e.g., London, Japan" class="mt-1 block w-full pl-3 pr-4 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="sortBy" class="block text-sm font-medium text-slate-700">Sort By</label>
+                        <select id="sortBy" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm rounded-md">
+                            <option value="city_asc">City (A-Z)</option>
+                            <option value="city_desc">City (Z-A)</option>
+                            <option value="country_asc">Country (A-Z)</option>
+                            <option value="country_desc">Country (Z-A)</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-            <div class="flex-grow w-full">
-                <label for="cityFilter" class="block text-sm font-medium text-gray-700">Filter by City</label>
-                <select id="cityFilter" onchange="filterMissions()" class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                    <option value="All">All Cities</option>
-                    <option value="Canberra">Canberra</option>
-                    <option value="Sydney">Sydney</option>
-                    <option value="Melbourne">Melbourne</option>
-                    <option value="Perth">Perth</option>
-                    <option value="Brisbane">Brisbane</option>
-                    <option value="Adelaide">Adelaide</option>
-                    <option value="Hobart">Hobart</option>
-                    <option value="Darwin">Darwin</option>
-                </select>
-            </div>
-            <div class="flex-grow w-full">
-                <label for="typeFilter" class="block text-sm font-medium text-gray-700">Filter by Type</label>
-                <select id="typeFilter" onchange="filterMissions()" class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                    <option value="All">All Types</option>
-                    <option value="Embassy">Embassy</option>
-                    <option value="High Commission">High Commission</option>
-                    <option value="Consulate-General">Consulate-General</option>
-                    <option value="Consulate">Consulate</option>
-                    <option value="Apostolic Nunciature">Apostolic Nunciature</option>
-                </select>
-            </div>
-        </div>
 
-        <div id="missionsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            </div>
+            <section id="map-section" class="bg-white p-6 rounded-xl shadow-md mb-8">
+                <h2 class="text-2xl font-bold text-slate-900 mb-4 text-center">Mission Locations</h2>
+                <div id="map" class="w-full"></div>
+            </section>
+
+            <section id="results">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-slate-900">Missions</h2>
+                    <p id="resultsCount" class="text-slate-600 font-medium"></p>
+                </div>
+                <div id="missionsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                </div>
+            </section>
+        </main>
     </div>
 
-    <button onclick="scrollToBottom()" id="goToBottomBtn" title="Go to Bottom" class="fixed bottom-5 left-5 w-12 h-12 bg-green-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-green-700 transition-all text-2xl font-bold z-20">
-        &#8595;
-    </button>
-    <button onclick="scrollToTop()" id="goToTopBtn" title="Go to top" class="fixed hidden bottom-5 right-5 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-all text-2xl font-bold z-20">
-        &#8593;
-    </button>
-    
+    <div class="fixed bottom-5 w-full px-5 z-20 flex justify-between">
+        <button id="goToBottomBtn" title="Go to bottom" class="hidden w-12 h-12 bg-green-600 text-white rounded-full shadow-lg items-center justify-center hover:bg-green-700 transition-all text-2xl font-bold">
+            &#8595;
+        </button>
+        <button id="goToTopBtn" title="Go to top" class="hidden w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg items-center justify-center hover:bg-blue-700 transition-all text-2xl font-bold">
+            &#8593;
+        </button>
+    </div>
+
     <script>
-        const missionsData = [
-            { country: 'Afghanistan', city: 'Canberra', type: 'Embassy', address: '4 Beale Crescent, Deakin ACT 2600', website: 'http://www.afghanembassy.com.au/' },
-            { country: 'Albania', city: 'Canberra', type: 'Embassy', address: '13 Culgoa Circuit, O\'Malley ACT 2606', website: 'http://www.ambasadat.gov.al/australia/en/' },
-            { country: 'Algeria', city: 'Canberra', type: 'Embassy', address: '29 Cobbadah Street, O\'Malley ACT 2606', website: 'http://www.algeriaemb.org.au/' },
-            { country: 'Argentina', city: 'Canberra', type: 'Embassy', address: 'John McEwen House, Level 2, 7 National Circuit, Barton ACT 2600', website: 'https://eaust.cancilleria.gob.ar/' },
-            { country: 'Argentina', city: 'Sydney', type: 'Consulate-General', address: 'Suite 2, Level 20, 44 Market Street, Sydney NSW 2000', website: 'https://csidn.cancilleria.gob.ar/' },
-            { country: 'Austria', city: 'Canberra', type: 'Embassy', address: '12 Talbot Street, Forrest ACT 2603', website: 'https://www.bmeia.gv.at/en/austrian-embassy-canberra/' },
-            { country: 'Austria', city: 'Sydney', type: 'Consulate-General', address: 'Suite 2201, Level 22, 1 York Street, Sydney NSW 2000', website: 'https://www.bmeia.gv.at/en/austrian-consulate-general-sydney/' },
-            { country: 'Bangladesh', city: 'Canberra', type: 'High Commission', address: '57 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://www.bhcanberra.com/' },
-            { country: 'Belgium', city: 'Canberra', type: 'Embassy', address: '19 Arkana Street, Yarralumla ACT 2600', website: 'https://australia.diplomatie.belgium.be/en' },
-            { country: 'Bosnia and Herzegovina', city: 'Canberra', type: 'Embassy', address: '50 Knox Street, Watson ACT 2602', website: 'http://www.bihembassy.org/' },
-            { country: 'Botswana', city: 'Canberra', type: 'High Commission', address: '112 State Circle, Yarralumla ACT 2600', website: 'https://www.botswanahighcom.org.au/' },
-            { country: 'Brazil', city: 'Canberra', type: 'Embassy', address: '19 Forster Crescent, Yarralumla ACT 2600', website: 'http://camberra.itamaraty.gov.br/en-us/' },
-            { country: 'Brazil', city: 'Sydney', type: 'Consulate-General', address: 'Level 6, 45 Clarence Street, Sydney NSW 2000', website: 'http://sydney.itamaraty.gov.br/en-us/' },
-            { country: 'Brunei', city: 'Canberra', type: 'High Commission', address: '10 Beale Crescent, Deakin ACT 2600', website: 'http://www.mfa.gov.bn/brunei-canberra' },
-            { country: 'Bulgaria', city: 'Canberra', type: 'Embassy', address: '29 Pindari Crescent, O\'Malley ACT 2606', website: 'https://www.mfa.bg/en/embassies/australia' },
-            { country: 'Cambodia', city: 'Canberra', type: 'Embassy', address: '5 Canterbury Crescent, Deakin ACT 2600', website: 'https://www.embassyofcambodia.org.au/' },
-            { country: 'Canada', city: 'Canberra', type: 'High Commission', address: 'Commonwealth Avenue, Yarralumla ACT 2600', website: 'https://www.international.gc.ca/country-pays/australia-australie/' },
-            { country: 'Canada', city: 'Sydney', type: 'Consulate-General', address: 'Level 5, 111 Harrington Street, Sydney NSW 2000', website: 'https://www.international.gc.ca/country-pays/australia-australie/sydney.aspx?lang=eng' },
-            { country: 'Chile', city: 'Canberra', type: 'Embassy', address: '10 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://chile.gob.cl/australia/' },
-            { country: 'Chile', city: 'Melbourne', type: 'Consulate-General', address: 'Level 13, 390 St Kilda Road, Melbourne VIC 3004', website: 'https://www.consulado.gob.cl/consulados/melbourne' },
-            { country: 'Chile', city: 'Sydney', type: 'Consulate-General', address: 'Level 18, 44 Market Street, Sydney NSW 2000', website: 'https://www.consulado.gob.cl/consulados/sydney' },
-            { country: 'China', city: 'Canberra', type: 'Embassy', address: '15 Coronation Drive, Yarralumla ACT 2600', website: 'http://au.china-embassy.gov.cn/eng/' },
-            { country: 'China', city: 'Sydney', type: 'Consulate-General', address: '39 Dunblane Street, Camperdown NSW 2050', website: 'http://sydney.china-consulate.gov.cn/eng/' },
-            { country: 'China', city: 'Melbourne', type: 'Consulate-General', address: '75-77 Irving Road, Toorak VIC 3142', website: 'http://melbourne.china-consulate.gov.cn/eng/' },
-            { country: 'China', city: 'Perth', type: 'Consulate-General', address: '45 Brown Street, East Perth WA 6004', website: 'http://perth.china-consulate.gov.cn/eng/' },
-            { country: 'China', city: 'Brisbane', type: 'Consulate-General', address: 'Level 9, 79 Adelaide Street, Brisbane QLD 4000', website: 'http://brisbane.china-consulate.gov.cn/eng/' },
-            { country: 'China', city: 'Adelaide', type: 'Consulate-General', address: '52-54 Anzac Highway, Everard Park SA 5035', website: 'http://adelaide.china-consulate.gov.cn/eng/' },
-            { country: 'Colombia', city: 'Canberra', type: 'Embassy', address: 'Level 2, 40 Macquarie Street, Barton ACT 2600', website: 'https://australia.embajada.gov.co/' },
-            { country: 'Croatia', city: 'Canberra', type: 'Embassy', address: '14 Jindalee Crescent, O\'Malley ACT 2606', website: 'https://mvep.gov.hr/au' },
-            { country: 'Cuba', city: 'Canberra', type: 'Embassy', address: '7 Terrigal Crescent, O\'Malley ACT 2606', website: 'http://misiones.minrex.gob.cu/en/australia' },
-            { country: 'Cyprus', city: 'Canberra', type: 'High Commission', address: '30 Beale Crescent, Deakin ACT 2600', website: 'https://mfa.gov.cy/hccanberra.nsf/index_en/index_en?OpenDocument' },
-            { country: 'Czech Republic', city: 'Canberra', type: 'Embassy', address: '8 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://www.mzv.cz/canberra' },
-            { country: 'Denmark', city: 'Canberra', type: 'Embassy', address: '11 Hunter Street, Yarralumla ACT 2600', website: 'https://australien.um.dk/en' },
-            { country: 'Ecuador', city: 'Canberra', type: 'Embassy', address: '38, 188 Collins Street, Melbourne VIC 3000', website: 'https://www.cancilleria.gob.ec/australia/' },
-            { country: 'Egypt', city: 'Canberra', type: 'Embassy', address: '1 Darwin Avenue, Yarralumla ACT 2600', website: 'https://mfa.gov.eg/english/embassies/egyptian_embassy_canberra/pages/default.aspx' },
-            { country: 'El Salvador', city: 'Canberra', type: 'Embassy', address: 'Level 10, 300 Queen Street, Brisbane QLD 4000', website: 'https://www.rree.gob.sv/' },
-            { country: 'Estonia', city: 'Canberra', type: 'Embassy', address: '120 Empire Circuit, Yarralumla ACT 2600', website: 'https://canberra.mfa.ee/' },
-            { country: 'Ethiopia', city: 'Canberra', type: 'Embassy', address: '14 LUMEAH St, Narrabundah, ACT 2604', website: 'https://ethiopianembassy.net/' },
-            { country: 'Fiji', city: 'Canberra', type: 'High Commission', address: '19 Beale Crescent, Deakin ACT 2600', website: 'https://www.fijihighcommission.org.au/' },
-            { country: 'Finland', city: 'Canberra', type: 'Embassy', address: '12 Darwin Avenue, Yarralumla ACT 2600', website: 'https://finlandabroad.fi/web/aus/frontpage' },
-            { country: 'France', city: 'Canberra', type: 'Embassy', address: '6 Perth Avenue, Yarralumla ACT 2600', website: 'https://au.ambafrance.org/' },
-            { country: 'France', city: 'Sydney', type: 'Consulate-General', address: 'Level 26, St Martins Tower, 31 Market Street, Sydney NSW 2000', website: 'https://sydney.consulfrance.org/' },
-            { country: 'Georgia', city: 'Canberra', type: 'Embassy', address: '22 Mulley Street, Holder ACT 2611', website: 'https://australia.mfa.gov.ge/' },
-            { country: 'Germany', city: 'Canberra', type: 'Embassy', address: '119 Empire Circuit, Yarralumla ACT 2600', website: 'https://australien.diplo.de/' },
-            { country: 'Germany', city: 'Sydney', type: 'Consulate-General', address: 'Level 17, 100 William Street, Woolloomooloo NSW 2011', website: 'https://australien.diplo.de/au-en/vertretungen/generalkonsulat1' },
-            { country: 'Ghana', city: 'Canberra', type: 'High Commission', address: '24 Akame Circuit, O\'Malley ACT 2606', website: 'https://www.ghanahighcomcan.org.au/' },
-            { country: 'Greece', city: 'Canberra', type: 'Embassy', address: '9 Turrana Street, Yarralumla ACT 2600', website: 'https://www.mfa.gr/australia/en/' },
-            { country: 'Greece', city: 'Adelaide', type: 'Consulate-General', address: 'Level 4, 32-34 Grenfell Street, Adelaide SA 5000', website: 'https://www.mfa.gr/australia/en/consulate-general-adelaide/' },
-            { country: 'Greece', city: 'Melbourne', type: 'Consulate-General', address: '37-39 Albert Road, Melbourne VIC 3004', website: 'https://www.mfa.gr/australia/en/consulate-general-melbourne/' },
-            { country: 'Greece', city: 'Sydney', type: 'Consulate-General', address: 'Suite 2, Level 2, 219-223 Castlereagh Street, Sydney NSW 2000', website: 'https://www.mfa.gr/australia/en/consulate-general-sydney/' },
-            { country: 'Holy See', city: 'Canberra', type: 'Apostolic Nunciature', address: '2 Vancouver Street, Red Hill ACT 2603', website: 'https://www.vatican.va/' },
-            { country: 'Hungary', city: 'Canberra', type: 'Embassy', address: '17 Beale Crescent, Deakin ACT 2600', website: 'https://canberra.mfa.gov.hu/' },
-            { country: 'India', city: 'Canberra', type: 'High Commission', address: '3-5 Moonah Place, Yarralumla ACT 2600', website: 'https://www.hcicanberra.gov.in/' },
-            { country: 'India', city: 'Melbourne', type: 'Consulate-General', address: '344 St Kilda Road, Melbourne VIC 3004', website: 'https://www.cgimelbourne.gov.in/' },
-            { country: 'India', city: 'Sydney', type: 'Consulate-General', address: 'Level 1, 265 Castlereagh Street, Sydney NSW 2000', website: 'https://www.cgisydney.gov.in/' },
-            { country: 'India', city: 'Perth', type: 'Consulate-General', address: 'Level 7, 12 St Georges Terrace, Perth WA 6000', website: 'https://www.cgiperth.gov.in/' },
-            { country: 'Indonesia', city: 'Canberra', type: 'Embassy', address: '8 Darwin Avenue, Yarralumla ACT 2600', website: 'https://kemlu.go.id/canberra/en' },
-            { country: 'Indonesia', city: 'Sydney', type: 'Consulate-General', address: '236-238 Maroubra Road, Maroubra NSW 2035', website: 'https://kemlu.go.id/sydney/en' },
-            { country: 'Indonesia', city: 'Melbourne', type: 'Consulate-General', address: '72 Queens Road, Melbourne VIC 3004', website: 'https://kemlu.go.id/melbourne/en' },
-            { country: 'Indonesia', city: 'Perth', type: 'Consulate-General', address: '134 Adelaide Terrace, East Perth WA 6004', website: 'https://kemlu.go.id/perth/en' },
-            { country: 'Iran', city: 'Canberra', type: 'Embassy', address: '25 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://australia.mfa.ir/en' },
-            { country: 'Iraq', city: 'Canberra', type: 'Embassy', address: '48 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://www.mofa.gov.iq/canberra/' },
-            { country: 'Ireland', city: 'Canberra', type: 'Embassy', address: '20 Arkana Street, Yarralumla ACT 2600', website: 'https://www.dfa.ie/australia/' },
-            { country: 'Israel', city: 'Canberra', type: 'Embassy', address: '6 Turrana Street, Yarralumla ACT 2600', website: 'https://embassies.gov.il/canberra' },
-            { country: 'Italy', city: 'Canberra', type: 'Embassy', address: '12 Grey Street, Deakin ACT 2600', website: 'https://ambcanberra.esteri.it/en/' },
-            { country: 'Italy', city: 'Adelaide', type: 'Consulate', address: '398 Payneham Road, Payneham SA 5070', website: 'https://consadelaide.esteri.it/en/' },
-            { country: 'Italy', city: 'Brisbane', type: 'Consulate', address: 'Level 8, 199 George Street, Brisbane QLD 4000', website: 'https://consbrisbane.esteri.it/en/' },
-            { country: 'Italy', city: 'Melbourne', type: 'Consulate-General', address: '509 St Kilda Road, Melbourne VIC 3004', website: 'https://consmelbourne.esteri.it/en/' },
-            { country: 'Italy', city: 'Perth', type: 'Consulate', address: 'Level 2, 1292 Hay Street, West Perth WA 6005', website: 'https://consperth.esteri.it/en/' },
-            { country: 'Italy', city: 'Sydney', type: 'Consulate-General', address: 'Level 4, 100 William Street, Woolloomooloo NSW 2011', website: 'https://conssydney.esteri.it/en/' },
-            { country: 'Japan', city: 'Canberra', type: 'Embassy', address: '112 Empire Circuit, Yarralumla ACT 2600', website: 'https://www.au.emb-japan.go.jp/' },
-            { country: 'Japan', city: 'Sydney', type: 'Consulate-General', address: 'Level 12, 1 O\'Connell Street, Sydney NSW 2000', website: 'https://www.sydney.au.emb-japan.go.jp/' },
-            { country: 'Japan', city: 'Melbourne', type: 'Consulate-General', address: 'Level 25, 570 Bourke Street, Melbourne VIC 3000', website: 'https://www.melbourne.au.emb-japan.go.jp/' },
-            { country: 'Japan', city: 'Perth', type: 'Consulate-General', address: 'U22/Level 2, 111 St Georges Terrace, Perth WA 6000', website: 'https://www.perth.au.emb-japan.go.jp/' },
-            { country: 'Japan', city: 'Brisbane', type: 'Consulate-General', address: 'Level 17, 12 Creek Street, Brisbane QLD 4000', website: 'https://www.brisbane.au.emb-japan.go.jp/' },
-            { country: 'Jordan', city: 'Canberra', type: 'Embassy', address: '17 Cobbadah Street, O\'Malley ACT 2606', website: 'http://www.jordanembassy.org.au/' },
-            { country: 'Kazakhstan', city: 'Canberra', type: 'Embassy', address: 'Level 2, 243 Northbourne Avenue, Lyneham ACT 2602', website: 'https://www.gov.kz/memleket/entities/mfa-canberra' },
-            { country: 'Kenya', city: 'Canberra', type: 'High Commission', address: '33-35 Ainslie Avenue, Canberra ACT 2601', website: 'https://kenya.asn.au/' },
-            { country: 'Kuwait', city: 'Canberra', type: 'Embassy', address: '5 Callemonda Rise, O\'Malley ACT 2606', website: 'http://kuwaitembassy.com.au/' },
-            { country: 'Laos', city: 'Canberra', type: 'Embassy', address: '1 Dalman Crescent, O\'Malley ACT 2606', website: 'https://www.laoembassy.net/' },
-            { country: 'Latvia', city: 'Canberra', type: 'Embassy', address: '9 Turrana Street, Yarralumla ACT 2600', website: 'https://www2.mfa.gov.lv/en/australia' },
-            { country: 'Lebanon', city: 'Canberra', type: 'Embassy', address: '27 Endeavour Street, Red Hill ACT 2603', website: 'http://www.lebanonembassyus.org/embassy/in-australia.htm' },
-            { country: 'Lesotho', city: 'Canberra', type: 'High Commission', address: '3rd Floor, 39 Empire Circuit, Forrest ACT 2603', website: 'https://www.foreign.gov.ls/missions/' },
-            { country: 'Libya', city: 'Canberra', type: 'Embassy', address: '13 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://foreign.gov.ly/' },
-            { country: 'Lithuania', city: 'Canberra', type: 'Embassy', address: '2 Daly street, Deakin ACT 2600', website: 'https://jp.mfa.lt/jp/en/embassy-to-australia' },
-            { country: 'Malaysia', city: 'Canberra', type: 'High Commission', address: '7 Perth Avenue, Yarralumla ACT 2600', website: 'https://www.kln.gov.my/web/aus_canberra/home' },
-            { country: 'Malaysia', city: 'Perth', type: 'Consulate-General', address: '252 Adelaide Terrace, Perth WA 6000', website: 'https://www.kln.gov.my/web/aus_perth/home' },
-            { country: 'Malta', city: 'Canberra', type: 'High Commission', address: '38 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://foreign.gov.mt/en/Embassies/Hc_Canberra/Pages/Hc_Canberra.aspx' },
-            { country: 'Mauritius', city: 'Canberra', type: 'High Commission', address: '2 Beale Crescent, Deakin ACT 2600', website: 'https://mauritius-canberra.com/' },
-            { country: 'Mexico', city: 'Canberra', type: 'Embassy', address: '14 Perth Avenue, Yarralumla ACT 2600', website: 'https://embamex.sre.gob.mx/australia/' },
-            { country: 'Mongolia', city: 'Canberra', type: 'Embassy', address: '27-29 Curlewis Crescent, Garran ACT 2605', website: 'http://www.mongolianembassy.org.au/' },
-            { country: 'Morocco', city: 'Canberra', type: 'Embassy', address: '9 Terrigal Crescent, O\'Malley ACT 2606', website: 'https://www.moroccanembassy.net.au/' },
-            { country: 'Myanmar', city: 'Canberra', type: 'Embassy', address: '22 Arkana Street, Yarralumla ACT 2600', website: 'https://www.mecanberra.org.mm/' },
-            { country: 'Nepal', city: 'Canberra', type: 'Embassy', address: 'Suite 2.02, Level 2, 24 Marcus Clarke Street, Canberra ACT 2601', website: 'https://au.nepalembassy.gov.np/' },
-            { country: 'Netherlands', city: 'Canberra', type: 'Embassy', address: '120 Empire Circuit, Yarralumla ACT 2600', website: 'https://www.netherlandsandyou.nl/your-country-and-the-netherlands/australia' },
-            { country: 'New Zealand', city: 'Canberra', type: 'High Commission', address: '140 Commonwealth Avenue, Yarralumla ACT 2600', website: 'https://www.mfat.govt.nz/en/countries-and-regions/australia-and-pacific/australia/new-zealand-high-commission/' },
-            { country: 'New Zealand', city: 'Sydney', type: 'Consulate-General', address: 'Level 10, 55 Hunter Street, Sydney NSW 2000', website: 'https://www.mfat.govt.nz/en/countries-and-regions/australia-and-pacific/australia/new-zealand-consulate-general-sydney/' },
-            { country: 'Nigeria', city: 'Canberra', type: 'High Commission', address: '26 Guilfoyle Street, Yarralumla ACT 2600', website: 'https://nigeria-canberra.org/' },
-            { country: 'North Macedonia', city: 'Canberra', type: 'Embassy', address: '74 Pethebridge Street, Pearce ACT 2607', website: 'https://canberra.mfa.gov.mk/' },
-            { country: 'Norway', city: 'Canberra', type: 'Embassy', address: '17 Hunter Street, Yarralumla ACT 2600', website: 'https://www.norway.no/en/australia/' },
-            { country: 'Oman', city: 'Canberra', type: 'Embassy', address: '184 Melbourne Avenue, Deakin ACT 2600', website: 'https://www.fm.gov.om/missions/australia/' },
-            { country: 'Pakistan', city: 'Canberra', type: 'High Commission', address: '4 Timbarra Crescent, O\'Malley ACT 2606', website: 'https://www.pakistan.org.au/' },
-            { country: 'Palestine', city: 'Canberra', type: 'Embassy', address: '176 Mugga Way, Red Hill ACT 2603', website: 'http://www.palestine-australia.com/' },
-            { country: 'Papua New Guinea', city: 'Canberra', type: 'High Commission', address: '39-41 Forster Crescent, Yarralumla ACT 2600', website: 'https://www.pngcanberra.org/' },
-            { country: 'Peru', city: 'Canberra', type: 'Embassy', address: '40 Brisbane Avenue, Barton ACT 2600', website: 'http://www.embassyofperu.org.au/' },
-            { country: 'Philippines', city: 'Canberra', type: 'Embassy', address: '1 Moonah Place, Yarralumla ACT 2600', website: 'https://www.philembassy.org.au/' },
-            { country: 'Poland', city: 'Canberra', type: 'Embassy', address: '7 Turrana Street, Yarralumla ACT 2600', website: 'https://www.gov.pl/web/australia' },
-            { country: 'Portugal', city: 'Canberra', type: 'Embassy', address: 'Suite 2, Level 2, 201-203 London Circuit, Canberra ACT 2601', website: 'https://camberra.embaixadaportugal.mne.gov.pt/en/' },
-            { country: 'Qatar', city: 'Canberra', type: 'Embassy', address: '10 Akame Circuit, O\'Malley ACT 2606', website: 'https://canberra.embassy.qa/en' },
-            { country: 'Romania', city: 'Canberra', type: 'Embassy', address: '41 Empire Circuit, Forrest ACT 2603', website: 'https://canberra.mae.ro/' },
-            { country: 'Russia', city: 'Canberra', type: 'Embassy', address: '78 Canberra Avenue, Griffith ACT 2603', website: 'https://australia.mid.ru/en/' },
-            { country: 'Saudi Arabia', city: 'Canberra', type: 'Embassy', address: '38 Guilfoyle Street, Yarralumla ACT 2600', website: 'https://embassies.mofa.gov.sa/sites/australia' },
-            { country: 'Serbia', city: 'Canberra', type: 'Embassy', address: '169 Dominion Circuit, Forrest ACT 2603', website: 'http://www.canberra.mfa.gov.rs/' },
-            { country: 'Singapore', city: 'Canberra', type: 'High Commission', address: '17 Forster Crescent, Yarralumla ACT 2600', website: 'https://www.mfa.gov.sg/canberra' },
-            { country: 'Slovakia', city: 'Canberra', type: 'Embassy', address: '47 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://www.mzv.sk/web/canberra-en' },
-            { country: 'Slovenia', city: 'Canberra', type: 'Embassy', address: 'Level 6, St. George\'s Building, 60 Marcus Clarke Street, Canberra ACT 2601', website: 'http://www.canberra.embassy.si/' },
-            { country: 'Solomon Islands', city: 'Canberra', type: 'High Commission', address: '3 Timbarra Crescent, O\'Malley ACT 2606', website: 'https://www.sihcaussi.org/' },
-            { country: 'South Africa', city: 'Canberra', type: 'High Commission', address: 'Cnr State Circle & Rhodes Place, Yarralumla ACT 2600', website: 'https://dirco1.azurewebsites.net/canberra/' },
-            { country: 'South Korea', city: 'Canberra', type: 'Embassy', address: '113 Empire Circuit, Yarralumla ACT 2600', website: 'https://overseas.mofa.go.kr/au-en/index.do' },
-            { country: 'Spain', city: 'Canberra', type: 'Embassy', address: '15 Arkana Street, Yarralumla ACT 2600', website: 'https://www.exteriores.gob.es/Embajadas/canberra/en/Paginas/index.aspx' },
-            { country: 'Sri Lanka', city: 'Canberra', type: 'High Commission', address: '61 Hampton Circuit, Yarralumla ACT 2600', website: 'https://www.slhcaust.org/' },
-            { country: 'Sweden', city: 'Canberra', type: 'Embassy', address: '5 Turrana Street, Yarralumla ACT 2600', website: 'https://www.swedenabroad.se/en/embassies/australia-canberra/' },
-            { country: 'Switzerland', city: 'Canberra', type: 'Embassy', address: '7 Melbourne Avenue, Forrest ACT 2603', website: 'https://www.eda.admin.ch/canberra' },
-            { country: 'Thailand', city: 'Canberra', type: 'Embassy', address: '111 Empire Circuit, Yarralumla ACT 2600', website: 'https://canberra.thaiembassy.org/' },
-            { country: 'Timor-Leste', city: 'Canberra', type: 'Embassy', address: '75 Dominion Circuit, Forrest ACT 2603', website: 'https://www.embtlcanberra.org/' },
-            { country: 'Tonga', city: 'Canberra', type: 'High Commission', address: '31 Endeavour Street, Red Hill ACT 2603', website: 'https://tongahighcommission.com.au/' },
-            { country: 'Turkey', city: 'Canberra', type: 'Embassy', address: '60 Mugga Way, Red Hill ACT 2603', website: 'http://canberra.emb.mfa.gov.tr' },
-            { country: 'Uganda', city: 'Canberra', type: 'High Commission', address: '22 Pindari Crescent, O\'Malley ACT 2606', website: 'https://canberra.mofa.go.ug/' },
-            { country: 'Ukraine', city: 'Canberra', type: 'Embassy', address: 'Level 12, St George Centre, 60 Marcus Clarke Street, Canberra ACT 2601', website: 'https://australia.mfa.gov.ua/en' },
-            { country: 'United Arab Emirates', city: 'Canberra', type: 'Embassy', address: '12 Bulwarra Close, O\'Malley ACT 2606', website: 'https://www.mofa.gov.ae/en/missions/canberra' },
-            { country: 'United Kingdom', city: 'Canberra', type: 'High Commission', address: 'Commonwealth Avenue, Yarralumla ACT 2600', website: 'https://www.gov.uk/world/organisations/british-high-commission-canberra' },
-            { country: 'United Kingdom', city: 'Sydney', type: 'Consulate-General', address: 'Level 16, Gateway Building, 1 Macquarie Place, Sydney NSW 2000', website: 'https://www.gov.uk/world/organisations/british-consulate-general-sydney' },
-            { country: 'United States', city: 'Canberra', type: 'Embassy', address: 'Moonah Place, Yarralumla ACT 2600', website: 'https://au.usembassy.gov/' },
-            { country: 'United States', city: 'Sydney', type: 'Consulate-General', address: 'Level 10, 48 Miller Street, North Sydney NSW 2060', website: 'https://au.usembassy.gov/embassy-consulates/sydney/' },
-            { country: 'United States', city: 'Melbourne', type: 'Consulate-General', address: '553 St Kilda Road, Melbourne VIC 3004', website: 'https://au.usembassy.gov/embassy-consulates/melbourne/' },
-            { country: 'United States', city: 'Perth', type: 'Consulate-General', address: 'Level 4, 16 St Georges Terrace, Perth WA 6000', website: 'https://au.usembassy.gov/embassy-consulates/perth/' },
-            { country: 'Uruguay', city: 'Canberra', type: 'Embassy', address: 'Suite 2, Level 4, 13 London Circuit, Canberra ACT 2601', website: 'https://www.uruguay.org.au/' },
-            { country: 'Vanuatu', city: 'Canberra', type: 'High Commission', address: '3rd Floor, 39 Empire Circuit, Forrest ACT 2603', website: 'https://vanuatuhighcommission.gov.vu/' },
-            { country: 'Venezuela', city: 'Canberra', type: 'Embassy', address: '7 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://embassy-finder.com/venezuela_in_canberra_australia' },
-            { country: 'Vietnam', city: 'Canberra', type: 'Embassy', address: '6 Timbarra Crescent, O\'Malley ACT 2606', website: 'https://vietnamembassy.org.au/' },
-            { country: 'Zimbabwe', city: 'Canberra', type: 'Embassy', address: '7 Timbarra Crescent, O\'Malley ACT 2606', website: 'https://www.zimbabweembassy.org.au/' },
-        ];
+        document.addEventListener('DOMContentLoaded', () => {
+            const missionsData = [
+                { city: "Abu Dhabi", country: "United Arab Emirates", type: "Embassy", lat: 24.46, lng: 54.36 },
+                { city: "Abuja", country: "Nigeria", type: "High Commission", lat: 9.07, lng: 7.49 },
+                { city: "Accra", country: "Ghana", type: "High Commission", lat: 5.60, lng: -0.18 },
+                { city: "Addis Ababa", country: "Ethiopia", type: "Embassy", lat: 9.01, lng: 38.76 },
+                { city: "Alofi", country: "Niue", type: "High Commission", lat: -19.05, lng: -169.92 },
+                { city: "Amman", country: "Jordan", type: "Embassy", lat: 31.95, lng: 35.93 },
+                { city: "Ankara", country: "Turkey", type: "Embassy", lat: 39.92, lng: 32.85 },
+                { city: "Apia", country: "Samoa", type: "High Commission", lat: -13.83, lng: -171.76 },
+                { city: "Athens", country: "Greece", type: "Embassy", lat: 37.98, lng: 23.72 },
+                { city: "Auckland", country: "New Zealand", type: "Consulate-General", lat: -36.85, lng: 174.76 },
+                { city: "Baghdad", country: "Iraq", type: "Embassy", lat: 33.31, lng: 44.36 },
+                { city: "Bali (Denpasar)", country: "Indonesia", type: "Consulate-General", lat: -8.67, lng: 115.21 },
+                { city: "Bandar Seri Begawan", country: "Brunei Darussalam", type: "High Commission", lat: 4.89, lng: 114.94 },
+                { city: "Bangkok", country: "Thailand", type: "Embassy", lat: 13.75, lng: 100.50 },
+                { city: "Beijing", country: "China", type: "Embassy", lat: 39.90, lng: 116.40 },
+                { city: "Beirut", country: "Lebanon", type: "Embassy", lat: 33.89, lng: 35.50 },
+                { city: "Belgrade", country: "Serbia", type: "Embassy", lat: 44.78, lng: 20.44 },
+                { city: "Bengaluru", country: "India", type: "Consulate-General", lat: 12.97, lng: 77.59 },
+                { city: "Berlin", country: "Germany", type: "Embassy", lat: 52.52, lng: 13.40 },
+                { city: "Bern", country: "Switzerland", type: "Embassy", lat: 46.94, lng: 7.44 },
+                { city: "Bogota", country: "Colombia", type: "Embassy", lat: 4.71, lng: -74.07 },
+                { city: "Brasilia", country: "Brazil", type: "Embassy", lat: -15.79, lng: -47.88 },
+                { city: "Brussels", country: "Belgium", type: "Embassy", lat: 50.85, lng: 4.35 },
+                { city: "Buenos Aires", country: "Argentina", type: "Embassy", lat: -34.60, lng: -58.38 },
+                { city: "Cairo", country: "Egypt", type: "Embassy", lat: 30.04, lng: 31.23 },
+                { city: "Canakkale", country: "Turkey", type: "Consulate", lat: 40.15, lng: 26.41 },
+                { city: "Chengdu", country: "China", type: "Consulate-General", lat: 30.57, lng: 104.06 },
+                { city: "Chennai", country: "India", type: "Consulate-General", lat: 13.08, lng: 80.27 },
+                { city: "Chicago", country: "United States of America", type: "Consulate-General", lat: 41.88, lng: -87.63 },
+                { city: "Colombo", country: "Sri Lanka", type: "High Commission", lat: 6.92, lng: 79.86 },
+                { city: "Copenhagen", country: "Denmark", type: "Embassy", lat: 55.67, lng: 12.56 },
+                { city: "Dhaka", country: "Bangladesh", type: "High Commission", lat: 23.81, lng: 90.41 },
+                { city: "Dili", country: "Timor-Leste", type: "Embassy", lat: -8.55, lng: 125.56 },
+                { city: "Doha", country: "Qatar", type: "Embassy", lat: 25.28, lng: 51.53 },
+                { city: "Dubai", country: "United Arab Emirates", type: "Consulate-General", lat: 25.20, lng: 55.27 },
+                { city: "Dublin", country: "Ireland", type: "Embassy", lat: 53.34, lng: -6.26 },
+                { city: "Frankfurt", country: "Germany", type: "Consulate-General", lat: 50.11, lng: 8.68 },
+                { city: "Funafuti", country: "Tuvalu", type: "High Commission", lat: -8.52, lng: 179.19 },
+                { city: "Geneva", country: "Switzerland", type: "Consulate-General and Permanent Mission", lat: 46.20, lng: 6.14 },
+                { city: "Guangzhou", country: "China", type: "Consulate-General", lat: 23.13, lng: 113.26 },
+                { city: "Hanoi", country: "Vietnam", type: "Embassy", lat: 21.02, lng: 105.83 },
+                { city: "Harare", country: "Zimbabwe", type: "Embassy", lat: -17.82, lng: 31.05 },
+                { city: "Ho Chi Minh City", country: "Vietnam", type: "Consulate-General", lat: 10.82, lng: 106.62 },
+                { city: "Hong Kong", country: "China", type: "Consulate-General", lat: 22.31, lng: 114.16 },
+                { city: "Honiara", country: "Solomon Islands", type: "High Commission", lat: -9.43, lng: 159.95 },
+                { city: "Honolulu", country: "United States of America", type: "Consulate-General", lat: 21.31, lng: -157.85 },
+                { city: "Houston", country: "United States of America", type: "Consulate-General", lat: 29.76, lng: -95.36 },
+                { city: "Islamabad", country: "Pakistan", type: "High Commission", lat: 33.73, lng: 73.09 },
+                { city: "Istanbul", country: "Turkey", type: "Consulate-General", lat: 41.00, lng: 28.97 },
+                { city: "Jakarta", country: "Indonesia", type: "Embassy", lat: -6.20, lng: 106.84 },
+                { city: "Kathmandu", country: "Nepal", type: "Embassy", lat: 27.71, lng: 85.32 },
+                { city: "Kolkata", country: "India", type: "Consulate-General", lat: 22.57, lng: 88.36 },
+                { city: "Kuala Lumpur", country: "Malaysia", type: "High Commission", lat: 3.13, lng: 101.68 },
+                { city: "Kuwait City", country: "Kuwait", type: "Embassy", lat: 29.37, lng: 47.97 },
+                { city: "Kyiv", country: "Ukraine", type: "Embassy", lat: 50.45, lng: 30.52 },
+                { city: "Lae", country: "Papua New Guinea", type: "Consulate-General", lat: -6.71, lng: 146.99 },
+                { city: "Lima", country: "Peru", type: "Embassy", lat: -12.04, lng: -77.04 },
+                { city: "Lisbon", country: "Portugal", type: "Embassy", lat: 38.72, lng: -9.13 },
+                { city: "London", country: "United Kingdom", type: "High Commission", lat: 51.50, lng: -0.12 },
+                { city: "Los Angeles", country: "United States of America", type: "Consulate-General", lat: 34.05, lng: -118.24 },
+                { city: "Madrid", country: "Spain", type: "Embassy", lat: 40.41, lng: -3.70 },
+                { city: "Majuro", country: "Marshall Islands", type: "Embassy", lat: 7.11, lng: 171.38 },
+                { city: "Makassar", country: "Indonesia", type: "Consulate-General", lat: -5.14, lng: 119.43 },
+                { city: "Malé", country: "Maldives", type: "High Commission", lat: 4.17, lng: 73.50 },
+                { city: "Malta", country: "Malta", type: "High Commission", lat: 35.89, lng: 14.51 },
+                { city: "Manila", country: "Philippines", type: "Embassy", lat: 14.59, lng: 120.98 },
+                { city: "Mexico City", country: "Mexico", type: "Embassy", lat: 19.43, lng: -99.13 },
+                { city: "Milan", country: "Italy", type: "Consulate-General", lat: 45.46, lng: 9.19 },
+                { city: "Moscow", country: "Russia", type: "Embassy", lat: 55.75, lng: 37.61 },
+                { city: "Mumbai", country: "India", type: "Consulate-General", lat: 19.07, lng: 72.87 },
+                { city: "Myanmar", country: "Yangon", type: "Embassy", lat: 16.86, lng: 96.19 },
+                { city: "Nairobi", country: "Kenya", type: "High Commission", lat: -1.29, lng: 36.82 },
+                { city: "Nauru", country: "Nauru", type: "High Commission", lat: -0.52, lng: 166.93 },
+                { city: "New Delhi", country: "India", type: "High Commission", lat: 28.61, lng: 77.20 },
+                { city: "New York", country: "United States of America", type: "Consulate-General", lat: 40.71, lng: -74.00 },
+                { city: "Nicosia", country: "Cyprus", type: "High Commission", lat: 35.18, lng: 33.36 },
+                { city: "Noumea", country: "New Caledonia", type: "Consulate-General", lat: -22.27, lng: 166.45 },
+                { city: "Nuku'Alofa", country: "Tonga", type: "High Commission", lat: -21.13, lng: -175.20 },
+                { city: "Osaka", country: "Japan", type: "Consulate-General", lat: 34.69, lng: 135.50 },
+                { city: "Ottawa", country: "Canada", type: "High Commission", lat: 45.42, lng: -75.69 },
+                { city: "Palau", country: "Palau", type: "Embassy", lat: 7.50, lng: 134.55 },
+                { city: "Papeete", country: "French Polynesia", type: "Consulate-General", lat: -17.53, lng: -149.56 },
+                { city: "Paris", country: "France", type: "Embassy", lat: 48.85, lng: 2.35 },
+                { city: "Phnom Penh", country: "Cambodia", type: "Embassy", lat: 11.55, lng: 104.91 },
+                { city: "Phuket", country: "Thailand", type: "Consulate-General", lat: 7.88, lng: 98.39 },
+                { city: "Pohnpei", country: "Federated States of Micronesia", type: "Embassy", lat: 6.96, lng: 158.20 },
+                { city: "Port Louis", country: "Mauritius", type: "High Commission", lat: -20.16, lng: 57.49 },
+                { city: "Port Moresby", country: "Papua New Guinea", type: "High Commission", lat: -9.44, lng: 147.18 },
+                { city: "Port of Spain", country: "Trinidad and Tobago", type: "High Commission", lat: 10.65, lng: -61.51 },
+                { city: "Port Vila", country: "Vanuatu", type: "High Commission", lat: -17.73, lng: 168.32 },
+                { city: "Pretoria", country: "South Africa", type: "High Commission", lat: -25.74, lng: 28.18 },
+                { city: "Ramallah", country: "Palestinian Authority", type: "Representative Office", lat: 31.90, lng: 35.20 },
+                { city: "Rarotonga", country: "Cook Islands", type: "High Commission", lat: -21.23, lng: -159.77 },
+                { city: "Riyadh", country: "Saudi Arabia", type: "Embassy", lat: 24.71, lng: 46.67 },
+                { city: "Rome", country: "Italy", type: "Embassy", lat: 41.90, lng: 12.49 },
+                { city: "San Francisco", country: "United States of America", type: "Consulate-General", lat: 37.77, lng: -122.41 },
+                { city: "Santiago", country: "Chile", type: "Embassy", lat: -33.44, lng: -70.66 },
+                { city: "Sao Paulo", country: "Brazil", type: "Consulate-General", lat: -23.55, lng: -46.63 },
+                { city: "Seoul", country: "Korea, Republic of (South)", type: "Embassy", lat: 37.56, lng: 126.97 },
+                { city: "Shanghai", country: "China", type: "Consulate-General", lat: 31.23, lng: 121.47 },
+                { city: "Singapore", country: "Singapore", type: "High Commission", lat: 1.35, lng: 103.81 },
+                { city: "Stockholm", country: "Sweden", type: "Embassy", lat: 59.32, lng: 18.06 },
+                { city: "Surabaya", country: "Indonesia", type: "Consulate-General", lat: -7.25, lng: 112.75 },
+                { city: "Suva", country: "Fiji", type: "High Commission", lat: -18.14, lng: 178.44 },
+                { city: "Taipei", country: "Taiwan", type: "Australian Office", lat: 25.03, lng: 121.56 },
+                { city: "Tallinn", country: "Estonia", type: "Embassy", lat: 59.43, lng: 24.75 },
+                { city: "Tarawa", country: "Kiribati", type: "High Commission", lat: 1.32, lng: 172.97 },
+                { city: "Tehran", country: "Iran", type: "Embassy", lat: 35.68, lng: 51.38 },
+                { city: "Tel Aviv", country: "Israel", type: "Embassy", lat: 32.08, lng: 34.78 },
+                { city: "The Hague", country: "Netherlands", type: "Embassy", lat: 52.07, lng: 4.30 },
+                { city: "Tokyo", country: "Japan", type: "Embassy", lat: 35.67, lng: 139.65 },
+                { city: "Toronto", country: "Canada", type: "Consulate-General", lat: 43.65, lng: -79.38 },
+                { city: "Ulaanbaatar", country: "Mongolia", type: "Embassy", lat: 47.91, lng: 106.88 },
+                { city: "Vancouver", country: "Canada", type: "Consulate", lat: 49.28, lng: -123.12 },
+                { city: "Vatican City", country: "Holy See", type: "Embassy", lat: 41.90, lng: 12.45 },
+                { city: "Vienna", country: "Austria", type: "Embassy", lat: 48.20, lng: 16.37 },
+                { city: "Vientiane", country: "Laos", type: "Embassy", lat: 17.97, lng: 102.63 },
+                { city: "Warsaw", country: "Poland", type: "Embassy", lat: 52.22, lng: 21.01 },
+                { city: "Washington DC", country: "United States of America", type: "Embassy", lat: 38.90, lng: -77.03 },
+                { city: "Wellington", country: "New Zealand", type: "High Commission", lat: -41.28, lng: 174.77 },
+                { city: "Zagreb", country: "Croatia", type: "Embassy", lat: 45.81, lng: 15.98 }
+            ];
 
-        function populateMissions() {
+            const countryFilter = document.getElementById('countryFilter');
+            const typeFilter = document.getElementById('typeFilter');
+            const searchInput = document.getElementById('search');
+            const sortBy = document.getElementById('sortBy');
             const missionsGrid = document.getElementById('missionsGrid');
-            missionsGrid.innerHTML = '';
-            const cityFilter = document.getElementById('cityFilter').value;
-            const typeFilter = document.getElementById('typeFilter').value;
-            const searchFilter = document.getElementById('searchInput').value.toUpperCase();
+            const resultsCount = document.getElementById('resultsCount');
+            const goToTopBtn = document.getElementById('goToTopBtn');
+            const goToBottomBtn = document.getElementById('goToBottomBtn');
+            
+            let map;
+            let currentMarkers = L.layerGroup();
 
-            const filteredMissions = missionsData.filter(mission => {
-                const cityMatch = (cityFilter === 'All' || mission.city === cityFilter);
-                const typeMatch = (typeFilter === 'All' || mission.type === typeFilter);
-                const searchMatch = (mission.country.toUpperCase().includes(searchFilter));
-                return cityMatch && typeMatch && searchMatch;
-            });
-
-            if (filteredMissions.length === 0) {
-                missionsGrid.innerHTML = `<p class="text-gray-500 col-span-full text-center">No missions found matching your criteria.</p>`;
-                return;
+            function initializeMap() {
+                map = L.map('map').setView([20, 30], 3);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 18,
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+                currentMarkers.addTo(map);
             }
 
-            filteredMissions.forEach(mission => {
-                const missionCard = document.createElement('div');
-                missionCard.className = 'mission-card bg-white p-6 rounded-lg border border-gray-200 flex flex-col';
-                missionCard.innerHTML = `
-                    <h3 class="font-bold text-xl text-gray-800">${mission.country}</h3>
-                    <p class="text-gray-600 font-medium">${mission.type} in ${mission.city}</p>
-                    <p class="text-sm text-gray-500 mt-2 flex-grow">${mission.address}</p>
-                    <a href="${mission.website}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline text-sm mt-4 inline-block self-start">
-                        Visit Website →
-                    </a>
-                `;
-                missionsGrid.appendChild(missionCard);
-            });
-        }
+            function initializeFilters() {
+                const countries = [...new Set(missionsData.map(m => m.country))].sort();
+                countries.forEach(country => {
+                    const option = document.createElement('option');
+                    option.value = country;
+                    option.textContent = country;
+                    countryFilter.appendChild(option);
+                });
 
-        function filterMissions() {
-            populateMissions();
-        }
-
-        // --- Scroll Button Logic ---
-        const goToTopBtn = document.getElementById('goToTopBtn');
-        const goToBottomBtn = document.getElementById('goToBottomBtn');
-
-        window.onscroll = function() {
-            const scrollPosition = window.scrollY || document.documentElement.scrollTop;
-            const pageHeight = document.documentElement.scrollHeight;
-            const viewportHeight = window.innerHeight;
-
-            // Show "Go to Top" button only when scrolled down
-            if (scrollPosition > 100) {
-                goToTopBtn.classList.remove('hidden');
-            } else {
-                goToTopBtn.classList.add('hidden');
+                const types = [...new Set(missionsData.map(m => m.type))].sort();
+                types.forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type;
+                    option.textContent = type;
+                    typeFilter.appendChild(option);
+                });
             }
 
-            // Show "Go to Bottom" button unless you're at the very bottom
-            if (scrollPosition + viewportHeight >= pageHeight - 100) { // Hides 100px from bottom
-                goToBottomBtn.classList.add('hidden');
-            } else {
-                goToBottomBtn.classList.remove('hidden');
+            function renderMissions() {
+                const country = countryFilter.value;
+                const type = typeFilter.value;
+                const searchTerm = searchInput.value.toLowerCase();
+                const sortValue = sortBy.value;
+
+                let filteredMissions = missionsData.filter(mission => {
+                    const matchesCountry = country === 'all' || mission.country === country;
+                    const matchesType = type === 'all' || mission.type === type;
+                    const matchesSearch = !searchTerm ||
+                        mission.city.toLowerCase().includes(searchTerm) ||
+                        mission.country.toLowerCase().includes(searchTerm);
+                    return matchesCountry && matchesType && matchesSearch;
+                });
+
+                filteredMissions.sort((a, b) => {
+                    switch (sortValue) {
+                        case 'city_asc': return a.city.localeCompare(b.city);
+                        case 'city_desc': return b.city.localeCompare(a.city);
+                        case 'country_asc': return a.country.localeCompare(b.country);
+                        case 'country_desc': return b.country.localeCompare(a.country);
+                        default: return 0;
+                    }
+                });
+
+                missionsGrid.innerHTML = '';
+                if (filteredMissions.length === 0) {
+                    missionsGrid.innerHTML = `<p class="text-slate-500 md:col-span-2 xl:col-span-3 text-center">No missions found matching your criteria.</p>`;
+                } else {
+                    filteredMissions.forEach(mission => {
+                        const websiteLink = mission.website ? `<a href="${mission.website}" target="_blank" rel="noopener noreferrer" class="inline-block bg-teal-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors">Visit Website</a>` : `<span class="text-slate-500">Website not available</span>`;
+                        const card = `
+                            <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6 flex flex-col">
+                                <h3 class="text-xl font-bold text-slate-900">${mission.city}</h3>
+                                <p class="text-slate-600 mb-1">${mission.country}</p>
+                                <p class="text-sm font-semibold text-teal-700 bg-teal-100 px-2 py-1 rounded-full self-start mb-4">${mission.type}</p>
+                                <div class="text-slate-700 space-y-2 text-sm flex-grow">
+                                    <p><span class="font-semibold">Address:</span> ${mission.address || 'N/A'}</p>
+                                    <p><span class="font-semibold">Phone:</span> ${mission.phone || 'N/A'}</p>
+                                </div>
+                                <div class="mt-4 pt-4 border-t border-slate-200">
+                                    ${websiteLink}
+                                </div>
+                            </div>
+                        `;
+                        missionsGrid.innerHTML += card;
+                    });
+                }
+                resultsCount.textContent = `Showing ${filteredMissions.length} of ${missionsData.length} missions`;
+                updateMap(filteredMissions);
             }
-        };
 
-        function scrollToTop() {
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
+            function updateMap(filteredData) {
+                currentMarkers.clearLayers();
+                
+                const markerGroupForBounds = L.featureGroup();
 
-        function scrollToBottom() {
-            // This function scrolls to the very end of the page
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
+                filteredData.forEach(mission => {
+                    if(mission.lat && mission.lng) {
+                        const marker = L.marker([mission.lat, mission.lng]);
+                        marker.bindPopup(`<b>${mission.city}, ${mission.country}</b><br>${mission.type}`);
+                        currentMarkers.addLayer(marker);
+                        markerGroupForBounds.addLayer(marker);
+                    }
+                });
 
-        window.onload = () => {
-            populateMissions();
-        };
+                if (filteredData.length > 0 && filteredData.some(m => m.lat && m.lng)) {
+                    map.fitBounds(markerGroupForBounds.getBounds().pad(0.2));
+                } else {
+                    map.setView([20, 30], 3);
+                }
+            }
+            
+            function handleScrollButtons() {
+                const scrollY = window.scrollY;
+                const pageHeight = document.body.scrollHeight;
+                const viewportHeight = window.innerHeight;
+
+                if (scrollY > 300) {
+                    goToTopBtn.style.display = 'flex';
+                } else {
+                    goToTopBtn.style.display = 'none';
+                }
+
+                if (scrollY + viewportHeight < pageHeight - 100) {
+                    goToBottomBtn.style.display = 'flex';
+                } else {
+                    goToBottomBtn.style.display = 'none';
+                }
+            }
+
+            countryFilter.addEventListener('change', renderMissions);
+            typeFilter.addEventListener('change', renderMissions);
+            searchInput.addEventListener('input', renderMissions);
+            sortBy.addEventListener('change', renderMissions);
+            goToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+            goToBottomBtn.addEventListener('click', () => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }));
+            window.addEventListener('scroll', handleScrollButtons);
+
+            initializeMap();
+            initializeFilters();
+            renderMissions();
+            handleScrollButtons();
+        });
     </script>
 </body>
 </html>
