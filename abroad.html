@@ -8,9 +8,11 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
         body {
             font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth;
         }
         #map {
             height: 500px;
@@ -34,23 +36,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: A dashboard-style SPA is used to present the data. The structure includes a header, a control panel for user interaction (filters, search, sort), an interactive map, and a responsive grid for displaying mission details as cards. This structure was chosen to transform a static data table into an engaging, user-driven exploration tool. It prioritizes usability by allowing users to quickly find and compare information both textually and geographically. The map provides immediate visual context that updates with user filters. -->
+    <!-- Visualization & Content Choices: Report Info: List of missions -> Goal: Organize & Inform -> Presentation: Interactive card grid -> Interaction: The grid dynamically updates based on user filtering, sorting, and searching. Report Info: Geographic location of missions -> Goal: Organize & Compare -> Viz Method: Interactive Map (Leaflet.js) with markers -> Interaction: Markers on the map are filtered in real-time based on the user's selections in the control panel, providing a direct visual link between the filtered data and their locations. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 </head>
-<body class="bg-gray-50 text-gray-800">
-
-    <nav class="bg-gray-800 text-white shadow-md no-print">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-center h-16">
-                <div class="flex space-x-4">
-                    <a href="index.html" class="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Visa Guide</a>
-                    <a href="missions.html" class="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Missions</a>
-                    <a href="abroad.html" class="bg-gray-900 px-3 py-2 rounded-md text-sm font-medium">Abroad</a>
-                    <a href="strategy.html" class="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Strategy</a>
-                    <a href="documents.html" class="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Documents</a>
-                    <a href="logistics.html" class="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Logistics</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+<body class="bg-slate-50 text-slate-800">
 
     <div class="container mx-auto p-4 sm:p-6 lg:p-8">
         <header class="text-center mb-8">
@@ -108,92 +99,139 @@
         </main>
     </div>
 
-    <button onclick="scrollToBottom()" id="goToBottomBtn" title="Go to Bottom" class="fixed bottom-5 left-5 w-12 h-12 bg-green-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-green-700 transition-all text-2xl font-bold z-20">
-        &#8595;
-    </button>
-    <button onclick="scrollToTop()" id="goToTopBtn" title="Go to top" class="fixed hidden bottom-5 right-5 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-all text-2xl font-bold z-20">
-        &#8593;
-    </button>
+    <div class="fixed bottom-5 w-full px-5 z-20 flex justify-between">
+        <button id="goToBottomBtn" title="Go to bottom" class="hidden w-12 h-12 bg-green-600 text-white rounded-full shadow-lg items-center justify-center hover:bg-green-700 transition-all text-2xl font-bold">
+            &#8595;
+        </button>
+        <button id="goToTopBtn" title="Go to top" class="hidden w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg items-center justify-center hover:bg-blue-700 transition-all text-2xl font-bold">
+            &#8593;
+        </button>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const missionsData = [
-                { city: "Abu Dhabi", country: "United Arab Emirates", type: "Embassy", address: "Al Mubarraz Tower, corner of Sheikh Zayed the First St and 26th St, Abu Dhabi", phone: "+971 2 401 7500", website: "https://uae.embassy.gov.au/", lat: 24.46, lng: 54.36 },
-                { city: "Accra", country: "Ghana", type: "High Commission", address: "2, Second Rangoon Close, Cantonments, Accra", phone: "+233 302 216 400", website: "https://ghana.embassy.gov.au/", lat: 5.60, lng: -0.18 },
-                { city: "Amman", country: "Jordan", type: "Embassy", address: "41 Kayed Al Armouti Street, Abdoun, Amman", phone: "+962 6 580 7000", website: "https://jordan.embassy.gov.au/", lat: 31.95, lng: 35.93 },
-                { city: "Ankara", country: "Turkey", type: "Embassy", address: "Uğur Mumcu Caddesi No: 88, 7th Floor, Gaziosmanpaşa, 06700, Ankara", phone: "+90 312 459 9500", website: "https://turkey.embassy.gov.au/", lat: 39.92, lng: 32.85 },
-                { city: "Apia", country: "Samoa", type: "High Commission", address: "Beach Road, Apia", phone: "+685 23 411", website: "https://samoa.embassy.gov.au/", lat: -13.83, lng: -171.76 },
-                { city: "Athens", country: "Greece", type: "Embassy", address: "Hatziyianni Mexi 5, Athens 115 21", phone: "+30 210 870 4000", website: "https://greece.embassy.gov.au/", lat: 37.98, lng: 23.72 },
-                { city: "Baghdad", country: "Iraq", type: "Embassy", address: "International Zone, Baghdad", phone: "+964 780 923 5430", website: "https://iraq.embassy.gov.au/", lat: 33.31, lng: 44.36 },
-                { city: "Bangkok", country: "Thailand", type: "Embassy", address: "181 Wireless Road, Lumphini, Pathumwan, Bangkok 10330", phone: "+66 2 344 6300", website: "https://thailand.embassy.gov.au/", lat: 13.75, lng: 100.50 },
-                { city: "Beijing", country: "China", type: "Embassy", address: "21 Dongzhimenwai Dajie, Sanlitun, Beijing", phone: "+86 10 5140 4111", website: "https://china.embassy.gov.au/", lat: 39.90, lng: 116.40 },
-                { city: "Beirut", country: "Lebanon", type: "Embassy", address: "Embassy Complex, Serail Hill, Downtown Beirut", phone: "+961 1 960 600", website: "https://lebanon.embassy.gov.au/", lat: 33.89, lng: 35.50 },
-                { city: "Belgrade", country: "Serbia", type: "Embassy", address: "8 Vladimira Popovica, Novi Beograd, Belgrade", phone: "+381 11 330 3400", website: "https://serbia.embassy.gov.au/", lat: 44.78, lng: 20.44 },
-                { city: "Berlin", country: "Germany", type: "Embassy", address: "Wallstrasse 76-79, 10179 Berlin", phone: "+49 30 8800 880", website: "https://germany.embassy.gov.au/", lat: 52.52, lng: 13.40 },
-                { city: "Bern", country: "Switzerland", type: "Embassy", address: "Weltpoststrasse 5, 2nd Floor, 3015 Bern", phone: "+41 31 310 17 80", website: "https://switzerland.embassy.gov.au/", lat: 46.94, lng: 7.44 },
-                { city: "Bogotá", country: "Colombia", type: "Embassy", address: "Edificio Tierra Firme, Avenida Carrera 9, No. 115-06/30, Oficina 2003, Bogotá", phone: "+57 1 657 8030", website: "https://colombia.embassy.gov.au/", lat: 4.71, lng: -74.07 },
-                { city: "Brasilia", country: "Brazil", type: "Embassy", address: "SES Avenida das Nações, Quadra 801, Lote 04, Brasilia - DF", phone: "+55 61 3226 3111", website: "https://brazil.embassy.gov.au/", lat: -15.79, lng: -47.88 },
-                { city: "Brussels", country: "Belgium", type: "Embassy", address: "Avenue des Arts/Kunstlaan 56, 1000 Brussels", phone: "+32 2 286 0500", website: "https://belgium.embassy.gov.au/", lat: 50.85, lng: 4.35 },
-                { city: "Buenos Aires", country: "Argentina", type: "Embassy", address: "Villanueva 1400, C1426BMJ, Buenos Aires", phone: "+54 11 4779 3500", website: "https://argentina.embassy.gov.au/", lat: -34.60, lng: -58.38 },
-                { city: "Cairo", country: "Egypt", type: "Embassy", address: "World Trade Centre, 1191 Corniche El-Nil, Boulac, Cairo", phone: "+20 2 2770 6600", website: "https://egypt.embassy.gov.au/", lat: 30.04, lng: 31.23 },
-                { city: "Colombo", country: "Sri Lanka", type: "High Commission", address: "21, Gregory's Road, Colombo 7", phone: "+94 11 246 3200", website: "https://srilanka.embassy.gov.au/", lat: 6.92, lng: 79.86 },
-                { city: "Copenhagen", country: "Denmark", type: "Embassy", address: "Dampfaergevej 26, 2nd floor, 2100 Copenhagen", phone: "+45 70 26 36 76", website: "https://denmark.embassy.gov.au/", lat: 55.67, lng: 12.56 },
-                { city: "Dhaka", country: "Bangladesh", type: "High Commission", address: "184 Gulshan Avenue, Gulshan-2, Dhaka 1212", phone: "+880 2 881 3105", website: "https://bangladesh.embassy.gov.au/", lat: 23.81, lng: 90.41 },
-                { city: "Dili", country: "Timor-Leste", type: "Embassy", address: "Rua Mártires da Pátria, Dili", phone: "+670 332 2111", website: "https://timorleste.embassy.gov.au/", lat: -8.55, lng: 125.56 },
-                { city: "Doha", country: "Qatar", type: "Embassy", address: "Tornado Tower, Level 21, West Bay, Doha", phone: "+974 4007 8500", website: "https://qatar.embassy.gov.au/", lat: 25.28, lng: 51.53 },
-                { city: "Dubai", country: "United Arab Emirates", type: "Consulate-General", address: "Level 25, BurJuman Business Tower, Dubai", phone: "+971 4 508 7100", website: "https://uae.embassy.gov.au/", lat: 25.20, lng: 55.27 },
-                { city: "Dublin", country: "Ireland", type: "Embassy", address: "2nd Floor, 6-8 College Green, Dublin 2", phone: "+353 1 664 5300", website: "https://ireland.embassy.gov.au/", lat: 53.34, lng: -6.26 },
-                { city: "Geneva", country: "Switzerland", type: "Consulate-General", address: "Chemin des Fins 2, 1218 Le Grand-Saconnex, Geneva", phone: "+41 22 799 9100", website: "https://geneva.mission.gov.au/", lat: 46.20, lng: 6.14 },
-                { city: "Hanoi", country: "Vietnam", type: "Embassy", address: "8 Dao Tan Street, Ba Dinh District, Hanoi", phone: "+84 24 3774 0100", website: "https://vietnam.embassy.gov.au/", lat: 21.02, lng: 105.83 },
-                { city: "Harare", country: "Zimbabwe", type: "Embassy", address: "1 Green Close, Borrowdale, Harare", phone: "+263 867 700 7381", website: "https://zimbabwe.embassy.gov.au/", lat: -17.82, lng: 31.05 },
-                { city: "Ho Chi Minh City", country: "Vietnam", type: "Consulate-General", address: "Level 20, Vincom Center, 47 Ly Tu Trong Street, District 1, Ho Chi Minh City", phone: "+84 28 3521 8100", website: "https://vietnam.embassy.gov.au/", lat: 10.82, lng: 106.62 },
-                { city: "Honiara", country: "Solomon Islands", type: "High Commission", address: "Cnr Hibiscus Avenue & Mud Alley, Honiara", phone: "+677 21561", website: "https://solomonislands.embassy.gov.au/", lat: -9.43, lng: 159.95 },
-                { city: "Islamabad", country: "Pakistan", type: "High Commission", address: "Diplomatic Enclave No.1, Sector G-5/4, Islamabad", phone: "+92 51 835 5500", website: "https://pakistan.embassy.gov.au/", lat: 33.73, lng: 73.09 },
-                { city: "Jakarta", country: "Indonesia", type: "Embassy", address: "Jalan Patra Kuningan Raya Kav. 1-4, Jakarta Selatan", phone: "+62 21 2550 5555", website: "https://indonesia.embassy.gov.au/", lat: -6.20, lng: 106.84 },
-                { city: "Kathmandu", country: "Nepal", type: "Embassy", address: "Bansbari, Kathmandu", phone: "+977 1 437 1678", website: "https://nepal.embassy.gov.au/", lat: 27.71, lng: 85.32 },
-                { city: "Kuala Lumpur", country: "Malaysia", type: "High Commission", address: "6, Jalan Yap Kwan Seng, 50450 Kuala Lumpur", phone: "+60 3 2146 5555", website: "https://malaysia.embassy.gov.au/", lat: 3.13, lng: 101.68 },
-                { city: "Kuwait City", country: "Kuwait", type: "Embassy", address: "Dar Al-Awadi Complex, Ahmed Al-Jaber Street, Sharq, Kuwait City", phone: "+965 2232 2422", website: "https://kuwait.embassy.gov.au/", lat: 29.37, lng: 47.97 },
-                { city: "Lima", country: "Peru", type: "Embassy", address: "Av. La Paz 1049, Piso 10, Miraflores, Lima 18", phone: "+51 1 630 0500", website: "https://peru.embassy.gov.au/", lat: -12.04, lng: -77.04 },
-                { city: "Lisbon", country: "Portugal", type: "Embassy", address: "Avenida da Liberdade, 200, 1250-147 Lisbon", phone: "+351 21 310 1500", website: "https://portugal.embassy.gov.au/", lat: 38.72, lng: -9.13 },
-                { city: "London", country: "United Kingdom", type: "High Commission", address: "Australia House, Strand, London WC2B 4LA", phone: "+44 20 7379 4334", website: "https://uk.embassy.gov.au/", lat: 51.50, lng: -0.12 },
-                { city: "Madrid", country: "Spain", type: "Embassy", address: "Torre Emperador Castellana, Paseo de la Castellana 259D, 28046 Madrid", phone: "+34 91 353 6600", website: "https://spain.embassy.gov.au/", lat: 40.41, lng: -3.70 },
-                { city: "Malé", country: "Maldives", type: "High Commission", address: "G. Manaam Building, 2/1 Neeloafaru Magu, Malé", phone: "+960 334 2070", website: "", lat: 4.17, lng: 73.50 },
-                { city: "Manila", country: "Philippines", type: "Embassy", address: "Level 23, Tower 2, RCBC Plaza, 6819 Ayala Avenue, Makati City 1200", phone: "+63 2 7757 8100", website: "https://philippines.embassy.gov.au/", lat: 14.59, lng: 120.98 },
-                { city: "Mexico City", country: "Mexico", type: "Embassy", address: "Ruben Dario 55, Polanco, 11580 Mexico City", phone: "+52 55 1101 2200", website: "https://mexico.embassy.gov.au/", lat: 19.43, lng: -99.13 },
-                { city: "Moscow", country: "Russia", type: "Embassy", address: "10A/2 Podkolokolny Pereulok, Moscow 109028", phone: "+7 495 956 6070", website: "https://russia.embassy.gov.au/", lat: 55.75, lng: 37.61 },
-                { city: "Nairobi", country: "Kenya", type: "High Commission", address: "Limuru Road, Rosslyn, Nairobi", phone: "+254 20 427 7100", website: "https://kenya.embassy.gov.au/", lat: -1.29, lng: 36.82 },
-                { city: "New Delhi", country: "India", type: "High Commission", address: "1/50G, Shantipath, Chanakyapuri, New Delhi 110021", phone: "+91 11 4139 9900", website: "https://india.highcommission.gov.au/", lat: 28.61, lng: 77.20 },
-                { city: "Nicosia", country: "Cyprus", type: "High Commission", address: "7, Zenonos Sozou Street, Nicosia 1075", phone: "+357 22 697 500", website: "https://cyprus.embassy.gov.au/", lat: 35.18, lng: 33.36 },
-                { city: "Nuku'alofa", country: "Tonga", type: "High Commission", address: "Salote Road, Nuku'alofa", phone: "+676 23244", website: "https://tonga.embassy.gov.au/", lat: -21.13, lng: -175.20 },
-                { city: "Ottawa", country: "Canada", type: "High Commission", address: "50 O'Connor Street, Suite 1301, Ottawa, Ontario K1P 6L2", phone: "+1 613 236 0841", website: "https://canada.embassy.gov.au/", lat: 45.42, lng: -75.69 },
-                { city: "Paris", country: "France", type: "Embassy", address: "4 Rue Jean Rey, 75015 Paris", phone: "+33 1 4059 3300", website: "https://france.embassy.gov.au/", lat: 48.85, lng: 2.35 },
-                { city: "Phnom Penh", country: "Cambodia", type: "Embassy", address: "16B National Assembly Street, Sangkat Tonle Bassac, Khan Chamkarmon, Phnom Penh", phone: "+855 23 213 470", website: "https://cambodia.embassy.gov.au/", lat: 11.55, lng: 104.91 },
-                { city: "Port Louis", country: "Mauritius", type: "High Commission", address: "2nd Floor, Rogers House, 5 President John Kennedy Street, Port Louis", phone: "+230 202 0160", website: "https://mauritius.embassy.gov.au/", lat: -20.16, lng: 57.49 },
-                { city: "Port Moresby", country: "Papua New Guinea", type: "High Commission", address: "Godwit Road, Waigani, NCD", phone: "+675 7090 0100", website: "https://png.embassy.gov.au/", lat: -9.44, lng: 147.18 },
-                { city: "Port of Spain", country: "Trinidad and Tobago", type: "High Commission", address: "18 Herbert Street, St Clair, Port of Spain", phone: "+1 868 822 5450", website: "https://trinidadandtobago.embassy.gov.au/", lat: 10.65, lng: -61.51 },
-                { city: "Port Vila", country: "Vanuatu", type: "High Commission", address: "Winston Churchill Avenue, Port Vila", phone: "+678 22777", website: "https://vanuatu.embassy.gov.au/", lat: -17.73, lng: 168.32 },
-                { city: "Pretoria", country: "South Africa", type: "High Commission", address: "292 Orient Street, Arcadia, Pretoria 0083", phone: "+27 12 423 6000", website: "https://southafrica.embassy.gov.au/", lat: -25.74, lng: 28.18 },
-                { city: "Ramallah", country: "Palestinian Territories", type: "Representative Office", address: "7th Floor, Trust Building, Al-Irsal Street, Ramallah", phone: "+972 2 298 9000", website: "https://ramallah.mission.gov.au/", lat: 31.90, lng: 35.20 },
-                { city: "Riyadh", country: "Saudi Arabia", type: "Embassy", address: "Diplomatic Quarter, Riyadh", phone: "+966 11 250 0900", website: "https://saudiarabia.embassy.gov.au/", lat: 24.71, lng: 46.67 },
-                { city: "Rome", country: "Italy", type: "Embassy", address: "Via Antonio Bosio, 5, 00161 Rome", phone: "+39 06 8527 21", website: "https://italy.embassy.gov.au/", lat: 41.90, lng: 12.49 },
-                { city: "Santiago", country: "Chile", type: "Embassy", address: "Isidora Goyenechea 3621, 12th & 13th Floors, Las Condes, Santiago", phone: "+56 2 2550 3500", website: "https://chile.embassy.gov.au/", lat: -33.44, lng: -70.66 },
-                { city: "Seoul", country: "South Korea", type: "Embassy", address: "19th Floor, Kyobo Building, 1 Jong-ro, Jongno-gu, Seoul", phone: "+82 2 2003 0100", website: "https://southkorea.embassy.gov.au/", lat: 37.56, lng: 126.97 },
-                { city: "Singapore", country: "Singapore", type: "High Commission", address: "25 Napier Road, Singapore 258507", phone: "+65 6836 4100", website: "https://singapore.embassy.gov.au/", lat: 1.35, lng: 103.81 },
-                { city: "Stockholm", country: "Sweden", type: "Embassy", address: "Klarabergsviadukten 63, Stockholm", phone: "+46 8 613 2900", website: "https://sweden.embassy.gov.au/", lat: 59.32, lng: 18.06 },
-                { city: "Suva", country: "Fiji", type: "High Commission", address: "37 Princes Road, Tamavua, Suva", phone: "+679 338 2200", website: "https://fiji.embassy.gov.au/", lat: -18.14, lng: 178.44 },
-                { city: "Taipei", country: "Taiwan", type: "Australian Office", address: "27-28F, 9-11 Songgao Road, Xinyi District, Taipei", phone: "+886 2 8725 4100", website: "https://australia.org.tw/", lat: 25.03, lng: 121.56 },
-                { city: "Tarawa", country: "Kiribati", type: "High Commission", address: "Bairiki, Tarawa", phone: "+686 7502 1184", website: "https://kiribati.embassy.gov.au/", lat: 1.32, lng: 172.97 },
-                { city: "Tehran", country: "Iran", type: "Embassy", address: "No. 13, Yekta Street, Bahar Street, Shahid Fallahi Street, Valie Asr Avenue, Tehran", phone: "+98 21 7288 8000", website: "https://iran.embassy.gov.au/", lat: 35.68, lng: 51.38 },
-                { city: "Tel Aviv", country: "Israel", type: "Embassy", address: "Discount Bank Tower (28th Floor), 23 Yehuda Halevi Street, Tel Aviv 6513601", phone: "+972 3 693 5000", website: "https://israel.embassy.gov.au/", lat: 32.08, lng: 34.78 },
-                { city: "The Hague", country: "Netherlands", type: "Embassy", address: "Carnegielaan 4, 2517 KH The Hague", phone: "+31 70 310 8200", website: "https://netherlands.embassy.gov.au/", lat: 52.07, lng: 4.30 },
-                { city: "Tokyo", country: "Japan", type: "Embassy", address: "2-1-14 Mita, Minato-ku, Tokyo 108-8361", phone: "+81 3 5232 4111", website: "https://japan.embassy.gov.au/", lat: 35.67, lng: 139.65 },
-                { city: "Vienna", country: "Austria", type: "Embassy", address: "Mattiellistrasse 2, 1040 Vienna", phone: "+43 1 506 740", website: "https://austria.embassy.gov.au/", lat: 48.20, lng: 16.37 },
-                { city: "Vientiane", country: "Laos", type: "Embassy", address: "KM4, Thadeua Road, Watnak Village, Sisattanak District, Vientiane", phone: "+856 21 353 800", website: "https://laos.embassy.gov.au/", lat: 17.97, lng: 102.63 },
-                { city: "Warsaw", country: "Poland", type: "Embassy", address: "Nowogrodzka 11, 00-511 Warsaw", phone: "+48 22 521 3444", website: "https://poland.embassy.gov.au/", lat: 52.22, lng: 21.01 },
-                { city: "Washington", country: "United States", type: "Embassy", address: "1601 Massachusetts Avenue NW, Washington, D.C. 20036", phone: "+1 202 797 3000", website: "https://usa.embassy.gov.au/", lat: 38.90, lng: -77.03 },
-                { city: "Wellington", country: "New Zealand", type: "High Commission", address: "72-76 Hobson Street, Thorndon, Wellington", phone: "+64 4 473 6411", website: "https://newzealand.embassy.gov.au/", lat: -41.28, lng: 174.77 },
-                { city: "Yangon", country: "Myanmar", type: "Embassy", address: "88 Strand Road, Kyauktada Township, Yangon", phone: "+95 1 251 810", website: "https://myanmar.embassy.gov.au/", lat: 16.86, lng: 96.19 },
-                { city: "Zagreb", country: "Croatia", type: "Embassy", address: "Kaptol Centar, Nova Ves 11, 3rd Floor, 10000 Zagreb", phone: "+385 1 489 1200", website: "https://croatia.embassy.gov.au/", lat: 45.81, lng: 15.98 }
+                { city: "Abu Dhabi", country: "United Arab Emirates", type: "Embassy", lat: 24.46, lng: 54.36 },
+                { city: "Abuja", country: "Nigeria", type: "High Commission", lat: 9.07, lng: 7.49 },
+                { city: "Accra", country: "Ghana", type: "High Commission", lat: 5.60, lng: -0.18 },
+                { city: "Addis Ababa", country: "Ethiopia", type: "Embassy", lat: 9.01, lng: 38.76 },
+                { city: "Alofi", country: "Niue", type: "High Commission", lat: -19.05, lng: -169.92 },
+                { city: "Amman", country: "Jordan", type: "Embassy", lat: 31.95, lng: 35.93 },
+                { city: "Ankara", country: "Turkey", type: "Embassy", lat: 39.92, lng: 32.85 },
+                { city: "Apia", country: "Samoa", type: "High Commission", lat: -13.83, lng: -171.76 },
+                { city: "Athens", country: "Greece", type: "Embassy", lat: 37.98, lng: 23.72 },
+                { city: "Auckland", country: "New Zealand", type: "Consulate-General", lat: -36.85, lng: 174.76 },
+                { city: "Baghdad", country: "Iraq", type: "Embassy", lat: 33.31, lng: 44.36 },
+                { city: "Bali (Denpasar)", country: "Indonesia", type: "Consulate-General", lat: -8.67, lng: 115.21 },
+                { city: "Bandar Seri Begawan", country: "Brunei Darussalam", type: "High Commission", lat: 4.89, lng: 114.94 },
+                { city: "Bangkok", country: "Thailand", type: "Embassy", lat: 13.75, lng: 100.50 },
+                { city: "Beijing", country: "China", type: "Embassy", lat: 39.90, lng: 116.40 },
+                { city: "Beirut", country: "Lebanon", type: "Embassy", lat: 33.89, lng: 35.50 },
+                { city: "Belgrade", country: "Serbia", type: "Embassy", lat: 44.78, lng: 20.44 },
+                { city: "Bengaluru", country: "India", type: "Consulate-General", lat: 12.97, lng: 77.59 },
+                { city: "Berlin", country: "Germany", type: "Embassy", lat: 52.52, lng: 13.40 },
+                { city: "Bern", country: "Switzerland", type: "Embassy", lat: 46.94, lng: 7.44 },
+                { city: "Bogota", country: "Colombia", type: "Embassy", lat: 4.71, lng: -74.07 },
+                { city: "Brasilia", country: "Brazil", type: "Embassy", lat: -15.79, lng: -47.88 },
+                { city: "Brussels", country: "Belgium", type: "Embassy", lat: 50.85, lng: 4.35 },
+                { city: "Buenos Aires", country: "Argentina", type: "Embassy", lat: -34.60, lng: -58.38 },
+                { city: "Cairo", country: "Egypt", type: "Embassy", lat: 30.04, lng: 31.23 },
+                { city: "Canakkale", country: "Turkey", type: "Consulate", lat: 40.15, lng: 26.41 },
+                { city: "Chengdu", country: "China", type: "Consulate-General", lat: 30.57, lng: 104.06 },
+                { city: "Chennai", country: "India", type: "Consulate-General", lat: 13.08, lng: 80.27 },
+                { city: "Chicago", country: "United States of America", type: "Consulate-General", lat: 41.88, lng: -87.63 },
+                { city: "Colombo", country: "Sri Lanka", type: "High Commission", lat: 6.92, lng: 79.86 },
+                { city: "Copenhagen", country: "Denmark", type: "Embassy", lat: 55.67, lng: 12.56 },
+                { city: "Dhaka", country: "Bangladesh", type: "High Commission", lat: 23.81, lng: 90.41 },
+                { city: "Dili", country: "Timor-Leste", type: "Embassy", lat: -8.55, lng: 125.56 },
+                { city: "Doha", country: "Qatar", type: "Embassy", lat: 25.28, lng: 51.53 },
+                { city: "Dubai", country: "United Arab Emirates", type: "Consulate-General", lat: 25.20, lng: 55.27 },
+                { city: "Dublin", country: "Ireland", type: "Embassy", lat: 53.34, lng: -6.26 },
+                { city: "Frankfurt", country: "Germany", type: "Consulate-General", lat: 50.11, lng: 8.68 },
+                { city: "Funafuti", country: "Tuvalu", type: "High Commission", lat: -8.52, lng: 179.19 },
+                { city: "Geneva", country: "Switzerland", type: "Consulate-General and Permanent Mission", lat: 46.20, lng: 6.14 },
+                { city: "Guangzhou", country: "China", type: "Consulate-General", lat: 23.13, lng: 113.26 },
+                { city: "Hanoi", country: "Vietnam", type: "Embassy", lat: 21.02, lng: 105.83 },
+                { city: "Harare", country: "Zimbabwe", type: "Embassy", lat: -17.82, lng: 31.05 },
+                { city: "Ho Chi Minh City", country: "Vietnam", type: "Consulate-General", lat: 10.82, lng: 106.62 },
+                { city: "Hong Kong", country: "China", type: "Consulate-General", lat: 22.31, lng: 114.16 },
+                { city: "Honiara", country: "Solomon Islands", type: "High Commission", lat: -9.43, lng: 159.95 },
+                { city: "Honolulu", country: "United States of America", type: "Consulate-General", lat: 21.31, lng: -157.85 },
+                { city: "Houston", country: "United States of America", type: "Consulate-General", lat: 29.76, lng: -95.36 },
+                { city: "Islamabad", country: "Pakistan", type: "High Commission", lat: 33.73, lng: 73.09 },
+                { city: "Istanbul", country: "Turkey", type: "Consulate-General", lat: 41.00, lng: 28.97 },
+                { city: "Jakarta", country: "Indonesia", type: "Embassy", lat: -6.20, lng: 106.84 },
+                { city: "Kathmandu", country: "Nepal", type: "Embassy", lat: 27.71, lng: 85.32 },
+                { city: "Kolkata", country: "India", type: "Consulate-General", lat: 22.57, lng: 88.36 },
+                { city: "Kuala Lumpur", country: "Malaysia", type: "High Commission", lat: 3.13, lng: 101.68 },
+                { city: "Kuwait City", country: "Kuwait", type: "Embassy", lat: 29.37, lng: 47.97 },
+                { city: "Kyiv", country: "Ukraine", type: "Embassy", lat: 50.45, lng: 30.52 },
+                { city: "Lae", country: "Papua New Guinea", type: "Consulate-General", lat: -6.71, lng: 146.99 },
+                { city: "Lima", country: "Peru", type: "Embassy", lat: -12.04, lng: -77.04 },
+                { city: "Lisbon", country: "Portugal", type: "Embassy", lat: 38.72, lng: -9.13 },
+                { city: "London", country: "United Kingdom", type: "High Commission", lat: 51.50, lng: -0.12 },
+                { city: "Los Angeles", country: "United States of America", type: "Consulate-General", lat: 34.05, lng: -118.24 },
+                { city: "Madrid", country: "Spain", type: "Embassy", lat: 40.41, lng: -3.70 },
+                { city: "Majuro", country: "Marshall Islands", type: "Embassy", lat: 7.11, lng: 171.38 },
+                { city: "Makassar", country: "Indonesia", type: "Consulate-General", lat: -5.14, lng: 119.43 },
+                { city: "Malé", country: "Maldives", type: "High Commission", lat: 4.17, lng: 73.50 },
+                { city: "Malta", country: "Malta", type: "High Commission", lat: 35.89, lng: 14.51 },
+                { city: "Manila", country: "Philippines", type: "Embassy", lat: 14.59, lng: 120.98 },
+                { city: "Mexico City", country: "Mexico", type: "Embassy", lat: 19.43, lng: -99.13 },
+                { city: "Milan", country: "Italy", type: "Consulate-General", lat: 45.46, lng: 9.19 },
+                { city: "Moscow", country: "Russia", type: "Embassy", lat: 55.75, lng: 37.61 },
+                { city: "Mumbai", country: "India", type: "Consulate-General", lat: 19.07, lng: 72.87 },
+                { city: "Myanmar", country: "Yangon", type: "Embassy", lat: 16.86, lng: 96.19 },
+                { city: "Nairobi", country: "Kenya", type: "High Commission", lat: -1.29, lng: 36.82 },
+                { city: "Nauru", country: "Nauru", type: "High Commission", lat: -0.52, lng: 166.93 },
+                { city: "New Delhi", country: "India", type: "High Commission", lat: 28.61, lng: 77.20 },
+                { city: "New York", country: "United States of America", type: "Consulate-General", lat: 40.71, lng: -74.00 },
+                { city: "Nicosia", country: "Cyprus", type: "High Commission", lat: 35.18, lng: 33.36 },
+                { city: "Noumea", country: "New Caledonia", type: "Consulate-General", lat: -22.27, lng: 166.45 },
+                { city: "Nuku'Alofa", country: "Tonga", type: "High Commission", lat: -21.13, lng: -175.20 },
+                { city: "Osaka", country: "Japan", type: "Consulate-General", lat: 34.69, lng: 135.50 },
+                { city: "Ottawa", country: "Canada", type: "High Commission", lat: 45.42, lng: -75.69 },
+                { city: "Palau", country: "Palau", type: "Embassy", lat: 7.50, lng: 134.55 },
+                { city: "Papeete", country: "French Polynesia", type: "Consulate-General", lat: -17.53, lng: -149.56 },
+                { city: "Paris", country: "France", type: "Embassy", lat: 48.85, lng: 2.35 },
+                { city: "Phnom Penh", country: "Cambodia", type: "Embassy", lat: 11.55, lng: 104.91 },
+                { city: "Phuket", country: "Thailand", type: "Consulate-General", lat: 7.88, lng: 98.39 },
+                { city: "Pohnpei", country: "Federated States of Micronesia", type: "Embassy", lat: 6.96, lng: 158.20 },
+                { city: "Port Louis", country: "Mauritius", type: "High Commission", lat: -20.16, lng: 57.49 },
+                { city: "Port Moresby", country: "Papua New Guinea", type: "High Commission", lat: -9.44, lng: 147.18 },
+                { city: "Port of Spain", country: "Trinidad and Tobago", type: "High Commission", lat: 10.65, lng: -61.51 },
+                { city: "Port Vila", country: "Vanuatu", type: "High Commission", lat: -17.73, lng: 168.32 },
+                { city: "Pretoria", country: "South Africa", type: "High Commission", lat: -25.74, lng: 28.18 },
+                { city: "Ramallah", country: "Palestinian Authority", type: "Representative Office", lat: 31.90, lng: 35.20 },
+                { city: "Rarotonga", country: "Cook Islands", type: "High Commission", lat: -21.23, lng: -159.77 },
+                { city: "Riyadh", country: "Saudi Arabia", type: "Embassy", lat: 24.71, lng: 46.67 },
+                { city: "Rome", country: "Italy", type: "Embassy", lat: 41.90, lng: 12.49 },
+                { city: "San Francisco", country: "United States of America", type: "Consulate-General", lat: 37.77, lng: -122.41 },
+                { city: "Santiago", country: "Chile", type: "Embassy", lat: -33.44, lng: -70.66 },
+                { city: "Sao Paulo", country: "Brazil", type: "Consulate-General", lat: -23.55, lng: -46.63 },
+                { city: "Seoul", country: "Korea, Republic of (South)", type: "Embassy", lat: 37.56, lng: 126.97 },
+                { city: "Shanghai", country: "China", type: "Consulate-General", lat: 31.23, lng: 121.47 },
+                { city: "Singapore", country: "Singapore", type: "High Commission", lat: 1.35, lng: 103.81 },
+                { city: "Stockholm", country: "Sweden", type: "Embassy", lat: 59.32, lng: 18.06 },
+                { city: "Surabaya", country: "Indonesia", type: "Consulate-General", lat: -7.25, lng: 112.75 },
+                { city: "Suva", country: "Fiji", type: "High Commission", lat: -18.14, lng: 178.44 },
+                { city: "Taipei", country: "Taiwan", type: "Australian Office", lat: 25.03, lng: 121.56 },
+                { city: "Tallinn", country: "Estonia", type: "Embassy", lat: 59.43, lng: 24.75 },
+                { city: "Tarawa", country: "Kiribati", type: "High Commission", lat: 1.32, lng: 172.97 },
+                { city: "Tehran", country: "Iran", type: "Embassy", lat: 35.68, lng: 51.38 },
+                { city: "Tel Aviv", country: "Israel", type: "Embassy", lat: 32.08, lng: 34.78 },
+                { city: "The Hague", country: "Netherlands", type: "Embassy", lat: 52.07, lng: 4.30 },
+                { city: "Tokyo", country: "Japan", type: "Embassy", lat: 35.67, lng: 139.65 },
+                { city: "Toronto", country: "Canada", type: "Consulate-General", lat: 43.65, lng: -79.38 },
+                { city: "Ulaanbaatar", country: "Mongolia", type: "Embassy", lat: 47.91, lng: 106.88 },
+                { city: "Vancouver", country: "Canada", type: "Consulate", lat: 49.28, lng: -123.12 },
+                { city: "Vatican City", country: "Holy See", type: "Embassy", lat: 41.90, lng: 12.45 },
+                { city: "Vienna", country: "Austria", type: "Embassy", lat: 48.20, lng: 16.37 },
+                { city: "Vientiane", country: "Laos", type: "Embassy", lat: 17.97, lng: 102.63 },
+                { city: "Warsaw", country: "Poland", type: "Embassy", lat: 52.22, lng: 21.01 },
+                { city: "Washington DC", country: "United States of America", type: "Embassy", lat: 38.90, lng: -77.03 },
+                { city: "Wellington", country: "New Zealand", type: "High Commission", lat: -41.28, lng: 174.77 },
+                { city: "Zagreb", country: "Croatia", type: "Embassy", lat: 45.81, lng: 15.98 }
             ];
 
             const countryFilter = document.getElementById('countryFilter');
@@ -202,22 +240,19 @@
             const sortBy = document.getElementById('sortBy');
             const missionsGrid = document.getElementById('missionsGrid');
             const resultsCount = document.getElementById('resultsCount');
+            const goToTopBtn = document.getElementById('goToTopBtn');
+            const goToBottomBtn = document.getElementById('goToBottomBtn');
             
             let map;
-            let markers = [];
+            let currentMarkers = L.layerGroup();
 
             function initializeMap() {
-                map = L.map('map').setView([20, 30], 2);
+                map = L.map('map').setView([20, 30], 3);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 18,
                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 }).addTo(map);
-
-                missionsData.forEach(mission => {
-                    const marker = L.marker([mission.lat, mission.lng]);
-                    marker.bindPopup(`<b>${mission.city}, ${mission.country}</b><br>${mission.type}`);
-                    markers.push(marker);
-                });
+                currentMarkers.addTo(map);
             }
 
             function initializeFilters() {
@@ -249,8 +284,7 @@
                     const matchesType = type === 'all' || mission.type === type;
                     const matchesSearch = !searchTerm ||
                         mission.city.toLowerCase().includes(searchTerm) ||
-                        mission.country.toLowerCase().includes(searchTerm) ||
-                        mission.address.toLowerCase().includes(searchTerm);
+                        mission.country.toLowerCase().includes(searchTerm);
                     return matchesCountry && matchesType && matchesSearch;
                 });
 
@@ -276,8 +310,8 @@
                                 <p class="text-slate-600 mb-1">${mission.country}</p>
                                 <p class="text-sm font-semibold text-teal-700 bg-teal-100 px-2 py-1 rounded-full self-start mb-4">${mission.type}</p>
                                 <div class="text-slate-700 space-y-2 text-sm flex-grow">
-                                    <p><span class="font-semibold">Address:</span> ${mission.address}</p>
-                                    <p><span class="font-semibold">Phone:</span> ${mission.phone}</p>
+                                    <p><span class="font-semibold">Address:</span> ${mission.address || 'N/A'}</p>
+                                    <p><span class="font-semibold">Phone:</span> ${mission.phone || 'N/A'}</p>
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-slate-200">
                                     ${websiteLink}
@@ -292,23 +326,41 @@
             }
 
             function updateMap(filteredData) {
-                markers.forEach(marker => marker.removeFrom(map));
-                const filteredMarkers = [];
+                currentMarkers.clearLayers();
                 
-                const filteredSet = new Set(filteredData.map(m => `${m.lat},${m.lng}`));
+                const markerGroupForBounds = L.featureGroup();
 
-                missionsData.forEach((mission, index) => {
-                    if (filteredSet.has(`${mission.lat},${mission.lng}`)) {
-                        markers[index].addTo(map);
-                        filteredMarkers.push(markers[index]);
+                filteredData.forEach(mission => {
+                    if(mission.lat && mission.lng) {
+                        const marker = L.marker([mission.lat, mission.lng]);
+                        marker.bindPopup(`<b>${mission.city}, ${mission.country}</b><br>${mission.type}`);
+                        currentMarkers.addLayer(marker);
+                        markerGroupForBounds.addLayer(marker);
                     }
                 });
 
-                if (filteredMarkers.length > 0) {
-                    const group = new L.featureGroup(filteredMarkers);
-                    map.fitBounds(group.getBounds().pad(0.2));
+                if (filteredData.length > 0 && filteredData.some(m => m.lat && m.lng)) {
+                    map.fitBounds(markerGroupForBounds.getBounds().pad(0.2));
                 } else {
-                    map.setView([20, 30], 2);
+                    map.setView([20, 30], 3);
+                }
+            }
+            
+            function handleScrollButtons() {
+                const scrollY = window.scrollY;
+                const pageHeight = document.body.scrollHeight;
+                const viewportHeight = window.innerHeight;
+
+                if (scrollY > 300) {
+                    goToTopBtn.style.display = 'flex';
+                } else {
+                    goToTopBtn.style.display = 'none';
+                }
+
+                if (scrollY + viewportHeight < pageHeight - 100) {
+                    goToBottomBtn.style.display = 'flex';
+                } else {
+                    goToBottomBtn.style.display = 'none';
                 }
             }
 
@@ -316,45 +368,15 @@
             typeFilter.addEventListener('change', renderMissions);
             searchInput.addEventListener('input', renderMissions);
             sortBy.addEventListener('change', renderMissions);
+            goToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+            goToBottomBtn.addEventListener('click', () => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }));
+            window.addEventListener('scroll', handleScrollButtons);
 
             initializeMap();
             initializeFilters();
             renderMissions();
-            
-            // --- Scroll Button Visibility Logic ---
-            const goToTopBtn = document.getElementById('goToTopBtn');
-            const goToBottomBtn = document.getElementById('goToBottomBtn');
-    
-            window.onscroll = function() {
-                const scrollPosition = window.scrollY || document.documentElement.scrollTop;
-                const pageHeight = document.documentElement.scrollHeight;
-                const viewportHeight = window.innerHeight;
-    
-                // Show "Go to Top" button only when scrolled down
-                if (scrollPosition > 100) {
-                    goToTopBtn.classList.remove('hidden');
-                } else {
-                    goToTopBtn.classList.add('hidden');
-                }
-    
-                // Show "Go to Bottom" button unless you're at the very bottom
-                if (scrollPosition + viewportHeight >= pageHeight - 100) { // Hides 100px from bottom
-                    goToBottomBtn.classList.add('hidden');
-                } else {
-                    goToBottomBtn.classList.remove('hidden');
-                }
-            };
+            handleScrollButtons();
         });
-
-        // --- Scroll Button Click Functions (GLOBAL SCOPE) ---
-        function scrollToTop() {
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
-
-        function scrollToBottom() {
-            // This function scrolls to the very end of the page
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
     </script>
 </body>
 </html>
