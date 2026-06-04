@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Web3 Dark Harmony -->
-    <!-- Application Structure Plan: The application is designed as a multi-section, single-page dashboard. This structure was chosen over a linear report format to allow users to explore the complex, multi-faceted plan in a non-linear way, mirroring the "Chaos Theory" approach of the mission itself. The key sections are: 1) A high-level Overview, 2) The Strategic Framework explaining the Catalyst Oracle's logic, 3) An Interactive Itinerary allowing users to explore the 11-year plan by phase and year, and 4) A Master Dossier checklist for repeatable country deployment. This task-oriented design prioritizes user understanding by breaking down the vast amount of information into digestible, interactive modules. -->
+    <!-- Application Structure Plan: The application is designed as a multi-section, single-page dashboard. This structure was chosen over a linear report format to allow users to explore the complex, multi-faceted plan in a non-linear way while still keeping a clear rhythm for human review and agent handoff. The key sections are: 1) A high-level Overview, 2) The Strategic Framework explaining the Catalyst Oracle's logic, 3) An Interactive Itinerary allowing users to explore the 11-year plan by phase and year, 4) A Master Dossier checklist for repeatable country deployment, and 5) An Agent Update Log that generates Markdown for dates, sources, triggers, decisions, and emerging-technology changes. This task-oriented design prioritises user understanding by breaking down the vast amount of information into digestible, interactive modules. -->
     <!-- Visualization & Content Choices: Report Info: Catalyst Oracle logic -> Goal: Explain a complex decision-making process -> Viz/Method: Interactive HTML/CSS diagram with clickable elements -> Interaction: User clicks on each of the four pillars to reveal detailed metrics and data sources. -> Justification: A static flowchart would be dense and overwhelming. This interactive approach allows users to self-pace their learning and explore the layers of the algorithm, enhancing comprehension. Method: Vanilla JS and Tailwind CSS. Report Info: Master Dossier -> Goal: Provide a repeatable checklist for country visits -> Viz/Method: Interactive checklist with expandable sections. -> Interaction: Users can check items and expand sections for more detail. -> Justification: An interactive checklist is more engaging and functional than a static list, allowing for a clear workflow for each country visit. Method: Vanilla JS and Tailwind CSS. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -131,7 +131,7 @@
             border-color: #EA580C;
         }
         .checklist-item input[type="checkbox"]:checked::after {
-            content: '✔';
+            content: '\2713';
             color: white;
             position: absolute;
             top: 50%;
@@ -149,7 +149,66 @@
             text-decoration: line-through;
             color: #64748B;
         }
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .form-label {
+            color: #CBD5E1;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .form-control {
+            width: 100%;
+            border: 1px solid #475569;
+            border-radius: 0.75rem;
+            background: rgba(15, 23, 42, 0.8);
+            color: #E2E8F0;
+            padding: 0.8rem 1rem;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .form-control:focus {
+            border-color: #F97316;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.18);
+        }
+        .form-control::placeholder {
+            color: #64748B;
+        }
+        .source-option {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            padding: 0.9rem;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            background-color: rgba(15, 23, 42, 0.55);
+        }
+        .source-option input {
+            margin-top: 0.25rem;
+            accent-color: #EA580C;
+        }
+        .source-option span {
+            color: #CBD5E1;
+            font-size: 0.92rem;
+            line-height: 1.35;
+        }
+        .markdown-output {
+            min-height: 36rem;
+            font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+            font-size: 0.82rem;
+            line-height: 1.5;
+            white-space: pre;
+        }
+        .status-line {
+            min-height: 1.5rem;
+            color: #FBBF24;
+            font-size: 0.9rem;
+        }
     </style>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
 </head>
 <body class="antialiased">
 
@@ -181,6 +240,7 @@
                         <a id="nav-oracle" class="nav-link text-slate-300 hover:text-orange-500 font-medium">The Catalyst Oracle</a>
                         <a id="nav-itinerary" class="nav-link text-slate-300 hover:text-orange-500 font-medium">11-Year Itinerary</a>
                         <a id="nav-dossier" class="nav-link text-slate-300 hover:text-orange-500 font-medium">Master Dossier</a>
+                        <a id="nav-agent-log" class="nav-link text-slate-300 hover:text-orange-500 font-medium">Agent Update Log</a>
                     </nav>
                 </div>
             </div>
@@ -197,11 +257,11 @@
                 <div class="grid md:grid-cols-3 gap-8 text-center">
                     <div class="card p-8 rounded-2xl">
                         <h3 class="text-2xl font-bold text-orange-500 text-center">Phase 1: Seeding</h3>
-                        <p class="text-slate-400 mt-3">Year 1: The Global Seeding Blitz. Establish an anchor presence on all six inhabited continents, testing the operational cadence and initiating monetization streams.</p>
+                        <p class="text-slate-400 mt-3">Year 1: The Global Seeding Blitz. Establish an anchor presence on all six inhabited continents, testing the operational cadence and initiating monetisation streams.</p>
                     </div>
                     <div class="card p-8 rounded-2xl">
                         <h3 class="text-2xl font-bold text-orange-500 text-center">Phase 2: Expansion</h3>
-                        <p class="text-slate-400 mt-3">Years 2-6: Chaos Theory Activation. Deploy the Catalyst Oracle to pursue thematic, multi-country "Opportunity Vectors" based on real-time intelligence.</p>
+                        <p class="text-slate-400 mt-3">Years 2-6: Rhythm & Melody Activation. Deploy the Catalyst Oracle to pursue thematic, multi-country "Opportunity Vectors" based on current searches, update triggers, and human judgement.</p>
                     </div>
                     <div class="card p-8 rounded-2xl">
                         <h3 class="text-2xl font-bold text-orange-500 text-center">Phase 3: Consolidation</h3>
@@ -217,8 +277,8 @@
                             <p class="text-slate-400">A high-intensity operational tempo involving focused 1-2 week deployments in each location. Each visit is a targeted intervention to catalyze local networks, gather data, and seed the foundational pillars of a protopian future.</p>
                         </div>
                         <div class="inlaid-card p-8 rounded-xl text-center">
-                            <h3 class="text-3xl font-semibold mb-3 text-white">The 'Chaos Theory' Model</h3>
-                            <p class="text-slate-400">A non-linear, non-regional approach to itinerary planning. This model, powered by the Catalyst Oracle, prioritizes emergent, mission-aligned opportunities over convenient geographic routing, ensuring every move is the most strategically valuable one possible.</p>
+                            <h3 class="text-3xl font-semibold mb-3 text-white">The 'Rhythm & Melody' Model</h3>
+                            <p class="text-slate-400">A responsive, music-like approach to itinerary planning. The beat is safety, documents, budget, source dates, and review cadence; the melody is opportunity, culture, relationships, and emerging technology. The aim is joyful responsible abundance as a compass, not disorder as a destination.</p>
                         </div>
                     </div>
                 </div>
@@ -227,7 +287,7 @@
             <section id="section-oracle" class="section">
                 <div class="text-center mb-16">
                     <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-white">The Catalyst Oracle</h1>
-                    <p class="mt-6 max-w-3xl mx-auto text-lg text-slate-400">The dynamic travel intelligence engine that operationalizes Chaos Theory. It's a multi-layered scoring system that processes global data to generate a ranked list of "Next Best Action" destinations. Click on each pillar to explore its logic.</p>
+                    <p class="mt-6 max-w-3xl mx-auto text-lg text-slate-400">The dynamic travel intelligence engine that turns current signals into a ranked list of "Next Best Action" destinations. It keeps search dates, source trails, update triggers, and emerging-technology changes visible so agents can update the plan without losing the human intent. Click on each pillar to explore its logic.</p>
                 </div>
                 <div id="oracle-container" class="space-y-4 max-w-4xl mx-auto">
                 </div>
@@ -277,7 +337,7 @@
                         <h3 class="text-2xl font-bold mb-6 text-orange-500 text-center">Phase 3: Engagement</h3>
                          <div class="space-y-2">
                             <div class="checklist-item"><input type="checkbox" id="chk3-1"><label for="chk3-1">Tailor Pitch Deck with Local Data</label></div>
-                            <div class="checklist-item"><input type="checkbox" id="chk3-2"><label for="chk3-2">Present Localized 500Q Value Prop</label></div>
+                            <div class="checklist-item"><input type="checkbox" id="chk3-2"><label for="chk3-2">Present Localised 500Q Value Prop</label></div>
                             <div class="checklist-item"><input type="checkbox" id="chk3-3"><label for="chk3-3">Host Informal Founder Meetup</label></div>
                             <div class="checklist-item"><input type="checkbox" id="chk3-4"><label for="chk3-4">Frame GAJRA/Aura for Local Context</label></div>
                             <div class="checklist-item"><input type="checkbox" id="chk3-5"><label for="chk3-5">Log All Contacts & Notes in CRM</label></div>
@@ -285,6 +345,111 @@
                             <div class="checklist-item"><input type="checkbox" id="chk3-7"><label for="chk3-7">Plan Onward Travel</label></div>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <section id="section-agent-log" class="section">
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-white">Agent Update Log</h1>
+                    <p class="mt-6 max-w-3xl mx-auto text-lg text-slate-400">Record what was searched, when it was searched, why the strategy changed, and what an agent or human should check next. The output is a plain `.md` file that can travel into the field library, an AI chat, a repo issue, or a private travel dossier.</p>
+                </div>
+
+                <div class="grid lg:grid-cols-[minmax(0,1fr)_minmax(22rem,0.9fr)] gap-8 items-start">
+                    <form id="agent-log-form" class="card p-6 md:p-8 rounded-2xl space-y-8">
+                        <div class="grid md:grid-cols-2 gap-5">
+                            <label class="form-field">
+                                <span class="form-label">Focus area</span>
+                                <input class="form-control" name="focus_area" placeholder="e.g., Japan AI corridor, visa sweep, field-library refresh">
+                            </label>
+                            <label class="form-field">
+                                <span class="form-label">Trigger type</span>
+                                <select class="form-control" name="trigger_type">
+                                    <option value="">Choose a trigger</option>
+                                    <option>Visa, border, or consular change</option>
+                                    <option>Safety, health, insurance, or climate signal</option>
+                                    <option>Emerging technology change</option>
+                                    <option>Event, grant, conference, or partner timing</option>
+                                    <option>Budget, flight, accommodation, or logistics shift</option>
+                                    <option>Field-library or source dataset update</option>
+                                    <option>Relationship, culture, or community signal</option>
+                                    <option>Manual review rhythm</option>
+                                </select>
+                            </label>
+                            <label class="form-field">
+                                <span class="form-label">Search date</span>
+                                <input class="form-control" type="date" name="search_date">
+                            </label>
+                            <label class="form-field">
+                                <span class="form-label">Update date</span>
+                                <input class="form-control" type="date" name="update_date">
+                            </label>
+                            <label class="form-field">
+                                <span class="form-label">Next review date</span>
+                                <input class="form-control" type="date" name="next_review_date">
+                            </label>
+                            <label class="form-field">
+                                <span class="form-label">Public/private status</span>
+                                <select class="form-control" name="privacy_status">
+                                    <option>Private working note</option>
+                                    <option>Public-safe summary</option>
+                                    <option>Needs redaction first</option>
+                                    <option>Ready for repo issue or changelog</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h2 class="text-2xl font-bold text-white">Source lanes</h2>
+                            <div class="grid md:grid-cols-2 gap-3">
+                                <label class="source-option"><input type="checkbox" name="source_lanes" value="Global relations / travel / culture - attachment rank 7, 75 related docs"><span>Global relations / travel / culture. Travel oracle, cultural diplomacy, public audience pathways.</span></label>
+                                <label class="source-option"><input type="checkbox" name="source_lanes" value="Software / agents / simulation architecture - attachment rank 3, 102 related docs"><span>Software / agents / simulation architecture. Agent-ready Markdown and tool-builder patterns.</span></label>
+                                <label class="source-option"><input type="checkbox" name="source_lanes" value="Business / venture / operations - attachment rank 5, 96 related docs"><span>Business / venture / operations. Field kits, support bundles, venture readiness.</span></label>
+                                <label class="source-option"><input type="checkbox" name="source_lanes" value="Regenerative civilisation / protopian systems - attachment rank 11, 46 related docs"><span>Regenerative civilisation / protopian systems. Joyful responsible abundance, braided economy, public-good ledgers.</span></label>
+                                <label class="source-option"><input type="checkbox" name="source_lanes" value="strange-but-true-field-library deep catalogue - travel oracle, GAJRA, global operations records"><span>Field library deep catalogue. Travel oracle, GAJRA, global operations, and public/private review records.</span></label>
+                                <label class="source-option"><input type="checkbox" name="source_lanes" value="Live travel sources - visas, consular pages, safety advice, transport, insurance, events"><span>Live travel sources. Visas, consular pages, safety advice, transport, insurance, events.</span></label>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-5">
+                            <label class="form-field">
+                                <span class="form-label">Sources searched</span>
+                                <textarea class="form-control" rows="5" name="sources_searched" placeholder="URLs, local paths, repo files, field-library records, people contacted, or search phrases."></textarea>
+                            </label>
+                            <label class="form-field">
+                                <span class="form-label">Trigger details</span>
+                                <textarea class="form-control" rows="5" name="trigger_details" placeholder="What changed, what signal appeared, or why this review happened now?"></textarea>
+                            </label>
+                            <label class="form-field">
+                                <span class="form-label">Emerging technology evolution</span>
+                                <textarea class="form-control" rows="5" name="technology_evolution" placeholder="AI agents, eSIMs, digital visas, translation tools, autonomous logistics, payments, mapping, security, or field-library automation."></textarea>
+                            </label>
+                            <label class="form-field">
+                                <span class="form-label">Joyful responsible abundance check</span>
+                                <textarea class="form-control" rows="5" name="jra_check" placeholder="What feels joyful? What needs responsibility, consent, safety, reciprocity, redaction, or a smaller step?"></textarea>
+                            </label>
+                            <label class="form-field md:col-span-2">
+                                <span class="form-label">Decision and next actions</span>
+                                <textarea class="form-control" rows="5" name="decision_actions" placeholder="Decision made, status, next country or source to check, who/what an agent should update next."></textarea>
+                            </label>
+                            <label class="form-field md:col-span-2">
+                                <span class="form-label">Agent handoff notes</span>
+                                <textarea class="form-control" rows="4" name="agent_handoff" placeholder="Plain-language instructions for the next AI or human reviewer. Include uncertainty and what not to publish if needed."></textarea>
+                            </label>
+                        </div>
+
+                        <div class="flex flex-wrap gap-3">
+                            <button class="btn-primary px-5 py-3 rounded-lg font-semibold" type="submit">Generate Markdown</button>
+                            <button class="btn-secondary px-5 py-3 rounded-lg font-semibold" type="button" id="download-agent-log">Download .md</button>
+                            <button class="btn-secondary px-5 py-3 rounded-lg font-semibold" type="button" id="copy-agent-log">Copy Markdown</button>
+                            <button class="bg-red-900/70 hover:bg-red-800 text-white px-5 py-3 rounded-lg font-semibold transition" type="button" id="clear-agent-log">Clear Form</button>
+                        </div>
+                        <p id="agent-log-status" class="status-line" aria-live="polite"></p>
+                    </form>
+
+                    <aside class="card p-6 md:p-8 rounded-2xl">
+                        <label for="agent-markdown-output" class="form-label block mb-3">Generated Markdown</label>
+                        <textarea id="agent-markdown-output" class="form-control markdown-output" spellcheck="false"></textarea>
+                    </aside>
                 </div>
             </section>
         </main>
@@ -296,6 +461,7 @@
             oracle: document.getElementById('section-oracle'),
             itinerary: document.getElementById('section-itinerary'),
             dossier: document.getElementById('section-dossier'),
+            'agent-log': document.getElementById('section-agent-log'),
         };
 
         const navLinks = {
@@ -303,22 +469,24 @@
             oracle: document.getElementById('nav-oracle'),
             itinerary: document.getElementById('nav-itinerary'),
             dossier: document.getElementById('nav-dossier'),
+            'agent-log': document.getElementById('nav-agent-log'),
         };
 
         const oracleData = [
             { pillar: 'Catalyst Score', theme: 'Survival & Safety', content: `This is the non-negotiable foundational filter. Any destination that fails to meet a minimum threshold is immediately excluded from short-term consideration.`, metrics: [{ name: 'Financial Survival', source: 'Numbeo Cost of Living Index, Real-time budget' }, { name: 'Physical Safety', source: 'Global Peace Index, Fragile States Index' }, { name: 'Logistical Viability', source: 'Visa Friction Index for Australian Passport' },] },
             { pillar: 'GAJRA Score', theme: 'Ecosystem Growth', content: `This layer acts as the mission multiplier, ensuring that travel actively builds the global ventures: GAJRA Earth, 500 Queens VC, and Aura of Intelligence.`, metrics: [{ name: 'Startup Ecosystem Vibrancy', source: 'StartupBlink, Pitchbook, Startup Genome reports' }, { name: 'VC & Investor Access', source: 'Proprietary database of mission-aligned VCs' }, { name: 'Event & Partnership Alignment', source: 'Global database of key tech conferences and grants' },] },
             { pillar: 'Relationships Score', theme: 'Love & Connection', content: `This layer addresses the primary personal driver of the mission: to "love and be loved" and to research new models of human connection.`, metrics: [{ name: 'Intercultural Romance Potential', source: 'Legal status of relationships, social acceptance surveys' }, { name: 'GGM Network Density', source: 'Real-time map of the Global Group Marriages community' },] },
-            { pillar: 'Adventure & Mystery Score', theme: 'Serendipity & Consciousness', content: `This is the serendipity engine, ensuring the journey remains fulfilling, creative, and aligned with deeper personal interests.`, metrics: [{ name: 'Spontaneous Input', source: 'Direct user desire (e.g., "world-class surfing")' }, { name: 'Consciousness Exploration', source: 'Database of spiritual sites, wellness centers, cultural hubs' },] }
+            { pillar: 'Adventure & Mystery Score', theme: 'Serendipity & Consciousness', content: `This is the serendipity engine, ensuring the journey remains fulfilling, creative, and aligned with deeper personal interests.`, metrics: [{ name: 'Spontaneous Input', source: 'Direct user desire (e.g., "world-class surfing")' }, { name: 'Consciousness Exploration', source: 'Database of spiritual sites, wellness centres, cultural hubs' },] },
+            { pillar: 'Evolution & Update Score', theme: 'Search Freshness & Emerging Technology', content: `This layer keeps the strategy alive. It records search dates, source trails, update triggers, and emerging technologies so the plan can evolve responsibly instead of relying on stale assumptions.`, metrics: [{ name: 'Search Recency', source: 'Date-stamped agent update logs and source notes' }, { name: 'Emerging Tech Signals', source: 'AI agent tools, eSIMs, digital visas, translation, mapping, payments, and field automation' }, { name: 'Source Dataset Alignment', source: 'agent_doc_index.json topic lanes and strange-but-true-field-library catalogue records' },] }
         ];
         
         const itineraryData = [
-            { year: 1, phase: 1, theme: 'Global Seeding Blitz', objectives: 'Establish anchor presence on all inhabited continents; test operational cadence; initiate monetization.', entities: 'Ideally, 20 to 40 countries and territories to be visited this year' }, 
-            { year: 2, phase: 2, theme: 'Chaos Theory Activation', objectives: 'First full deployment of the Catalyst Oracle; execute initial high-priority Opportunity Vectors.', entities: 'Ideally, 20 to 40 countries and territories to be visited this year' }, 
+            { year: 1, phase: 1, theme: 'Global Seeding Blitz', objectives: 'Establish anchor presence on all inhabited continents; test operational cadence; initiate monetisation.', entities: 'Ideally, 20 to 40 countries and territories to be visited this year' },
+            { year: 2, phase: 2, theme: 'Rhythm & Melody Activation', objectives: 'First full deployment of the Catalyst Oracle; execute initial high-priority Opportunity Vectors with dated search logs and review triggers.', entities: 'Ideally, 20 to 40 countries and territories to be visited this year' },
             { year: 3, phase: 2, theme: 'Venture Ecosystem Deep Dive', objectives: 'Focus on activating the "500 Queens VC" network in emerging G20 startup hubs.', entities: 'Ideally, 20 to 40 countries and territories to be visited this year' }, 
             { year: 4, phase: 2, theme: 'Regenerative Frontiers', objectives: 'Target nations with advanced regenerative agriculture and cleantech sectors for GAJRA Earth.', entities: 'Ideally, 20 to 40 countries and territories to be visited this year' }, 
             { year: 5, phase: 2, theme: 'AI & Deep Tech Corridor', objectives: 'Engage with secondary and tertiary AI research hubs for the Aura of Intelligence project.', entities: 'Ideally, 20 to 40 countries and territories to be visited this year' }, 
-            { year: 6, phase: 2, theme: 'Intercultural & Uncharted Paths', objectives: 'Prioritize personal research vectors (GGM) and begin addressing more logistically complex territories.', entities: 'Ideally, 20 to 40 countries and territories to be visited this year' }, 
+            { year: 6, phase: 2, theme: 'Intercultural & Uncharted Paths', objectives: 'Prioritise personal research vectors (GGM) and begin addressing more logistically complex territories.', entities: 'Ideally, 20 to 40 countries and territories to be visited this year' },
             { year: 7, phase: 3, theme: 'Network Strengthening', objectives: 'Revisit key hubs to consolidate partnerships, measure impact, and launch second-wave initiatives.', entities: 'Ideally, 20 to 40 countries and territories to be visited this year' }, 
             { year: 8, phase: 3, theme: 'The Final Frontiers: Part 1', objectives: 'Systematically address the most remote and politically challenging entities.', entities: 'Ideally, 20 to 40 countries and territories to be visited this year' }, 
             { year: 9, phase: 3, theme: 'The Final Frontiers: Part 2', objectives: 'Continue visiting the most difficult-to-access territories, completing the geographic scope.', entities: 'Ideally, 20 to 40 countries and territories to be visited this year' }, 
@@ -426,9 +594,151 @@
             `;
         }
 
+        const agentLogForm = document.getElementById('agent-log-form');
+        const agentMarkdownOutput = document.getElementById('agent-markdown-output');
+        const agentLogStatus = document.getElementById('agent-log-status');
+
+        function getLocalDateInputValue(date = new Date()) {
+            const offsetMs = date.getTimezoneOffset() * 60000;
+            return new Date(date.getTime() - offsetMs).toISOString().slice(0, 10);
+        }
+
+        function setAgentLogDefaults() {
+            if (!agentLogForm) return;
+            const today = getLocalDateInputValue();
+            const nextReview = new Date();
+            nextReview.setMonth(nextReview.getMonth() + 1);
+            agentLogForm.elements.search_date.value = today;
+            agentLogForm.elements.update_date.value = today;
+            agentLogForm.elements.next_review_date.value = getLocalDateInputValue(nextReview);
+            agentLogForm.querySelectorAll('input[name="source_lanes"]').forEach((checkbox, index) => {
+                checkbox.checked = index < 4;
+            });
+            updateAgentLogMarkdown(false);
+        }
+
+        function fieldValue(name) {
+            const field = agentLogForm.elements[name];
+            return field && field.value.trim() ? field.value.trim() : 'Not recorded yet';
+        }
+
+        function selectedSourceLanes() {
+            const selected = Array.from(agentLogForm.querySelectorAll('input[name="source_lanes"]:checked'))
+                .map(item => `- ${item.value}`);
+            return selected.length ? selected.join('\n') : '- Not selected yet';
+        }
+
+        function safeFileSlug(value) {
+            return (value || 'travel-strategy-update')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .slice(0, 70) || 'travel-strategy-update';
+        }
+
+        function buildAgentLogMarkdown() {
+            const generatedAt = new Date().toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short' });
+            return `# Australian World Travel Strategy Update Log
+
+- Record generated: ${generatedAt}
+- Focus area: ${fieldValue('focus_area')}
+- Search date: ${fieldValue('search_date')}
+- Update date: ${fieldValue('update_date')}
+- Next review date: ${fieldValue('next_review_date')}
+- Trigger type: ${fieldValue('trigger_type')}
+- Public/private status: ${fieldValue('privacy_status')}
+
+## Source Lanes
+${selectedSourceLanes()}
+
+## Sources Searched
+${fieldValue('sources_searched')}
+
+## Trigger Details
+${fieldValue('trigger_details')}
+
+## Emerging Technology Evolution
+${fieldValue('technology_evolution')}
+
+## Joyful Responsible Abundance Check
+${fieldValue('jra_check')}
+
+## Decision And Next Actions
+${fieldValue('decision_actions')}
+
+## Agent Handoff Notes
+${fieldValue('agent_handoff')}
+
+## Review Prompt For Next Agent
+Check the search date before relying on this record. Refresh any live sources that could have changed, especially visas, consular guidance, insurance, transport, major events, AI agent tools, digital identity, translation, payment, mapping, and safety information. Keep joyful responsible abundance as a compass: look for delight and opportunity, but make consent, safety, cultural respect, money, and public/private boundaries explicit.`;
+        }
+
+        function updateAgentLogMarkdown(showStatus = true) {
+            if (!agentLogForm || !agentMarkdownOutput) return '';
+            const markdown = buildAgentLogMarkdown();
+            agentMarkdownOutput.value = markdown;
+            if (showStatus && agentLogStatus) {
+                agentLogStatus.textContent = 'Markdown updated.';
+            }
+            return markdown;
+        }
+
+        function downloadAgentLogMarkdown() {
+            const markdown = agentMarkdownOutput.value.trim() || updateAgentLogMarkdown(false);
+            const focusSlug = safeFileSlug(fieldValue('focus_area'));
+            const dateSlug = fieldValue('update_date') === 'Not recorded yet' ? getLocalDateInputValue() : fieldValue('update_date');
+            const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${focusSlug}-${dateSlug}.md`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(link.href);
+            if (agentLogStatus) {
+                agentLogStatus.textContent = `Downloaded ${link.download}`;
+            }
+        }
+
+        async function copyAgentLogMarkdown() {
+            const markdown = agentMarkdownOutput.value.trim() || updateAgentLogMarkdown(false);
+            try {
+                await navigator.clipboard.writeText(markdown);
+                if (agentLogStatus) {
+                    agentLogStatus.textContent = 'Markdown copied.';
+                }
+            } catch (error) {
+                agentMarkdownOutput.focus();
+                agentMarkdownOutput.select();
+                document.execCommand('copy');
+                if (agentLogStatus) {
+                    agentLogStatus.textContent = 'Markdown selected and copied.';
+                }
+            }
+        }
+
+        function clearAgentLogForm() {
+            agentLogForm.reset();
+            agentLogForm.querySelectorAll('input[name="source_lanes"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            agentMarkdownOutput.value = '';
+            if (agentLogStatus) {
+                agentLogStatus.textContent = 'Form cleared.';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             initOracle();
             initItinerary();
+            setAgentLogDefaults();
+            agentLogForm?.addEventListener('submit', (event) => {
+                event.preventDefault();
+                updateAgentLogMarkdown(true);
+            });
+            document.getElementById('download-agent-log')?.addEventListener('click', downloadAgentLogMarkdown);
+            document.getElementById('copy-agent-log')?.addEventListener('click', copyAgentLogMarkdown);
+            document.getElementById('clear-agent-log')?.addEventListener('click', clearAgentLogForm);
         });
     </script>
 </body>

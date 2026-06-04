@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-AU">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,6 +40,8 @@
     <!-- Application Structure Plan: A dashboard-style SPA is used to present the data. The structure includes a header, a control panel for user interaction (filters, search, sort), an interactive map, and a responsive grid for displaying mission details as cards. This structure was chosen to transform a static data table into an engaging, user-driven exploration tool. It prioritizes usability by allowing users to quickly find and compare information both textually and geographically. The map provides immediate visual context that updates with user filters. -->
     <!-- Visualization & Content Choices: Report Info: List of missions -> Goal: Organize & Inform -> Presentation: Interactive card grid -> Interaction: The grid dynamically updates based on user filtering, sorting, and searching. Report Info: Geographic location of missions -> Goal: Organize & Compare -> Viz Method: Interactive Map (Leaflet.js) with markers -> Interaction: Markers on the map are filtered in real-time based on the user's selections in the control panel, providing a direct visual link between the filtered data and their locations. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
 </head>
 <body class="bg-gray-50 text-gray-800">
 
@@ -62,6 +64,33 @@
             <h1 class="text-3xl md:text-4xl font-bold text-slate-900">Australian Diplomatic Missions Abroad</h1>
             <p class="mt-2 text-lg text-slate-600">An interactive directory to explore Australia's global diplomatic presence.</p>
         </header>
+
+        <section class="bg-white border border-teal-200 rounded-xl shadow-sm p-4 sm:p-5 mb-8" aria-label="Source freshness and version control">
+            <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">Source freshness</p>
+                    <h2 class="text-xl font-bold text-slate-900 mt-1">Australian missions search and update status</h2>
+                </div>
+                <div class="grid gap-2 sm:grid-cols-3 lg:min-w-[42rem]">
+                    <div class="rounded-md bg-teal-50 p-3">
+                        <p class="text-xs font-semibold text-teal-700">Latest source search</p>
+                        <p class="text-sm font-bold text-teal-950">19 May 2026</p>
+                        <p class="text-xs text-teal-900 mt-1">Searched DFAT overseas directory plus linked mission contact pages.</p>
+                    </div>
+                    <div class="rounded-md bg-green-50 p-3">
+                        <p class="text-xs font-semibold text-green-700">Page updated</p>
+                        <p class="text-sm font-bold text-green-950">19 May 2026</p>
+                        <p class="text-xs text-green-900 mt-1">Added address, phone, email, fax, website, and source fields where available.</p>
+                    </div>
+                    <div class="rounded-md bg-amber-50 p-3">
+                        <p class="text-xs font-semibold text-amber-700">Version acknowledgement</p>
+                        <p class="text-sm font-bold text-amber-950">Contact data added</p>
+                        <p class="text-xs text-amber-900 mt-1">125 records checked; 121 addresses, 121 phone numbers, 121 websites, 30 emails, and 98 faxes identified.</p>
+                    </div>
+                </div>
+            </div>
+            <p class="mt-4 text-sm text-slate-700"><strong>Why:</strong> missions can open, close, relocate, or change service coverage. These edits follow DFAT's current overseas missions list and linked contact pages; Phoenix is listed by DFAT as see also Los Angeles, with no separate contact page found in this pass.</p>
+        </section>
 
         <main>
             <div class="bg-white p-6 rounded-xl shadow-md mb-8">
@@ -131,7 +160,7 @@
                 { city: "Addis Ababa", country: "Ethiopia", type: "Embassy", lat: 9.01, lng: 38.76 },
                 { city: "Alofi", country: "Niue", type: "High Commission", lat: -19.05, lng: -169.92 },
                 { city: "Amman", country: "Jordan", type: "Embassy", lat: 31.95, lng: 35.93 },
-                { city: "Ankara", country: "Turkey", type: "Embassy", lat: 39.92, lng: 32.85 },
+                { city: "Ankara", country: "Türkiye", type: "Embassy", lat: 39.92, lng: 32.85 },
                 { city: "Apia", country: "Samoa", type: "High Commission", lat: -13.83, lng: -171.76 },
                 { city: "Athens", country: "Greece", type: "Embassy", lat: 37.98, lng: 23.72 },
                 { city: "Auckland", country: "New Zealand", type: "Consulate-General", lat: -36.85, lng: 174.76 },
@@ -150,12 +179,13 @@
                 { city: "Brussels", country: "Belgium", type: "Embassy", lat: 50.85, lng: 4.35 },
                 { city: "Buenos Aires", country: "Argentina", type: "Embassy", lat: -34.60, lng: -58.38 },
                 { city: "Cairo", country: "Egypt", type: "Embassy", lat: 30.04, lng: 31.23 },
-                { city: "Canakkale", country: "Turkey", type: "Consulate", lat: 40.15, lng: 26.41 },
+                { city: "Canakkale", country: "Türkiye", type: "Consulate", lat: 40.15, lng: 26.41 },
                 { city: "Chengdu", country: "China", type: "Consulate-General", lat: 30.57, lng: 104.06 },
                 { city: "Chennai", country: "India", type: "Consulate-General", lat: 13.08, lng: 80.27 },
                 { city: "Chicago", country: "United States of America", type: "Consulate-General", lat: 41.88, lng: -87.63 },
                 { city: "Colombo", country: "Sri Lanka", type: "High Commission", lat: 6.92, lng: 79.86 },
                 { city: "Copenhagen", country: "Denmark", type: "Embassy", lat: 55.67, lng: 12.56 },
+                { city: "Denver", country: "United States of America", type: "Consulate", lat: 39.74, lng: -104.99 },
                 { city: "Dhaka", country: "Bangladesh", type: "High Commission", lat: 23.81, lng: 90.41 },
                 { city: "Dili", country: "Timor-Leste", type: "Embassy", lat: -8.55, lng: 125.56 },
                 { city: "Doha", country: "Qatar", type: "Embassy", lat: 25.28, lng: 51.53 },
@@ -173,7 +203,7 @@
                 { city: "Honolulu", country: "United States of America", type: "Consulate-General", lat: 21.31, lng: -157.85 },
                 { city: "Houston", country: "United States of America", type: "Consulate-General", lat: 29.76, lng: -95.36 },
                 { city: "Islamabad", country: "Pakistan", type: "High Commission", lat: 33.73, lng: 73.09 },
-                { city: "Istanbul", country: "Turkey", type: "Consulate-General", lat: 41.00, lng: 28.97 },
+                { city: "Istanbul", country: "Türkiye", type: "Consulate-General", lat: 41.00, lng: 28.97 },
                 { city: "Jakarta", country: "Indonesia", type: "Embassy", lat: -6.20, lng: 106.84 },
                 { city: "Kathmandu", country: "Nepal", type: "Embassy", lat: 27.71, lng: 85.32 },
                 { city: "Kolkata", country: "India", type: "Consulate-General", lat: 22.57, lng: 88.36 },
@@ -192,14 +222,16 @@
                 { city: "Malta", country: "Malta", type: "High Commission", lat: 35.89, lng: 14.51 },
                 { city: "Manila", country: "Philippines", type: "Embassy", lat: 14.59, lng: 120.98 },
                 { city: "Mexico City", country: "Mexico", type: "Embassy", lat: 19.43, lng: -99.13 },
+                { city: "Miami", country: "United States of America", type: "Consulate", lat: 25.76, lng: -80.19 },
                 { city: "Milan", country: "Italy", type: "Consulate-General", lat: 45.46, lng: 9.19 },
                 { city: "Moscow", country: "Russia", type: "Embassy", lat: 55.75, lng: 37.61 },
                 { city: "Mumbai", country: "India", type: "Consulate-General", lat: 19.07, lng: 72.87 },
-                { city: "Myanmar", country: "Yangon", type: "Embassy", lat: 16.86, lng: 96.19 },
+                { city: "Yangon", country: "Myanmar", type: "Embassy", lat: 16.86, lng: 96.19 },
                 { city: "Nairobi", country: "Kenya", type: "High Commission", lat: -1.29, lng: 36.82 },
                 { city: "Nauru", country: "Nauru", type: "High Commission", lat: -0.52, lng: 166.93 },
                 { city: "New Delhi", country: "India", type: "High Commission", lat: 28.61, lng: 77.20 },
                 { city: "New York", country: "United States of America", type: "Consulate-General", lat: 40.71, lng: -74.00 },
+                { city: "New York (UN)", country: "United States of America", type: "Permanent Mission", lat: 40.75, lng: -73.97 },
                 { city: "Nicosia", country: "Cyprus", type: "High Commission", lat: 35.18, lng: 33.36 },
                 { city: "Noumea", country: "New Caledonia", type: "Consulate-General", lat: -22.27, lng: 166.45 },
                 { city: "Nuku'Alofa", country: "Tonga", type: "High Commission", lat: -21.13, lng: -175.20 },
@@ -209,6 +241,7 @@
                 { city: "Papeete", country: "French Polynesia", type: "Consulate-General", lat: -17.53, lng: -149.56 },
                 { city: "Paris", country: "France", type: "Embassy", lat: 48.85, lng: 2.35 },
                 { city: "Phnom Penh", country: "Cambodia", type: "Embassy", lat: 11.55, lng: 104.91 },
+                { city: "Phoenix", country: "United States of America", type: "Consulate", lat: 33.45, lng: -112.07 },
                 { city: "Phuket", country: "Thailand", type: "Consulate-General", lat: 7.88, lng: 98.39 },
                 { city: "Pohnpei", country: "Federated States of Micronesia", type: "Embassy", lat: 6.96, lng: 158.20 },
                 { city: "Port Louis", country: "Mauritius", type: "High Commission", lat: -20.16, lng: 57.49 },
@@ -247,6 +280,1020 @@
                 { city: "Wellington", country: "New Zealand", type: "High Commission", lat: -41.28, lng: 174.77 },
                 { city: "Zagreb", country: "Croatia", type: "Embassy", lat: 45.81, lng: 15.98 }
             ];
+
+            const missionContactData = {
+                      "Rome|Italy|Embassy": {
+                                "address": "Via, Antonio Bosio 5, Rome 00161, Italy",
+                                "phone": "+39 06 852 721",
+                                "fax": "+39 06 8527 2300",
+                                "email": "",
+                                "website": "https://italy.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-italy"
+                      },
+                      "Paris|France|Embassy": {
+                                "address": "4 Rue Jean Rey, Paris 75724 Cedex 15, France",
+                                "phone": "+33 1 4059 3300",
+                                "fax": "+33 1 4059 3315",
+                                "email": "",
+                                "website": "https://france.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-france"
+                      },
+                      "Apia|Samoa|High Commission": {
+                                "address": "Beach Road, Apia, Samoa",
+                                "phone": "+685 23 411",
+                                "fax": "+685 23 159",
+                                "email": "",
+                                "website": "https://samoa.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-high-commission-samoa"
+                      },
+                      "Madrid|Spain|Embassy": {
+                                "address": "Torre Espacio, Paseo de la Castellana, 259D, Planta 24, Madrid 28046, Spain",
+                                "phone": "+34 91 353 6600",
+                                "fax": "+34 91 353 6692",
+                                "email": "",
+                                "website": "https://spain.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-spain"
+                      },
+                      "Pretoria|South Africa|High Commission": {
+                                "address": "292 Orient Street, Arcadia, Pretoria 0083, South Africa",
+                                "phone": "+27 12 423 6000",
+                                "fax": "+27 12 342 8442",
+                                "email": "consular.pretoria@dfat.gov.au",
+                                "website": "https://southafrica.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-high-commission-south-africa"
+                      },
+                      "London|United Kingdom|High Commission": {
+                                "address": "Australia House, The Strand, London WC 2B 4LA, United Kingdom",
+                                "phone": "+44 20 7379 4334",
+                                "fax": "+44 20 7887 5558",
+                                "email": "",
+                                "website": "https://uk.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-high-commission-united-kingdom"
+                      },
+                      "Port of Spain|Trinidad and Tobago|High Commission": {
+                                "address": "18 Herbert Street, St Clair, Port of Spain, Trinidad and Tobago",
+                                "phone": "+1 (868) 235 7950",
+                                "fax": "",
+                                "email": "",
+                                "website": "https://trinidadandtobago.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-high-commission-trinidad-and-tobago"
+                      },
+                      "Buenos Aires|Argentina|Embassy": {
+                                "address": "Villanueva 1400, Buenos Aires C1426BMJ, Argentina",
+                                "phone": "+54-11 4779 3500",
+                                "fax": "+54-11 4779 3581",
+                                "email": "",
+                                "website": "https://argentina.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-argentina"
+                      },
+                      "Moscow|Russia|Embassy": {
+                                "address": "13 Kropotkinsky Pereulok, Moscow 119034, Russia, Location Map (Yandex), Location Map (Google Maps), Closest metro: Park Kultury",
+                                "phone": "+7-495 956 6070",
+                                "fax": "+7-495 956 6170",
+                                "email": "",
+                                "website": "https://russia.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-russia"
+                      },
+                      "The Hague|Netherlands|Embassy": {
+                                "address": "Carnegielaan 4, The Hague 2517 KH, Netherlands",
+                                "phone": "+31 70 310 8200",
+                                "fax": "+31 70 310 8250",
+                                "email": "",
+                                "website": "https://netherlands.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-netherlands"
+                      },
+                      "Vienna|Austria|Embassy": {
+                                "address": "The Icon, Gertrude-Froehlich-Sandner-Str. 2, 1100 Vienna, Austria",
+                                "phone": "+43 (0) 1 506 740",
+                                "fax": "+43 (0) 1 506 74185",
+                                "email": "vienna.embassy@dfat.gov.au",
+                                "website": "https://austria.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-and-permanent-mission-to-the-united-nations-austria"
+                      },
+                      "Ankara|Türkiye|Embassy": {
+                                "address": "Ugur Mumcu Caddesi No: 88, 7th floor, Gaziosmanpasa 06700, Ankara, Türkiye",
+                                "phone": "+90 312 459 9500",
+                                "fax": "+90 312 446 4827",
+                                "email": "",
+                                "website": "https://turkey.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-t%C3%BCrkiye"
+                      },
+                      "Riyadh|Saudi Arabia|Embassy": {
+                                "address": "Abdullah bin Hozafa Al-Sahmi Avenue, Diplomatic Quarter, Riyadh, Saudi Arabia",
+                                "phone": "+966 11 250 0900",
+                                "fax": "+966 11 250 0902",
+                                "email": "",
+                                "website": "https://saudiarabia.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-saudi-arabia"
+                      },
+                      "Dhaka|Bangladesh|High Commission": {
+                                "address": "184 Gulshan Avenue, Gulshan, Dhaka, Bangladesh",
+                                "phone": "+880 2 5881 3101-5",
+                                "fax": "+880 2 5881 1125",
+                                "email": "",
+                                "website": "https://bangladesh.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-high-commission-bangladesh"
+                      },
+                      "Brussels|Belgium|Embassy": {
+                                "address": "Level 7, Avenue des Arts 56, Brussels 1000, Belgium",
+                                "phone": "+32 2 286 0500",
+                                "fax": "+32 2 286 0576",
+                                "email": "",
+                                "website": "https://eu.mission.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-to-belgium-and-luxembourg-and-australian-mission-to-the-european-union"
+                      },
+                      "Abuja|Nigeria|High Commission": {
+                                "address": "PMB 5152, Wuse Post Office, Abuja, 00009",
+                                "phone": "+234 (0) 9460 6960",
+                                "fax": "",
+                                "email": "ahc.abuja@dfat.gov.au",
+                                "website": "https://nigeria.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-high-commission-nigeria"
+                      },
+                      "Bengaluru|India|Consulate-General": {
+                                "address": "Australian Consulate-General, Bengaluru, Level 10, Global Tech Park - MFAR, 37 Cunningham Road, Vasanth Nagar, Bengaluru – 560052",
+                                "phone": "+91 80 4505 5900",
+                                "fax": "",
+                                "email": "",
+                                "website": "https://bengaluru.consulate.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-general-in-bengaluru-india"
+                      },
+                      "Ottawa|Canada|High Commission": {
+                                "address": "Australian High Commission, Suite 1301, 50 O'Connor Street, Ottawa, Ontario K1P 6L2, Canada",
+                                "phone": "+1 613 236 0841",
+                                "fax": "+1 613 786 7621",
+                                "email": "",
+                                "website": "https://canada.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-high-commission-canada"
+                      },
+                      "New Delhi|India|High Commission": {
+                                "address": "No. 1/50 G Shantipath (Gate 1), Chanakyapuri, New Delhi INDIA 110021",
+                                "phone": "(91 11) 4139 9900",
+                                "fax": "(91 11) 2687 2228",
+                                "email": "ahc.newdelhi@dfat.gov.au",
+                                "website": "https://india.highcommission.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-high-commission-india"
+                      },
+                      "Lima|Peru|Embassy": {
+                                "address": "Av. La Paz 1049, Piso 10, Miraflores, Lima 18, Perú",
+                                "phone": "+51 1 630 0500",
+                                "fax": "+51 1 630 0520",
+                                "email": "",
+                                "website": "https://peru.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-in-lima-peru"
+                      },
+                      "Sao Paulo|Brazil|Consulate-General": {
+                                "address": "Alamenda Santos, 700, 9 th floor, Unit 92, Edifício Trianon Corporate – Cerqueira, César, 01418-100 – São Paulo – SP, Brazil",
+                                "phone": "+55 11 2112-6200",
+                                "fax": "+55 11 3171-2889",
+                                "email": "consular.saopaulo@austrade.gov.au",
+                                "website": "https://brazil.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-general-in-s-o-paulo-brazil"
+                      },
+                      "Brasilia|Brazil|Embassy": {
+                                "address": "SES Quadra 801, Conjunto K, Lote 7, Brasilia DF 70200-010, Brazil",
+                                "phone": "+55-61 3226 3111",
+                                "fax": "+55-61 3226 1112",
+                                "email": "",
+                                "website": "https://brazil.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-brazil"
+                      },
+                      "Bandar Seri Begawan|Brunei Darussalam|High Commission": {
+                                "address": "Level 6, DAR Takaful IBB Utama, Jalan Pemancha, Bandar Seri Begawan BS8711, Brunei Darussalam",
+                                "phone": "+673 222 9435",
+                                "fax": "+673 222 1652",
+                                "email": "",
+                                "website": "https://bruneidarussalam.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-high-commission-brunei-darussalam"
+                      },
+                      "Athens|Greece|Embassy": {
+                                "address": "5 Hatziyianni Mexi Street, Athens, 11528, Greece",
+                                "phone": "+30 210 870 4000",
+                                "fax": "+30 210 870 4055",
+                                "email": "",
+                                "website": "https://greece.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-greece"
+                      },
+                      "Accra|Ghana|High Commission": {
+                                "address": "2, Second Rangoon Close (cnr Josef B. Tito Ave), Cantonments Accra, Ghana",
+                                "phone": "+233 302 216 400",
+                                "fax": "+233 302 216 410",
+                                "email": "Accrahc.Enquiries@dfat.gov.au",
+                                "website": "https://ghana.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-high-commission-ghana"
+                      },
+                      "Nairobi|Kenya|High Commission": {
+                                "address": "Limuru Road, Rosslyn, Nairobi, Kenya",
+                                "phone": "Main High Commission Number: (254-20) 4277 100",
+                                "fax": "Main High Commission: (254-20) 4277 139 Department of Home Affairs: (254-20) 4277 189",
+                                "email": "australian.hc.kenya@dfat.gov.au",
+                                "website": "https://kenya.highcommission.gov.au",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-high-commission-kenya"
+                      },
+                      "Lisbon|Portugal|Embassy": {
+                                "address": "Avenida da Liberdade, 200, 2nd Floor, Lisbon 1250-147, Portugal",
+                                "phone": "+351 21 310 1500",
+                                "fax": "+351 21 310 1555",
+                                "email": "",
+                                "website": "https://portugal.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-portugal"
+                      },
+                      "Phnom Penh|Cambodia|Embassy": {
+                                "address": "16B National Assembly St, Sangkat Tonle Bassac, Khan Chamkamon, Phnom Penh, Cambodia",
+                                "phone": "+855 23 266 500",
+                                "fax": "+855 23 266 588",
+                                "email": "",
+                                "website": "https://cambodia.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-cambodia"
+                      },
+                      "Toronto|Canada|Consulate-General": {
+                                "address": "Suite 1100 South Tower, 175 Bloor Street, East, Toronto Ontario M4W 3R8, Canada",
+                                "phone": "General enquiries: +1 416 323 4280",
+                                "fax": "+1 416 352 5306",
+                                "email": "",
+                                "website": "https://canada.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-general-in-toronto-canada"
+                      },
+                      "Vancouver|Canada|Consulate": {
+                                "address": "Suite 2050 - 1075 West Georgia St, Vancouver BC V6E 3C9, Canada",
+                                "phone": "+1 604 694 6160",
+                                "fax": "+1 604 608 9671",
+                                "email": "",
+                                "website": "https://canada.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-in-vancouver-canada"
+                      },
+                      "Addis Ababa|Ethiopia|Embassy": {
+                                "address": "Turkish Compound (off Cape Verde Street), PO Box 3715, Addis Ababa, Ethiopia",
+                                "phone": "+251 (0) 967 941 377",
+                                "fax": "+251 11 667 2868",
+                                "email": "adba.info@dfat.gov.au",
+                                "website": "https://ethiopia.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-ethiopia"
+                      },
+                      "Santiago|Chile|Embassy": {
+                                "address": "Isidora Goyenechea 3621, 12 and 13th Flrs, Las Condes, Santiago de Chile, Chile",
+                                "phone": "+56 2 2 550 3500",
+                                "fax": "+56 2 2550 3560",
+                                "email": "",
+                                "website": "https://chile.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-chile"
+                      },
+                      "Beijing|China|Embassy": {
+                                "address": "21 Dongzhimenwai Dajie, Sanlitun, Beijing 100600, China (People's Republic of)",
+                                "phone": "+86 10 5140 4111",
+                                "fax": "+86 10 5140 4204",
+                                "email": "",
+                                "website": "https://china.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-china-peoples-republic-of"
+                      },
+                      "Chengdu|China|Consulate-General": {
+                                "address": "27/F, Square One, 18 Dongyu St, Jinjiang District, Chengdu, 610016, China (People's Republic of)",
+                                "phone": "+86 028 6268 5200",
+                                "fax": "+86 028 6268 5222",
+                                "email": "",
+                                "website": "https://chengdu.china.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-general-in-chengdu-china-peoples-republic-of"
+                      },
+                      "Guangzhou|China|Consulate-General": {
+                                "address": "12th Floor, Development Centre, No. 3 Linjiang Road, Zhujiang New City, Guangzhou 510623, China (People's Republic of)",
+                                "phone": "+86 20 38140111 (non-visa enquiries), +86 20 38140250 (visa enquiries)",
+                                "fax": "+86 20 38140112 (non-visa enquiries), +86 20 38140251 (visa enquiries)",
+                                "email": "",
+                                "website": "https://guangzhou.consulate.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-general-in-guangzhou-china-peoples-republic-of"
+                      },
+                      "Hong Kong|China|Consulate-General": {
+                                "address": "23/F Harbour Centre, 25 Harbour Road, Wan Chai, Hong Kong SAR",
+                                "phone": "+852 2827 8881",
+                                "fax": "+852 3010 3864",
+                                "email": "",
+                                "website": "https://hongkong.consulate.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-general-in-hong-kong"
+                      },
+                      "Shanghai|China|Consulate-General": {
+                                "address": "Level 22, Citic Square, 1168 Nanjing West Road, Shanghai 200041, China (People's Republic of)",
+                                "phone": "+86 21 2215 5200",
+                                "fax": "+86 21 2215 5252",
+                                "email": "",
+                                "website": "https://shanghai.consulate.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-general-in-shanghai-china-peoples-republic-of"
+                      },
+                      "Bogota|Colombia|Embassy": {
+                                "address": "Australian Embassy, Edificio Tierra Firme, Avenida Carrera 9 No. 115-06/30, Oficina 2003, Bogotá, Colombia",
+                                "phone": "+57 60 1 6578030",
+                                "fax": "",
+                                "email": "bogota.embassy@dfat.gov.au",
+                                "website": "https://colombia.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-general-in-bogota-colombia"
+                      },
+                      "Port Louis|Mauritius|High Commission": {
+                                "address": "2nd Floor, Rogers House, 5 President John Kennedy St, Port Louis, Mauritius",
+                                "phone": "+230 202 0160",
+                                "fax": "+230 208 8878",
+                                "email": "ahc.portlouis@dfat.gov.au",
+                                "website": "https://mauritius.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-high-commission-mauritius"
+                      },
+                      "Rarotonga|Cook Islands|High Commission": {
+                                "address": "Australian High Commission, 1st floor, Philatelic Bureau Building, Takuvaine Rd, Avarua, Rarotonga",
+                                "phone": "+682 22223",
+                                "fax": "",
+                                "email": "ahcrarotonga@dfat.gov.au",
+                                "website": "https://cookislands.highcommission.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-high-commission-cook-islands"
+                      },
+                      "Harare|Zimbabwe|Embassy": {
+                                "address": "1 Green Close, Borrowdale Harare, Zimbabwe",
+                                "phone": "+263 242 853 235 55 or +263 772 572 035",
+                                "fax": "+263 242 870 566",
+                                "email": "zimbabwe.embassy@dfat.gov.au",
+                                "website": "https://zimbabwe.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-zimbabwe"
+                      },
+                      "Mexico City|Mexico|Embassy": {
+                                "address": "Ruben Dario 55, Col. Polanco, Mexico City 11580, Mexico",
+                                "phone": "+52-55-11012200",
+                                "fax": "+52-55-1101-2201",
+                                "email": "",
+                                "website": "https://mexico.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-mexico"
+                      },
+                      "Zagreb|Croatia|Embassy": {
+                                "address": "Grand Centar, 5th Floor, Hektoroviceva 2, Zagreb 10000, Croatia",
+                                "phone": "+385 1 489 1200",
+                                "fax": "+385 1 489 1216, 483 6606",
+                                "email": "",
+                                "website": "https://croatia.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-croatia"
+                      },
+                      "Nicosia|Cyprus|High Commission": {
+                                "address": "7th Floor, Block A, Alpha Business Centre, 27 Pindarou Street, Nicosia 1060, Cyprus; Annex: Shakespeare House, Mehmet Akif Avenue 29, Koskluciftlik, north Nicosia.",
+                                "phone": "+357 2269 7555",
+                                "fax": "+357 22 766 486",
+                                "email": "",
+                                "website": "https://cyprus.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-high-commission-cyprus",
+                                "note": "Annex phone: +90 533 846 7017."
+                      },
+                      "Warsaw|Poland|Embassy": {
+                                "address": "8th Floor, Rondo ONZ 1, 00-124, Warsaw, Poland",
+                                "phone": "+48 22 5213 444",
+                                "fax": "+48 22 6273 500",
+                                "email": "",
+                                "website": "https://poland.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-poland"
+                      },
+                      "Copenhagen|Denmark|Embassy": {
+                                "address": "Dampfaergevej 26, 2nd floor, 2100 Copenhagen Ø, Denmark",
+                                "phone": "+45 7026 3676",
+                                "fax": "",
+                                "email": "",
+                                "website": "https://denmark.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-denmark"
+                      },
+                      "Dili|Timor-Leste|Embassy": {
+                                "address": "Rua Martires da Patria, Dili, Timor-Leste",
+                                "phone": "+670 3322 111",
+                                "fax": "+670 332 2247",
+                                "email": "",
+                                "website": "https://timorleste.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-timor-leste"
+                      },
+                      "Cairo|Egypt|Embassy": {
+                                "address": "World Trade Centre (11th Floor), Corniche El Nil, Boulaq (Code No. 11111), Cairo, Egypt",
+                                "phone": "+202 2770 6600",
+                                "fax": "+202 2770 6650",
+                                "email": "",
+                                "website": "https://egypt.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-egypt"
+                      },
+                      "Tallinn|Estonia|Embassy": {
+                                "address": "Ehitajate tee 5, Mustamäe, 19086 Tallinn, Estonia",
+                                "phone": "+372 51975081",
+                                "fax": "",
+                                "email": "kevin.parnell@taltech.ee",
+                                "website": "https://estonia.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-in-tallinn-estonia"
+                      },
+                      "Pohnpei|Federated States of Micronesia|Embassy": {
+                                "address": "H & E Enterprises Building, Kolonia, Pohnpei, Federated States of Micronesia",
+                                "phone": "+691 320 5448",
+                                "fax": "+691 320 5449",
+                                "email": "",
+                                "website": "https://fsm.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-federated-states-of-micronesia"
+                      },
+                      "Suva|Fiji|High Commission": {
+                                "address": "37 Princes Rd (Tamavua), Suva, Fiji",
+                                "phone": "+679 338 2211",
+                                "fax": "+679 338 2065",
+                                "email": "",
+                                "website": "https://fiji.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-high-commission-fiji"
+                      },
+                      "Stockholm|Sweden|Embassy": {
+                                "address": "Klarabergsviadukten 63, 8th Floor,, Stockholm, Sweden",
+                                "phone": "+46-8-6132900",
+                                "fax": "+46-8-6132982",
+                                "email": "",
+                                "website": "https://sweden.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-sweden"
+                      },
+                      "Papeete|French Polynesia|Consulate-General": {
+                                "address": "Second Floor, CCISM building, 41 Rue du Dr Cassiau, Papeete, Tahiti, 98713, FRENCH POLYNESIA",
+                                "phone": "+689 4057 6900",
+                                "fax": "",
+                                "email": "Consulate.Papeete@dfat.gov.au",
+                                "website": "",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-general-in-papeete-french-polynesia"
+                      },
+                      "Berlin|Germany|Embassy": {
+                                "address": "Wallstrasse 76-79, Berlin 10179, Germany",
+                                "phone": "+49 30 880088-0",
+                                "fax": "+49 30 880088–238",
+                                "email": "",
+                                "website": "https://germany.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-germany"
+                      },
+                      "Frankfurt|Germany|Consulate-General": {
+                                "address": "Australian Consulate General, Main Tower - 28th Floor, Neue Mainzer Strasse 52-58, 60311 Frankfurt, Germany",
+                                "phone": "+49 69 9055 80",
+                                "fax": "+49 69 2009 1713",
+                                "email": "",
+                                "website": "https://germany.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-general-in-frankfurt-germany"
+                      },
+                      "Honolulu|United States of America|Consulate-General": {
+                                "address": "Penthouse, 1000 Bishop Street, Honolulu 96813, United States of America",
+                                "phone": "+1 (808) 529 8100",
+                                "fax": "+1 (808) 529 8142",
+                                "email": "",
+                                "website": "https://usa.embassy.gov.au/our-locations",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-general-in-honolulu-united-states-of-america"
+                      },
+                      "Vatican City|Holy See|Embassy": {
+                                "address": "Corso Vittorio Emanuele II, 349, Rome 00186, Rome Italy",
+                                "phone": "+39 06 686 261",
+                                "fax": "+39 06 686 26111",
+                                "email": "",
+                                "website": "https://holysee.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-the-holy-see"
+                      },
+                      "Chennai|India|Consulate-General": {
+                                "address": "9th Floor, Express Chambers, Express Avenue, 49, 50L Whites Road, Royapettah, Chennai 600 014, Tamil Nadu, India",
+                                "phone": "(+91) 44 4592 1300",
+                                "fax": "+91 44 4592 1320",
+                                "email": "",
+                                "website": "https://chennai.consulate.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-general-in-chennai-india"
+                      },
+                      "Kolkata|India|Consulate-General": {
+                                "address": "1A, Ho Chi Minh Sarani, Kolkata 700-071, West Bengal, India",
+                                "phone": "+91 11 4910 5980",
+                                "fax": "",
+                                "email": "acg.kolkata@dfat.gov.au",
+                                "website": "https://kolkata.consulate.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-general-in-kolkata-india"
+                      },
+                      "Mumbai|India|Consulate-General": {
+                                "address": "Level 10, A Wing, Crescenzo Building, Opp MCA Cricket Club, G Block, Plot C 38-39, Bandra Kurla Complex, Mumbai 400 051, India",
+                                "phone": "+91 22 6757 4900",
+                                "fax": "+91 22 6757 4955",
+                                "email": "",
+                                "website": "https://mumbai.consulate.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-general-in-mumbai-india"
+                      },
+                      "Jakarta|Indonesia|Embassy": {
+                                "address": "Jalan Patra Kuningan Raya Kav. 1-4, Jakarta Selatan 12950, Indonesia",
+                                "phone": "+62 21 2550 5555",
+                                "fax": "+62 21 522 7101, 2550 5467",
+                                "email": "public-affairs-jakt@dfat.gov.au",
+                                "website": "https://indonesia.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-indonesia"
+                      },
+                      "Bali (Denpasar)|Indonesia|Consulate-General": {
+                                "address": "Jalan Tantular, No. 32, Renon, Denpasar, Bali 80234, Indonesia",
+                                "phone": "+62 361 - 2000 100",
+                                "fax": "+62 361 2000 195",
+                                "email": "",
+                                "website": "https://bali.indonesia.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-general-in-bali-indonesia"
+                      },
+                      "Makassar|Indonesia|Consulate-General": {
+                                "address": "Wisma Kalla Building, 7th Floor, Jalan DR. Sam Ratulangi No 8-10, Makassar 90125, Indonesia",
+                                "phone": "+62 4113664100",
+                                "fax": "",
+                                "email": "",
+                                "website": "https://makassar.consulate.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-general-in-makassar-indonesia"
+                      },
+                      "Surabaya|Indonesia|Consulate-General": {
+                                "address": "Level 3 ESA Sampoerna Center, Jl. Dokter.Ir. H. Soekarno No. 198, Klampis Ngasem, Sukolilo, Surabaya 60117, Indonesia",
+                                "phone": "+62 31 9920 3200",
+                                "fax": "",
+                                "email": "",
+                                "website": "https://surabaya.consulate.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-general-in-surabaya-indonesia"
+                      },
+                      "Tehran|Iran|Embassy": {
+                                "address": "",
+                                "phone": "",
+                                "fax": "",
+                                "email": "",
+                                "website": "https://iran.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-iran"
+                      },
+                      "Baghdad|Iraq|Embassy": {
+                                "address": "Australian Embassy, International Zone, Baghdad, Iraq",
+                                "phone": "Landlines in Baghdad are not operational. For consular emergencies, please contact the Consular Emergency Centre in Canberra: +61 2 6261 3305",
+                                "fax": "",
+                                "email": "",
+                                "website": "https://iraq.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-iraq"
+                      },
+                      "Dublin|Ireland|Embassy": {
+                                "address": "Third Floor, 47-49 St Stephen's Green, Dublin 2, D02W634, Ireland",
+                                "phone": "+353 1 664 5300",
+                                "fax": "+353 1 662 3566 (Political and Trade) +353 1 678 5185 (Consular and Administration)",
+                                "email": "",
+                                "website": "https://ireland.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-ireland"
+                      },
+                      "Tel Aviv|Israel|Embassy": {
+                                "address": "Discount Bank Tower (28th Floor), 23 Yehuda Halevi St (cnr Herzl St), Tel Aviv 65136, Israel",
+                                "phone": "+972 3, 693 5000",
+                                "fax": "+972 3, 693 5002",
+                                "email": "",
+                                "website": "https://israel.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-israel"
+                      },
+                      "Milan|Italy|Consulate-General": {
+                                "address": "3rd Floor, Via Borgogna 2, Milan 20122, Italy",
+                                "phone": "+39 02 77674200",
+                                "fax": "+39 02 44386663",
+                                "email": "",
+                                "website": "https://italy.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-general-in-milan-italy"
+                      },
+                      "Tokyo|Japan|Embassy": {
+                                "address": "2-1-14 Mita, Minato-Ku, Tokyo 108-8361, Japan",
+                                "phone": "+81 3 5232 4111",
+                                "fax": "+81 3 6368 3233",
+                                "email": "",
+                                "website": "https://japan.embassy.gov.au/tkyo/home.html",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-japan"
+                      },
+                      "Osaka|Japan|Consulate-General": {
+                                "address": "Twin 21 MID Tower, 16th Floor, 2-1-61, Shiromi, Chuo-ku, Osaka 540-6116, Japan",
+                                "phone": "+81 6-6941-9271(switchboard); +81 6-6941-9448 (Consular Section direct number)",
+                                "fax": "+81 6-7635-7033",
+                                "email": "",
+                                "website": "https://japan.embassy.gov.au/tkyo/location_osaka.html",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-general-in-osaka-japan"
+                      },
+                      "Amman|Jordan|Embassy": {
+                                "address": "41 Kayed Al Armouti Street, Abdoun, Amman, Jordan",
+                                "phone": "+962 - 6 5807000",
+                                "fax": "+962 - 6 5807001",
+                                "email": "",
+                                "website": "https://jordan.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-jordan"
+                      },
+                      "Tarawa|Kiribati|High Commission": {
+                                "address": "Bairiki, Tarawa, Kiribati",
+                                "phone": "+686 740 21184; Consular (after hours): +686 740 21184",
+                                "fax": "+686 740 21904",
+                                "email": "ahc.tarawa@dfat.gov.au",
+                                "website": "https://kiribati.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-high-commission-kiribati"
+                      },
+                      "Seoul|Korea, Republic of (South)|Embassy": {
+                                "address": "19th Fl, Kyobo Building, 1 Jongro-1-Ga, Jongro-Gu, Seoul 110-714, Korea (Republic of)",
+                                "phone": "+82 2 2003 0100",
+                                "fax": "+82 2 6322 9776",
+                                "email": "",
+                                "website": "https://southkorea.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-korea-republic-of"
+                      },
+                      "Kuwait City|Kuwait|Embassy": {
+                                "address": "Dar Al-Awadi Building (12th Floor),, Ahmed Al-Jaber Street,, Sharq, Kuwait",
+                                "phone": "+965, 232 2422",
+                                "fax": "+965, 232 2430",
+                                "email": "",
+                                "website": "https://kuwait.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-kuwait"
+                      },
+                      "Vientiane|Laos|Embassy": {
+                                "address": "KM4, Thadeua Road, Watnak village, Sisattanak District, Vientiane, Laos PDR",
+                                "phone": "+856 21 353800",
+                                "fax": "+856 21 353801",
+                                "email": "",
+                                "website": "https://laos.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-laos"
+                      },
+                      "Beirut|Lebanon|Embassy": {
+                                "address": "Embassy Complex, Serail Hill, Downtown Beirut, Lebanon",
+                                "phone": "+961-1-960600",
+                                "fax": "+961-1-960601",
+                                "email": "",
+                                "website": "https://lebanon.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-lebanon"
+                      },
+                      "Geneva|Switzerland|Consulate-General and Permanent Mission": {
+                                "address": "Chemin des Fins 2, Case Postale 172, 1211 Geneva 19, Switzerland",
+                                "phone": "+41 22 799 9100",
+                                "fax": "+41 22 799 9175",
+                                "email": "",
+                                "website": "http://geneva.mission.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-permanent-mission-to-the-office-of-the-united-nations-delegation-to-the-conference-on-disarmament-switzerland"
+                      },
+                      "Kuala Lumpur|Malaysia|High Commission": {
+                                "address": "6, Jalan Yap Kwan Seng, Kuala Lumpur 50450, Malaysia",
+                                "phone": "+60 3 2146 5555",
+                                "fax": "+60 3 2141 5773",
+                                "email": "Public-Affairs-KLPR@dfat.gov.au",
+                                "website": "https://malaysia.highcommission.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-high-commission-malaysia"
+                      },
+                      "Malé|Maldives|High Commission": {
+                                "address": "Level 5, JEN Maldives Malé, Ameer Ahmed Magu, Malé 20096, Republic of Maldives",
+                                "phone": "",
+                                "fax": "",
+                                "email": "",
+                                "website": "",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-high-commission-maldives"
+                      },
+                      "Malta|Malta|High Commission": {
+                                "address": "Ta' Xbiex Terrace, TA' XBIEX, XBX 1034, Malta",
+                                "phone": "+356 21338 201",
+                                "fax": "+356 21344 059",
+                                "email": "",
+                                "website": "https://malta.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-high-commission-malta"
+                      },
+                      "Majuro|Marshall Islands|Embassy": {
+                                "address": "Office Suite 1, 4th Floor, NAPA Building, Uliga, Majuro, Republic of the Marshall Islands",
+                                "phone": "+692 457 2285",
+                                "fax": "",
+                                "email": "",
+                                "website": "https://majuro.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-republic-of-the-marshall-islands"
+                      },
+                      "Ulaanbaatar|Mongolia|Embassy": {
+                                "address": "Level 20, Shangri-La Centre,, 19A Olympic Street,, Sukhbaatar District-1,, Ulaanbaatar 14241, Mongolia",
+                                "phone": "+976 7013-3001",
+                                "fax": "+976 7013-3014",
+                                "email": "",
+                                "website": "https://mongolia.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-mongolia"
+                      },
+                      "Belgrade|Serbia|Embassy": {
+                                "address": "8th Floor, Vladimira Popovica 38-40, 11070 New Belgrade, Serbia",
+                                "phone": "+381-11 3303 400",
+                                "fax": "+381-11 3303 409",
+                                "email": "",
+                                "website": "https://serbia.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-serbia"
+                      },
+                      "Nauru|Nauru|High Commission": {
+                                "address": "MQ45 & MQ43 NPC OE, Aiwo District, Republic of Nauru",
+                                "phone": "+674 557 3380",
+                                "fax": "+674 557 3382",
+                                "email": "",
+                                "website": "https://nauru.highcommission.gov.au/nuru/home.html",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-high-commission-in-the-republic-of-nauru"
+                      },
+                      "Kathmandu|Nepal|Embassy": {
+                                "address": "Bansbari, Kathmandu, Nepal",
+                                "phone": "+977 1 4371 678",
+                                "fax": "+977 1 4371 533",
+                                "email": "",
+                                "website": "https://nepal.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-nepal"
+                      },
+                      "Noumea|New Caledonia|Consulate-General": {
+                                "address": "Immeuble Norwich, 2nd floor, 11 rue Georges Baudoux, Artillerie, 98800 Noumea, New Caledonia",
+                                "phone": "+687 272 414",
+                                "fax": "",
+                                "email": "",
+                                "website": "https://noumea.consulate.gov.au/nmeafrench/home.html",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-general-in-noumea-new-caledonia"
+                      },
+                      "Wellington|New Zealand|High Commission": {
+                                "address": "72-76 Hobson Street, Thorndon, Wellington, New Zealand",
+                                "phone": "+64 4 473 6411",
+                                "fax": "+64 4 498 7103",
+                                "email": "nzinbox@dfat.gov.au",
+                                "website": "https://newzealand.highcommission.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-high-commission-new-zealand"
+                      },
+                      "Auckland|New Zealand|Consulate-General": {
+                                "address": "Level 7 HSBC Tower, 186-194 Quay Street, Auckland, New Zealand",
+                                "phone": "+64 9 9218800",
+                                "fax": "+64 9 3531328",
+                                "email": "",
+                                "website": "https://newzealand.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-general-in-auckland-new-zealand"
+                      },
+                      "Alofi|Niue|High Commission": {
+                                "address": "Australian High Commission, Tapeu-Porritt Road, Alofi; Office hours | Mon-Fri 0800 -1200, 1230 -1600 hrs",
+                                "phone": "+683 4173",
+                                "fax": "",
+                                "email": "ahcniue@dfat.gov.au",
+                                "website": "https://niue.highcommission.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-high-commission-niue"
+                      },
+                      "Islamabad|Pakistan|High Commission": {
+                                "address": "Constitution Ave and Ispahani Rd, Diplomatic Enclave No. 1, Sector G-5/4, Islamabad, Pakistan",
+                                "phone": "+92 51 835 5500",
+                                "fax": "+92 51 848 9990",
+                                "email": "",
+                                "website": "https://pakistan.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-high-commission-pakistan"
+                      },
+                      "Ramallah|Palestinian Authority|Representative Office": {
+                                "address": "P.O. Box 4235, El Bireh",
+                                "phone": "+972 2 242 5301",
+                                "fax": "+972-2 242 8290",
+                                "email": "",
+                                "website": "https://ramallah.mission.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-representative-office-ramallah"
+                      },
+                      "Palau|Palau|Embassy": {
+                                "address": "2nd Floor, RT Building (formerly PDC Building), Unit 203 & 205, Medalaii, Koror",
+                                "phone": "+680 775 5088",
+                                "fax": "",
+                                "email": "koror.embassy@dfat.gov.au",
+                                "website": "https://palau.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-palau"
+                      },
+                      "Port Moresby|Papua New Guinea|High Commission": {
+                                "address": "Godwit Road (Waigani), Port Moresby NCD, Papua New Guinea",
+                                "phone": "+675 7090 0100",
+                                "fax": "+675 325 9239",
+                                "email": "",
+                                "website": "https://png.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-high-commission-papua-new-guinea"
+                      },
+                      "Lae|Papua New Guinea|Consulate-General": {
+                                "address": "Australian Consulate-General Lae, Level 4, Nambawan Supa Haus, 2nd Street, Top Town, Lae, Morobe Province, Papua New Guinea",
+                                "phone": "+675 7999 5300",
+                                "fax": "",
+                                "email": "Consulate-General.Lae@dfat.gov.au",
+                                "website": "http://png.embassy.gov.au/pmsb/Lae.html",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-papua-new-guinea"
+                      },
+                      "Manila|Philippines|Embassy": {
+                                "address": "Level 23-Tower 2, RCBC Plaza,, 6819 Ayala Avenue (Makati City), Manila, Philippines",
+                                "phone": "+63 2 7757 8100",
+                                "fax": "+63 2 7757 8268",
+                                "email": "",
+                                "website": "https://philippines.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-philippines"
+                      },
+                      "New York|United States of America|Consulate-General": {
+                                "address": "150 East 42nd Street, 34th Floor, New York NY 10017-5612, United States of America",
+                                "phone": "+1 212 351 6500 (24 Hours)",
+                                "fax": "+1 212 351 6501",
+                                "email": "",
+                                "website": "https://usa.embassy.gov.au/our-locations",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-general-in-new-york-united-states-of-america"
+                      },
+                      "Doha|Qatar|Embassy": {
+                                "address": "Australian Embassy, Tornado Tower, Majlis Al Taawon St, Doha, Qatar",
+                                "phone": "+974 4007 8500",
+                                "fax": "",
+                                "email": "embassy.doha@dfat.gov.au",
+                                "website": "http://qatar.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-qatar"
+                      },
+                      "Singapore|Singapore|High Commission": {
+                                "address": "25 Napier Road, Singapore 258507, Singapore",
+                                "phone": "+65 6836 4100",
+                                "fax": "+65 6737 7465",
+                                "email": "enquiries-sg@dfat.gov.au",
+                                "website": "https://singapore.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-high-commission-singapore"
+                      },
+                      "Honiara|Solomon Islands|High Commission": {
+                                "address": "Cnr Hibiscus Ave & Mud Alley, Honiara, Solomon Islands",
+                                "phone": "+677 21 561",
+                                "fax": "+677 23 691",
+                                "email": "",
+                                "website": "https://solomonislands.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-high-commission-solomon-islands"
+                      },
+                      "Colombo|Sri Lanka|High Commission": {
+                                "address": "21 Srimath RG Senanayake Mawatha, Colombo 7, Sri Lanka",
+                                "phone": "+94-11- 246 3200 (general enquiries)",
+                                "fax": "+94-11- 268 6453 (administration) +94-11-268 2311 (visas, migration and citizenship)",
+                                "email": "reception.colombo@dfat.gov.au",
+                                "website": "https://srilanka.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-high-commission-sri-lanka"
+                      },
+                      "Bern|Switzerland|Embassy": {
+                                "address": "Weltpoststrasse 5, 2nd Floor – Flex Office, 3015 Bern, Switzerland",
+                                "phone": "+41 (0)31 310 17 80",
+                                "fax": "",
+                                "email": "",
+                                "website": "",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-switzerland"
+                      },
+                      "Taipei|Taiwan|Australian Office": {
+                                "address": "",
+                                "phone": "+886 2 8725 4100",
+                                "fax": "+886 2 6601 8243",
+                                "email": "",
+                                "website": "https://australia.org.tw/tpei/home.html",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/the-australian-office-in-taipei"
+                      },
+                      "Bangkok|Thailand|Embassy": {
+                                "address": "181 Wireless Road, Bangkok 10330, Thailand",
+                                "phone": "+66 2 344 6300",
+                                "fax": "+66 2 344 6593",
+                                "email": "",
+                                "website": "https://thailand.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-thailand"
+                      },
+                      "Phuket|Thailand|Consulate-General": {
+                                "address": "6th Floor, CCM Complex, 77/77 Charlermprakiat Rama 9 Road (Bypass Road), Phuket Province, 83000 Thailand",
+                                "phone": "+66 (0) 76 317 700",
+                                "fax": "+66 ( 0) 76 317 743",
+                                "email": "consular.phuket@dfat.gov.au",
+                                "website": "http://phuket.consulate.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-general-in-phuket-thailand"
+                      },
+                      "Nuku'Alofa|Tonga|High Commission": {
+                                "address": "82 Salote Road, Nuku'Alofa, Kingdom of Tonga",
+                                "phone": "+676 20 40023",
+                                "fax": "",
+                                "email": "",
+                                "website": "https://tonga.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-high-commission-tonga"
+                      },
+                      "Istanbul|Türkiye|Consulate-General": {
+                                "address": "Suzer Plaza, Elmadag Askerocagi Caddesi No. 15, Sisli, Istanbul 34367, Türkiye",
+                                "phone": "+90 212 393 3300",
+                                "fax": "+90 212 243 1332",
+                                "email": "consular.istanbul@dfat.gov.au",
+                                "website": "https://turkey.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-general-in-istanbul-t%C3%BCrkiye"
+                      },
+                      "Canakkale|Türkiye|Consulate": {
+                                "address": "Kolin Hotel, Kepez 17100, Canakkale, Türkiye",
+                                "phone": "+90 286 218 1721",
+                                "fax": "+90 286 218 1724",
+                                "email": "",
+                                "website": "https://turkey.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-in-canakkale-t%C3%BCrkiye"
+                      },
+                      "Funafuti|Tuvalu|High Commission": {
+                                "address": "First Floor, Telecom Tuvalu Building, Tuvalu Road, Vaiaku, Funafuti, Tuvalu; Opening hours: 8:30 am to 4:30 pm",
+                                "phone": "+688 20043",
+                                "fax": "",
+                                "email": "ahc.funafuti@dfat.gov.au",
+                                "website": "https://tuvalu.highcommission.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-high-commission-tuvalu"
+                      },
+                      "Kyiv|Ukraine|Embassy": {
+                                "address": "",
+                                "phone": "",
+                                "fax": "",
+                                "email": "AustEmbKyiv@dfat.gov.au",
+                                "website": "https://ukraine.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-ukraine"
+                      },
+                      "Abu Dhabi|United Arab Emirates|Embassy": {
+                                "address": "Al Muhairy Centre, Level 16, Al Muhairy Centre, Zayed the First Street, Abu Dhabi, United Arab Emirates",
+                                "phone": "+ 971 2 401 7500",
+                                "fax": "+ 971 2 401 7501",
+                                "email": "",
+                                "website": "https://uae.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-united-arab-emirates"
+                      },
+                      "Dubai|United Arab Emirates|Consulate-General": {
+                                "address": "Level 25, BurJuman Business Tower, Sheikh Khalifa Bin Zayed Road, Mankhool, Bur Dubai, Dubai, United Arab Emirates",
+                                "phone": "+971 4 508 7100",
+                                "fax": "+971 4 355 1547",
+                                "email": "consular.dubai@austrade.gov.au",
+                                "website": "https://uae.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-general-in-dubai-united-arab-emirates"
+                      },
+                      "Washington DC|United States of America|Embassy": {
+                                "address": "1601 Massachusetts Ave NW, Washington, DC 20036",
+                                "phone": "+1 202 797 3000",
+                                "fax": "+1 202 797 3331",
+                                "email": "",
+                                "website": "https://usa.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-embassy-united-states-of-america"
+                      },
+                      "New York (UN)|United States of America|Permanent Mission": {
+                                "address": "150 East 42 Street, Level 33, New York NY 10017, United Nations",
+                                "phone": "+1-212 or 1-646 351 6600",
+                                "fax": "+1-212 or +1-646 351 6610",
+                                "email": "",
+                                "website": "https://unny.mission.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-mission-to-the-united-nations-in-new-york"
+                      },
+                      "San Francisco|United States of America|Consulate-General": {
+                                "address": "575 Market Street, Suite 1800 (18th Floor), San Francisco CA 94105-2815, United States of America",
+                                "phone": "+1 415 644 3620",
+                                "fax": "+1 415 276 2375",
+                                "email": "",
+                                "website": "https://usa.embassy.gov.au/our-locations",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-general-in-san-francisco-united-states-of-america"
+                      },
+                      "Chicago|United States of America|Consulate-General": {
+                                "address": "123 North Wacker Drive, Suite 1330, Chicago IL 60606, United States of America",
+                                "phone": "+1 312 419 1480",
+                                "fax": "+1 312 419 1499",
+                                "email": "",
+                                "website": "https://usa.embassy.gov.au/our-locations",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-general-in-chicago-united-states-of-america"
+                      },
+                      "Houston|United States of America|Consulate-General": {
+                                "address": "3009 Post Oak Blvd, Suite 1310, Houston TX 77056, United States of America",
+                                "phone": "+1 832 962 8420",
+                                "fax": "+1 832 831 2022",
+                                "email": "",
+                                "website": "https://usa.embassy.gov.au/our-locations",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-in-houston-united-states-of-america"
+                      },
+                      "Los Angeles|United States of America|Consulate-General": {
+                                "address": "Century Plaza Towers - 31st Floor, 2029 Century Park East, Century City, Los Angeles CA 90067, United States of America",
+                                "phone": "+1 310 229 2300",
+                                "fax": "+1 310 229 2380",
+                                "email": "",
+                                "website": "https://usa.embassy.gov.au/our-locations",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-consulate-general-in-los-angeles-united-states-of-america"
+                      },
+                      "Denver|United States of America|Consulate": {
+                                "address": "WeWork Wells Fargo Center, 1700 Lincoln St, 17th Floor, Denver CO 80203",
+                                "phone": "+1 (720) 366 7500",
+                                "fax": "",
+                                "email": "",
+                                "website": "https://usa.embassy.gov.au/our-locations",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-in-denver-united-states-of-america"
+                      },
+                      "Miami|United States of America|Consulate": {
+                                "address": "The Biltmore, 1200 Anastasia Ave, Suite CCA-100, Coral Gables FLA, 33134",
+                                "phone": "+1 (202) 797 3000",
+                                "fax": "",
+                                "email": "",
+                                "website": "https://usa.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/australian-consulate-miami-united-states-america",
+                                "note": "Passport, visa and notarial services are not available at this consulate."
+                      },
+                      "Port Vila|Vanuatu|High Commission": {
+                                "address": "Winston Churchill Avenue, Port Vila, Vanuatu",
+                                "phone": "+678 22 777 (24 Hours)",
+                                "fax": "+678 23 948",
+                                "email": "",
+                                "website": "https://vanuatu.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-high-commission-vanuatu"
+                      },
+                      "Hanoi|Vietnam|Embassy": {
+                                "address": "8 Dao Tan Street, Ba Dinh District, Hanoi, Vietnam",
+                                "phone": "+84-24 3774 0100",
+                                "fax": "+84-24 3774 0111",
+                                "email": "",
+                                "website": "https://vietnam.embassy.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/Pages/australian-embassy-vietnam"
+                      },
+                      "Ho Chi Minh City|Vietnam|Consulate-General": {
+                                "address": "20th Floor, Vincom Center, 47 Ly Tu Trong Street, District 1, Ho Chi Minh City, Vietnam",
+                                "phone": "+84-28 3521 8100",
+                                "fax": "+84-28 3521 8101",
+                                "email": "",
+                                "website": "https://hcmc.consulate.gov.au/",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/australian-consulate-general-in-ho-chi-minh-city-vietnam"
+                      },
+                      "Yangon|Myanmar|Embassy": {
+                                "address": "Vantage Tower, 623 Pyay Road, Yangon, Myanmar",
+                                "phone": "+95 1 230 7410",
+                                "fax": "+95 1 230 7425",
+                                "email": "",
+                                "website": "https://myanmar.embassy.gov.au/",
+                                "source": "https://myanmar.embassy.gov.au/rang/contact-us.html"
+                      },
+                      "Phoenix|United States of America|Consulate": {
+                                "address": "",
+                                "phone": "",
+                                "fax": "",
+                                "email": "",
+                                "website": "",
+                                "source": "https://www.dfat.gov.au/about-us/our-locations/missions/our-embassies-and-consulates-overseas",
+                                "note": "DFAT lists Phoenix as see also Los Angeles; no separate contact page found in this pass."
+                      }
+            };
+
+            function missionKey(mission) {
+                return `${mission.city}|${mission.country}|${mission.type}`;
+            }
+
+            missionsData.forEach(mission => {
+                Object.assign(mission, missionContactData[missionKey(mission)] || {});
+            });
 
             const countryFilter = document.getElementById('countryFilter');
             const typeFilter = document.getElementById('typeFilter');
@@ -287,6 +1334,24 @@
                 });
             }
 
+            function escapeHtml(value) {
+                return String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
+            }
+
+            function infoRow(label, value, href = '') {
+                if (!value) return '';
+                const safeLabel = escapeHtml(label);
+                const safeValue = escapeHtml(value);
+                const renderedValue = href
+                    ? `<a href="${escapeHtml(href)}" class="text-teal-700 hover:text-teal-900 underline break-words">${safeValue}</a>`
+                    : safeValue;
+                return `<p><span class="font-semibold">${safeLabel}:</span> ${renderedValue}</p>`;
+            }
+
+            function actionLink(label, href, colourClasses) {
+                return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" class="inline-block text-white font-semibold px-4 py-2 rounded-lg transition-colors ${colourClasses}">${escapeHtml(label)}</a>`;
+            }
+
             function renderMissions() {
                 const country = countryFilter.value;
                 const type = typeFilter.value;
@@ -296,9 +1361,11 @@
                 let filteredMissions = missionsData.filter(mission => {
                     const matchesCountry = country === 'all' || mission.country === country;
                     const matchesType = type === 'all' || mission.type === type;
-                    const matchesSearch = !searchTerm ||
-                        mission.city.toLowerCase().includes(searchTerm) ||
-                        mission.country.toLowerCase().includes(searchTerm);
+                    const searchableText = [mission.city, mission.country, mission.type, mission.address, mission.phone, mission.email, mission.website]
+                        .filter(Boolean)
+                        .join(' ')
+                        .toLowerCase();
+                    const matchesSearch = !searchTerm || searchableText.includes(searchTerm);
                     return matchesCountry && matchesType && matchesSearch;
                 });
 
@@ -317,18 +1384,26 @@
                     missionsGrid.innerHTML = `<p class="text-slate-500 md:col-span-2 xl:col-span-3 text-center">No missions found matching your criteria.</p>`;
                 } else {
                     filteredMissions.forEach(mission => {
-                        const websiteLink = mission.website ? `<a href="${mission.website}" target="_blank" rel="noopener noreferrer" class="inline-block bg-teal-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors">Visit Website</a>` : `<span class="text-slate-500">Website not available</span>`;
+                        const contactRows = [
+                            infoRow('Address', mission.address),
+                            infoRow('Phone', mission.phone),
+                            infoRow('Fax', mission.fax),
+                            infoRow('Email', mission.email, mission.email ? `mailto:${mission.email}` : ''),
+                            infoRow('Note', mission.note)
+                        ].filter(Boolean).join('');
+                        const websiteLink = mission.website ? actionLink('Mission website', mission.website, 'bg-teal-600 hover:bg-teal-700') : '<span class="text-slate-500">Mission website not available</span>';
+                        const sourceLink = mission.source ? actionLink('Source', mission.source, 'bg-slate-700 hover:bg-slate-800') : '';
                         const card = `
                             <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6 flex flex-col">
-                                <h3 class="text-xl font-bold text-slate-900">${mission.city}</h3>
-                                <p class="text-slate-600 mb-1">${mission.country}</p>
-                                <p class="text-sm font-semibold text-teal-700 bg-teal-100 px-2 py-1 rounded-full self-start mb-4">${mission.type}</p>
+                                <h3 class="text-xl font-bold text-slate-900">${escapeHtml(mission.city)}</h3>
+                                <p class="text-slate-600 mb-1">${escapeHtml(mission.country)}</p>
+                                <p class="text-sm font-semibold text-teal-700 bg-teal-100 px-2 py-1 rounded-full self-start mb-4">${escapeHtml(mission.type)}</p>
                                 <div class="text-slate-700 space-y-2 text-sm flex-grow">
-                                    <p><span class="font-semibold">Address:</span> ${mission.address || 'N/A'}</p>
-                                    <p><span class="font-semibold">Phone:</span> ${mission.phone || 'N/A'}</p>
+                                    ${contactRows || '<p class="text-slate-500">Contact details not found in this pass.</p>'}
                                 </div>
-                                <div class="mt-4 pt-4 border-t border-slate-200">
+                                <div class="mt-4 pt-4 border-t border-slate-200 flex flex-wrap gap-2">
                                     ${websiteLink}
+                                    ${sourceLink}
                                 </div>
                             </div>
                         `;

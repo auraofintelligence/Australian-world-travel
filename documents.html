@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-AU">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document Compliance Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -41,6 +39,8 @@
             #main-content { margin-top: 0 !important; }
         }
     </style>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
 </head>
 <body class="bg-gray-50 text-gray-800">
 
@@ -66,7 +66,7 @@
                     <a href="#personal-documents" class="text-gray-600 hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Personal</a>
                     <a href="#financial-documents" class="text-gray-600 hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Financial</a>
                     <a href="#business-documents" class="text-gray-600 hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Business & Mission</a>
-                    <a href="#translation-hub" class="text-gray-600 hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Translation & Notarization</a>
+                    <a href="#translation-hub" class="text-gray-600 hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Translation & Notarisation</a>
                 </div>
             </div>
         </div>
@@ -82,7 +82,7 @@
             </div>
 
         <div id="translation-hub" class="mt-8 p-6 bg-white rounded-lg shadow-md">
-            <h2 class="text-2xl font-bold mb-4 border-b pb-2">Translation & Notarization Hub</h2>
+            <h2 class="text-2xl font-bold mb-4 border-b pb-2">Translation & Notarisation Hub</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                     <h3 class="font-semibold text-lg mb-2">Translation Checklist</h3>
@@ -97,9 +97,9 @@
                     </div>
                 </div>
                 <div>
-                    <h3 class="font-semibold text-lg mb-2">Notarization & Apostille Guide</h3>
+                    <h3 class="font-semibold text-lg mb-2">Notarisation & Apostille Guide</h3>
                     <p class="text-sm text-gray-600">
-                        <strong>Notarization:</strong> A Notary Public verifies the authenticity of your signature.
+                        <strong>Notarisation:</strong> A Notary Public verifies the authenticity of your signature.
                         <br>
                         <strong>Apostille:</strong> For countries in the Hague Convention, an Apostille from DFAT authenticates the document itself. This is a higher level of verification. Always check if an Apostille is required.
                     </p>
@@ -112,9 +112,13 @@
         <button onclick="window.print()" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">
             Print Checklist
         </button>
-        <button onclick="exportPDF()" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300 ml-4">
-            Export as PDF
+        <button onclick="downloadSupportMarkdown()" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300 ml-4">
+            Download support-agents.md
         </button>
+        <button onclick="copySupportMarkdown()" class="bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-800 transition duration-300 ml-4">
+            Copy Markdown
+        </button>
+        <p id="exportStatus" class="mt-2 text-sm text-gray-600" aria-live="polite"></p>
     </footer>
 
     <button onclick="scrollToBottom()" id="goToBottomBtn" title="Go to Bottom" class="fixed bottom-5 left-5 w-12 h-12 bg-green-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-green-700 transition-all text-2xl font-bold z-20 no-print">
@@ -130,9 +134,9 @@
                 id: 'personal-documents',
                 category: 'Personal Documents',
                 items: [
-                    { name: 'Passport Bio Pages (Primary & Concurrent)', notes: 'High-resolution color scans of all pages. Ensure at least 12 months validity and 4 blank pages.' },
+                    { name: 'Passport Bio Pages (Primary & Concurrent)', notes: 'High-resolution colour scans of all pages. Ensure at least 12 months validity and 4 blank pages.' },
                     { name: 'Birth Certificate', notes: 'Original, certified copy, and high-resolution scan. May require an Apostille.' },
-                    { name: 'National ID Cards / Driver\'s License', notes: 'High-resolution color scans of front and back.' },
+                    { name: 'National ID Cards / Driver\'s Licence', notes: 'High-resolution colour scans of front and back.' },
                     { name: 'Curriculum Vitae (CV)', notes: 'Updated quarterly. Tailor to highlight business experience and qualifications relevant to the mission.' },
                     { name: 'Police Clearance Certificates', notes: 'From Australian Federal Police and any country of residence for >12 months in the last 10 years. Renew as required.' },
                     { name: 'Vaccination Records', notes: 'Including International Certificate of Vaccination for Yellow Fever.' },
@@ -160,7 +164,7 @@
                     { name: 'Certificate of Incorporation (Mission Entities)', notes: 'For GAJRA Earth, Alpha Infinity Foundation, etc. Certified copies.' },
                     { name: 'Business Plan Summary', notes: '1-page summary of Project Odyssey, outlining goals, activities, and timeline in the destination country.' },
                     { name: 'Letter of Support (From Own Company)', notes: 'Template letter confirming employment, salary, purpose of travel, and that all expenses will be covered.' },
-                    { name: 'Letter of Invitation (From Host)', notes: 'Template to be customized by hosts in destination countries. Must be on their letterhead and often needs to be certified or notarized locally.' },
+                    { name: 'Letter of Invitation (From Host)', notes: 'Template to be customised by hosts in destination countries. Must be on their letterhead and often needs to be certified or notarised locally.' },
                     { name: 'List of Global Contacts/Partners', notes: 'For reference in applications, showing established business connections.' },
                     { name: 'Company Profile / Brochure', notes: 'Professional document outlining your business activities.' },
                     { name: 'Proof of Past Business Dealings', notes: 'Contracts, invoices, or correspondence with companies in the destination country, if applicable.' }
@@ -197,7 +201,7 @@
                             <div class="flex flex-wrap gap-x-4 gap-y-2 mt-2 text-sm">
                                 <label class="flex items-center"><input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Scan</span></label>
                                 <label class="flex items-center"><input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Certify</span></label>
-                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Notarize</span></label>
+                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Notarise</span></label>
                                 <label class="flex items-center"><input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Translate</span></label>
                             </div>
                         </div>
@@ -233,33 +237,92 @@
             });
         }
         
-        function exportPDF() {
-            const { jsPDF } = window.jspdf;
-            const content = document.getElementById('main-content');
-            
-            html2canvas(content, { scale: 2 }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = pdf.internal.pageSize.getHeight();
-                const canvasWidth = canvas.width;
-                const canvasHeight = canvas.height;
-                const ratio = canvasWidth / canvasHeight;
-                const imgHeight = pdfWidth / ratio;
-                let heightLeft = imgHeight;
-                let position = 0;
+        function getTodayForFileName() {
+            const offsetMs = new Date().getTimezoneOffset() * 60000;
+            return new Date(Date.now() - offsetMs).toISOString().slice(0, 10);
+        }
 
-                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
-                heightLeft -= pdfHeight;
+        function getCheckedLabelText(input) {
+            const label = input.closest('label');
+            return label ? label.textContent.trim().replace(/\s+/g, ' ') : 'Checked';
+        }
 
-                while (heightLeft > 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
-                    heightLeft -= pdfHeight;
-                }
-                pdf.save('Document_Compliance_Plan.pdf');
+        function buildSupportMarkdown() {
+            const generatedAt = new Date().toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short' });
+            const lines = [
+                '# Document Compliance Support Pack',
+                '',
+                `- Record generated: ${generatedAt}`,
+                '- Page updated: 19 May 2026',
+                '- Export format: Markdown `.md` for support agents, MCP tools, and AI handoff workflows',
+                '- Version acknowledgement: export behaviour changed from PDF to Markdown; checklist items were not changed in this update',
+                '',
+                '## Agent Instructions',
+                'Use this file as a working support checklist, not as proof that documents are valid. Verify every destination-specific requirement with official visa, embassy, consulate, DFAT, notary, apostille, and translation sources before relying on it.',
+                'Do not upload private scans, identity documents, bank statements, police checks, or medical documents into public tools. Use private, trusted review channels only.',
+                ''
+            ];
+
+            document.querySelectorAll('#document-categories > div').forEach(section => {
+                const category = section.querySelector('h2')?.textContent.trim() || 'Documents';
+                lines.push(`## ${category}`, '');
+
+                section.querySelectorAll('.document-card').forEach(card => {
+                    const name = card.querySelector('h4')?.textContent.trim() || 'Unnamed document';
+                    const notes = card.querySelector('p')?.textContent.trim() || 'No notes recorded';
+                    const statusSelect = card.querySelector('.status-select');
+                    const status = statusSelect?.selectedOptions[0]?.textContent.trim() || 'Not recorded';
+                    const expiry = card.querySelector('input[type="date"]')?.value || 'Not recorded';
+                    const actions = Array.from(card.querySelectorAll('input[type="checkbox"]:checked')).map(getCheckedLabelText);
+
+                    lines.push(`### ${name}`);
+                    lines.push(`- Status: ${status}`);
+                    lines.push(`- Expiry date: ${expiry}`);
+                    lines.push(`- Actions completed: ${actions.length ? actions.join(', ') : 'None recorded'}`);
+                    lines.push(`- Notes: ${notes}`);
+                    lines.push('');
+                });
             });
+
+            const languages = Array.from(document.querySelectorAll('#translation-hub input[type="checkbox"]:checked')).map(getCheckedLabelText);
+            lines.push('## Translation And Notarisation');
+            lines.push(`- Languages selected: ${languages.length ? languages.join(', ') : 'None recorded'}`);
+            lines.push('- Notarisation: confirm whether a Notary Public is required for the destination.');
+            lines.push('- Apostille: confirm whether the destination uses Hague Convention apostille requirements or a different authentication pathway.');
+            lines.push('');
+            lines.push('## MCP / Support-Agent Handoff');
+            lines.push('- Suggested next tool action: compare this support pack against the destination visa checklist and create a missing-document task list.');
+            lines.push('- Suggested privacy action: separate public-safe notes from private identity, financial, health, and police-clearance files.');
+            lines.push('- Suggested version-control action: if a document requirement changes, record the source URL or local source file, search date, affected item, exact change, and reason.');
+
+            return lines.join('\n');
+        }
+
+        function downloadTextFile(fileName, textContent, mimeType = 'text/markdown;charset=utf-8') {
+            const blob = new Blob([textContent], { type: mimeType });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(link.href);
+        }
+
+        function downloadSupportMarkdown() {
+            const fileName = `document-compliance-support-${getTodayForFileName()}.md`;
+            downloadTextFile(fileName, buildSupportMarkdown());
+            document.getElementById('exportStatus').textContent = `Downloaded ${fileName}`;
+        }
+
+        async function copySupportMarkdown() {
+            const markdown = buildSupportMarkdown();
+            try {
+                await navigator.clipboard.writeText(markdown);
+                document.getElementById('exportStatus').textContent = 'Markdown copied for support agents and MCP workflows.';
+            } catch (error) {
+                document.getElementById('exportStatus').textContent = 'Copy blocked by browser permissions. Use Download support-agents.md instead.';
+            }
         }
 
         function scrollToTop() {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-AU">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +19,8 @@
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
     </style>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
 </head>
 <body class="bg-gray-50 text-gray-800">
 
@@ -42,6 +44,34 @@
             <h1 class="text-4xl font-bold text-gray-900">Diplomatic Missions in Australia</h1>
             <p class="mt-2 text-lg text-gray-600">Find embassies, high commissions, and consulates across the country.</p>
         </header>
+
+        <section class="bg-white border border-blue-200 rounded-lg shadow-sm p-4 sm:p-5 mb-8" aria-label="Source freshness and version control">
+            <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-blue-700">Source freshness</p>
+                    <h2 class="text-xl font-bold text-gray-900 mt-1">Mission directory search and update status</h2>
+                    <p class="text-sm text-gray-600 mt-2">This tag tells the next agent whether the contact data was actually refreshed.</p>
+                </div>
+                <div class="grid gap-2 sm:grid-cols-3 lg:min-w-[42rem]">
+                    <div class="rounded-md bg-blue-50 p-3">
+                        <p class="text-xs font-semibold text-blue-700">Latest source search</p>
+                        <p class="text-sm font-bold text-blue-950">19 May 2026</p>
+                        <p class="text-xs text-blue-900 mt-1">Searched DFAT Protocol foreign embassies and consulates, version 3.10.22140.1.</p>
+                    </div>
+                    <div class="rounded-md bg-green-50 p-3">
+                        <p class="text-xs font-semibold text-green-700">Page updated</p>
+                        <p class="text-sm font-bold text-green-950">19 May 2026</p>
+                        <p class="text-xs text-green-900 mt-1">Recorded the official source path and refreshed country naming.</p>
+                    </div>
+                    <div class="rounded-md bg-amber-50 p-3">
+                        <p class="text-xs font-semibold text-amber-700">Version acknowledgement</p>
+                        <p class="text-sm font-bold text-amber-950">Naming changed</p>
+                        <p class="text-xs text-amber-900 mt-1">Updated Türkiye and United States of America labels; addresses and websites still need per-mission checks.</p>
+                    </div>
+                </div>
+            </div>
+            <p class="mt-4 text-sm text-gray-700"><strong>Why:</strong> diplomatic contact details move quietly. This pass confirmed the official DFAT Protocol directory path and naming; any future address, website, or role change should cite the exact mission detail page.</p>
+        </section>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 p-4 bg-white rounded-lg shadow-sm">
             <div class="flex-grow w-full">
@@ -214,16 +244,16 @@
             { country: 'Thailand', city: 'Canberra', type: 'Embassy', address: '111 Empire Circuit, Yarralumla ACT 2600', website: 'https://canberra.thaiembassy.org/' },
             { country: 'Timor-Leste', city: 'Canberra', type: 'Embassy', address: '75 Dominion Circuit, Forrest ACT 2603', website: 'https://www.embtlcanberra.org/' },
             { country: 'Tonga', city: 'Canberra', type: 'High Commission', address: '31 Endeavour Street, Red Hill ACT 2603', website: 'https://tongahighcommission.com.au/' },
-            { country: 'Turkey', city: 'Canberra', type: 'Embassy', address: '60 Mugga Way, Red Hill ACT 2603', website: 'http://canberra.emb.mfa.gov.tr' },
+            { country: 'Türkiye', city: 'Canberra', type: 'Embassy', address: '60 Mugga Way, Red Hill ACT 2603', website: 'http://canberra.emb.mfa.gov.tr' },
             { country: 'Uganda', city: 'Canberra', type: 'High Commission', address: '22 Pindari Crescent, O\'Malley ACT 2606', website: 'https://canberra.mofa.go.ug/' },
             { country: 'Ukraine', city: 'Canberra', type: 'Embassy', address: 'Level 12, St George Centre, 60 Marcus Clarke Street, Canberra ACT 2601', website: 'https://australia.mfa.gov.ua/en' },
             { country: 'United Arab Emirates', city: 'Canberra', type: 'Embassy', address: '12 Bulwarra Close, O\'Malley ACT 2606', website: 'https://www.mofa.gov.ae/en/missions/canberra' },
             { country: 'United Kingdom', city: 'Canberra', type: 'High Commission', address: 'Commonwealth Avenue, Yarralumla ACT 2600', website: 'https://www.gov.uk/world/organisations/british-high-commission-canberra' },
             { country: 'United Kingdom', city: 'Sydney', type: 'Consulate-General', address: 'Level 16, Gateway Building, 1 Macquarie Place, Sydney NSW 2000', website: 'https://www.gov.uk/world/organisations/british-consulate-general-sydney' },
-            { country: 'United States', city: 'Canberra', type: 'Embassy', address: 'Moonah Place, Yarralumla ACT 2600', website: 'https://au.usembassy.gov/' },
-            { country: 'United States', city: 'Sydney', type: 'Consulate-General', address: 'Level 10, 48 Miller Street, North Sydney NSW 2060', website: 'https://au.usembassy.gov/embassy-consulates/sydney/' },
-            { country: 'United States', city: 'Melbourne', type: 'Consulate-General', address: '553 St Kilda Road, Melbourne VIC 3004', website: 'https://au.usembassy.gov/embassy-consulates/melbourne/' },
-            { country: 'United States', city: 'Perth', type: 'Consulate-General', address: 'Level 4, 16 St Georges Terrace, Perth WA 6000', website: 'https://au.usembassy.gov/embassy-consulates/perth/' },
+            { country: 'United States of America', city: 'Canberra', type: 'Embassy', address: 'Moonah Place, Yarralumla ACT 2600', website: 'https://au.usembassy.gov/' },
+            { country: 'United States of America', city: 'Sydney', type: 'Consulate-General', address: 'Level 10, 48 Miller Street, North Sydney NSW 2060', website: 'https://au.usembassy.gov/embassy-consulates/sydney/' },
+            { country: 'United States of America', city: 'Melbourne', type: 'Consulate-General', address: '553 St Kilda Road, Melbourne VIC 3004', website: 'https://au.usembassy.gov/embassy-consulates/melbourne/' },
+            { country: 'United States of America', city: 'Perth', type: 'Consulate-General', address: 'Level 4, 16 St Georges Terrace, Perth WA 6000', website: 'https://au.usembassy.gov/embassy-consulates/perth/' },
             { country: 'Uruguay', city: 'Canberra', type: 'Embassy', address: 'Suite 2, Level 4, 13 London Circuit, Canberra ACT 2601', website: 'https://www.uruguay.org.au/' },
             { country: 'Vanuatu', city: 'Canberra', type: 'High Commission', address: '3rd Floor, 39 Empire Circuit, Forrest ACT 2603', website: 'https://vanuatuhighcommission.gov.vu/' },
             { country: 'Venezuela', city: 'Canberra', type: 'Embassy', address: '7 Culgoa Circuit, O\'Malley ACT 2606', website: 'https://embassy-finder.com/venezuela_in_canberra_australia' },
