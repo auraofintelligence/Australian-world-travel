@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diplomatic Missions in Australia</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="assets/missions.css" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -15,8 +14,16 @@
             transition: transform 0.2s, box-shadow 0.2s;
         }
         .mission-card:hover {
-            transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .mission-card a { overflow-wrap: anywhere; }
+        a:focus-visible, button:focus-visible, summary:focus-visible {
+            outline: 3px solid #2563eb;
+            outline-offset: 3px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            body { scroll-behavior: auto; }
+            .mission-card { transition: none; }
         }
     </style>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -24,10 +31,10 @@
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <nav class="bg-gray-800 text-white shadow-md no-print">
+    <nav class="site-nav bg-gray-800 text-white shadow-md no-print" aria-label="Main pages">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-center h-16">
-                <div class="flex space-x-4">
+                <div class="flex space-x-2 overflow-x-auto">
                     <a href="index.html" class="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Visa Guide</a>
                     <a href="missions.html" class="bg-gray-900 px-3 py-2 rounded-md text-sm font-medium">Missions</a>
                     <a href="abroad.html" class="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Abroad</a>
@@ -42,41 +49,41 @@
     <div class="container mx-auto p-4 sm:p-6 lg:p-8">
         <header class="text-center mb-8">
             <h1 class="text-4xl font-bold text-gray-900">Diplomatic Missions in Australia</h1>
-            <p class="mt-2 text-lg text-gray-600">Find embassies, high commissions, and consulates across the country.</p>
+            <p class="mt-2 text-lg text-gray-600">Reviewed office addresses for the original 141 embassy, high commission and consulate records.</p>
         </header>
 
-        <section class="bg-white border border-blue-200 rounded-lg shadow-sm p-4 sm:p-5 mb-8" aria-label="Source freshness and version control">
-            <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <section class="source-review bg-white border border-blue-200 rounded-lg shadow-sm p-4 sm:p-5 mb-8" aria-label="Source freshness and version control">
+            <div class="summary-layout flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                 <div>
-                    <p class="text-xs font-semibold uppercase tracking-wide text-blue-700">Source freshness</p>
-                    <h2 class="text-xl font-bold text-gray-900 mt-1">Mission directory search and update status</h2>
-                    <p class="text-sm text-gray-600 mt-2">This tag tells the next agent whether the contact data was actually refreshed.</p>
+                    <h2 class="text-xl font-bold text-gray-900">What has been checked</h2>
+                    <p class="text-sm text-gray-600 mt-2">Office addresses have been checked against DFAT Protocol and linked official mission sources. This repairs an older list; it is not a complete current diplomatic directory.</p>
                 </div>
-                <div class="grid gap-2 sm:grid-cols-3 lg:min-w-[42rem]">
+                <div class="summary-counts grid gap-2 sm:grid-cols-3 lg:min-w-[42rem]">
                     <div class="rounded-md bg-blue-50 p-3">
-                        <p class="text-xs font-semibold text-blue-700">Latest source search</p>
-                        <p class="text-sm font-bold text-blue-950">19 May 2026</p>
-                        <p class="text-xs text-blue-900 mt-1">Searched DFAT Protocol foreign embassies and consulates, version 3.10.22140.1.</p>
+                        <p class="text-xs font-semibold text-blue-700">Official sources checked</p>
+                        <p id="sourceCheckDate" class="text-sm font-bold text-blue-950">6 September 2026</p>
+                        <p class="text-xs text-blue-900 mt-1">Each record links to its evidence. Details can change after this date.</p>
                     </div>
                     <div class="rounded-md bg-green-50 p-3">
-                        <p class="text-xs font-semibold text-green-700">Page updated</p>
-                        <p class="text-sm font-bold text-green-950">19 May 2026</p>
-                        <p class="text-xs text-green-900 mt-1">Recorded the official source path and refreshed country naming.</p>
+                        <p class="text-xs font-semibold text-green-700">Office addresses checked</p>
+                        <p id="checkedAddressCount" class="text-sm font-bold text-green-950">Loading reviewed records</p>
+                        <p class="text-xs text-green-900 mt-1">An address can be checked even when its map position is still unresolved.</p>
                     </div>
                     <div class="rounded-md bg-amber-50 p-3">
-                        <p class="text-xs font-semibold text-amber-700">Version acknowledgement</p>
-                        <p class="text-sm font-bold text-amber-950">Naming changed</p>
-                        <p class="text-xs text-amber-900 mt-1">Updated Türkiye and United States of America labels; addresses and websites still need per-mission checks.</p>
+                        <p class="text-xs font-semibold text-amber-700">Map positions matched</p>
+                        <p id="mappedCount" class="text-sm font-bold text-amber-950">Loading reviewed records</p>
+                        <p class="text-xs text-amber-900 mt-1">Building or property positions, not verified visitor entrances.</p>
                     </div>
                 </div>
             </div>
-            <p class="mt-4 text-sm text-gray-700"><strong>Why:</strong> diplomatic contact details move quietly. This pass confirmed the official DFAT Protocol directory path and naming; any future address, website, or role change should cite the exact mission detail page.</p>
+            <p class="mt-4 text-sm text-gray-700"><strong>Before visiting:</strong> confirm current services, appointments and access with the office. A missing map position does not mean an office has closed. Suspensions, non-resident representation and identity questions are explained separately; old unverified addresses and contact links are not shown as current.</p>
+            <p class="mt-3 text-sm"><a href="https://protocol.dfat.gov.au/Public/MissionsInAustralia" class="text-blue-700 underline" target="_blank" rel="noopener noreferrer">DFAT diplomatic list</a> · <a href="https://protocol.dfat.gov.au/Public/ConsulatesInAustralia" class="text-blue-700 underline" target="_blank" rel="noopener noreferrer">DFAT consular list</a> · <a href="https://auraofintelligence.github.io/aura-horn-torus/missions.html" class="text-blue-700 underline">Globe mission directory</a></p>
         </section>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 p-4 bg-white rounded-lg shadow-sm">
+        <div class="mission-filters grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 p-4 bg-white rounded-lg shadow-sm">
             <div class="flex-grow w-full">
-                <label for="searchInput" class="block text-sm font-medium text-gray-700">Search by Country</label>
-                <input type="text" id="searchInput" onkeyup="filterMissions()" placeholder="e.g., Canada" class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label for="searchInput" class="block text-sm font-medium text-gray-700">Search the directory</label>
+                <input type="search" id="searchInput" oninput="filterMissions()" placeholder="Country, city or office address" class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div class="flex-grow w-full">
                 <label for="cityFilter" class="block text-sm font-medium text-gray-700">Filter by City</label>
@@ -103,10 +110,31 @@
                     <option value="Apostolic Nunciature">Apostolic Nunciature</option>
                 </select>
             </div>
+            <div class="flex-grow w-full">
+                <label for="statusFilter" class="block text-sm font-medium text-gray-700">Filter by review status</label>
+                <select id="statusFilter" onchange="filterMissions()" class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                    <option value="All">All review statuses</option>
+                    <option value="mapped">Address checked and mapped</option>
+                    <option value="address-checked">Address checked, map pending</option>
+                    <option value="notice">Official operational notice</option>
+                    <option value="non-resident">Non-resident representation</option>
+                    <option value="review">Identity or address review</option>
+                </select>
+            </div>
         </div>
 
-        <div id="missionsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="result-summary flex items-center justify-between gap-4 mb-5">
+            <p id="resultCount" role="status" aria-live="polite" class="text-sm text-gray-600">Loading reviewed records...</p>
+            <button type="button" onclick="clearFilters()" class="text-sm text-blue-700 underline">Clear filters</button>
+        </div>
+        <noscript><p class="p-4 bg-amber-50 border border-amber-300 rounded-lg">Turn on JavaScript to search the reviewed records, or use the official DFAT lists linked above.</p></noscript>
+        <div id="missionsGrid" aria-label="Reviewed mission records" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             </div>
+        <footer class="mt-10 pt-6 border-t border-gray-200 text-sm text-gray-600">
+            <p>The original 141 record numbers and country labels are retained for traceability. The May 2026 page changed country naming; it did not verify its old contact details. The latest review replaces those details only where evidence supports the change.</p>
+            <p class="mt-3">Office address evidence: <a class="underline" href="https://www.dfat.gov.au/about-us/about-this-website/copyright">Department of Foreign Affairs and Trade website - www.dfat.gov.au</a> and linked official sources. DFAT material is generally CC BY 4.0 except where otherwise noted. Map positions use <a class="underline" href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors, ODbL 1.0</a>, and <a class="underline" href="https://www.arcgis.com/home/item.html?id=13427dc77da340a29dd6601af4d7484d">ACTGOV ADDRESSES, © Australian Capital Territory</a>, under <a class="underline" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Each mapped record identifies its position source. The combined geocoded mission compilation is provided under ODbL 1.0 with the source attributions retained; see its <a class="underline" href="https://auraofintelligence.github.io/aura-horn-torus/data/MISSIONS-LICENCE.md">data licence and attribution notes</a>.</p>
+            <nav aria-label="Previous and next pages" class="flex justify-between gap-4 mt-5"><a class="text-blue-700 underline" href="index.html">Previous: Visa guide</a><a class="text-blue-700 underline" href="abroad.html">Next: Australian missions abroad</a></nav>
+        </footer>
     </div>
 
     <button onclick="scrollToBottom()" id="goToBottomBtn" title="Go to Bottom" class="fixed bottom-5 left-5 w-12 h-12 bg-green-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-green-700 transition-all text-2xl font-bold z-20">
@@ -116,8 +144,11 @@
         &#8593;
     </button>
     
+    <script src="data/missions-reviewed.js"></script>
     <script>
-        const missionsData = [
+        // Historical snapshot retained for audit and stable row numbering only.
+        // Never render these unverified addresses or websites as current contacts.
+        const historicalMissionsData = [
             { country: 'Afghanistan', city: 'Canberra', type: 'Embassy', address: '4 Beale Crescent, Deakin ACT 2600', website: 'http://www.afghanembassy.com.au/' },
             { country: 'Albania', city: 'Canberra', type: 'Embassy', address: '13 Culgoa Circuit, O\'Malley ACT 2606', website: 'http://www.ambasadat.gov.al/australia/en/' },
             { country: 'Algeria', city: 'Canberra', type: 'Embassy', address: '29 Cobbadah Street, O\'Malley ACT 2606', website: 'http://www.algeriaemb.org.au/' },
@@ -261,19 +292,69 @@
             { country: 'Zimbabwe', city: 'Canberra', type: 'Embassy', address: '7 Timbarra Crescent, O\'Malley ACT 2606', website: 'https://www.zimbabweembassy.org.au/' },
         ];
 
+        const reviewedSnapshot = window.AUSTRALIAN_MISSIONS_REVIEW;
+        const missionsData = reviewedSnapshot && Array.isArray(reviewedSnapshot.records)
+            ? reviewedSnapshot.records : [];
+        const reviewDate = reviewedSnapshot && /^\d{4}-\d{2}-\d{2}$/.test(reviewedSnapshot.checkedAt)
+            ? new Intl.DateTimeFormat('en-AU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+                .format(new Date(reviewedSnapshot.checkedAt + 'T00:00:00Z'))
+            : 'Date unavailable';
+
+        function escapeText(value) {
+            return String(value ?? '').replace(/[&<>"']/g, character => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[character]);
+        }
+
+        function safeLink(value) {
+            try {
+                const url = new URL(value);
+                return ['http:', 'https:'].includes(url.protocol) && !url.username && !url.password
+                    && url.hostname.includes('.') ? url.href : '';
+            } catch { return ''; }
+        }
+
+        function reviewCategory(mission) {
+            if (mission.status === 'mapped') return 'mapped';
+            if (mission.address) return 'address-checked';
+            if (/non-resident|nonresident|outside Australia/i.test(mission.reason)
+                && !/non-resident, postal-only or honorary/i.test(mission.reason)) return 'non-resident';
+            if (/suspend|expelled|expulsion|persona non grata|permanently closed|positive official evidence of a closure/i.test(mission.reason)) return 'notice';
+            return 'review';
+        }
+
+        const statusLabels = {
+            mapped: 'Address checked and mapped',
+            'address-checked': 'Address checked, map pending',
+            notice: 'Official operational notice',
+            'non-resident': 'Non-resident representation',
+            review: 'Identity or address review'
+        };
+
         function populateMissions() {
             const missionsGrid = document.getElementById('missionsGrid');
             missionsGrid.innerHTML = '';
+            if (!missionsData.length) {
+                document.getElementById('resultCount').textContent = 'The reviewed records could not be loaded.';
+                document.getElementById('checkedAddressCount').textContent = 'Unavailable';
+                document.getElementById('mappedCount').textContent = 'Unavailable';
+                missionsGrid.innerHTML = '<p class="col-span-full p-5 bg-amber-50 border border-amber-300 rounded-lg">Please reload this page or use the official DFAT links above. Old unverified contact details are not used as a fallback.</p>';
+                return;
+            }
             const cityFilter = document.getElementById('cityFilter').value;
             const typeFilter = document.getElementById('typeFilter').value;
-            const searchFilter = document.getElementById('searchInput').value.toUpperCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const searchFilter = document.getElementById('searchInput').value.trim().toLocaleLowerCase('en-AU');
 
             const filteredMissions = missionsData.filter(mission => {
                 const cityMatch = (cityFilter === 'All' || mission.city === cityFilter);
                 const typeMatch = (typeFilter === 'All' || mission.type === typeFilter);
-                const searchMatch = (mission.country.toUpperCase().includes(searchFilter));
-                return cityMatch && typeMatch && searchMatch;
+                const statusMatch = statusFilter === 'All' || reviewCategory(mission) === statusFilter;
+                const searchMatch = [mission.country, mission.city, mission.type, mission.name,
+                    mission.address, mission.id].join(' ').toLocaleLowerCase('en-AU').includes(searchFilter);
+                return cityMatch && typeMatch && statusMatch && searchMatch;
             });
+            document.getElementById('resultCount').textContent = `Showing ${filteredMissions.length} of ${missionsData.length} historical records`;
 
             if (filteredMissions.length === 0) {
                 missionsGrid.innerHTML = `<p class="text-gray-500 col-span-full text-center">No missions found matching your criteria.</p>`;
@@ -281,21 +362,59 @@
             }
 
             filteredMissions.forEach(mission => {
-                const missionCard = document.createElement('div');
+                const category = reviewCategory(mission);
+                const website = mission.address ? safeLink(mission.website) : '';
+                const sourceUrl = safeLink(mission.sourceUrl);
+                const positionSource = mission.status === 'mapped' ? safeLink(mission.coordinateSourceUrl) : '';
+                const sources = (mission.sources || []).filter(source => safeLink(source.url));
+                const missionCard = document.createElement('article');
+                missionCard.id = mission.id;
                 missionCard.className = 'mission-card bg-white p-6 rounded-lg border border-gray-200 flex flex-col';
+                const badgeColour = category === 'mapped' ? 'bg-green-50 text-green-800' : category === 'address-checked'
+                    ? 'bg-blue-50 text-blue-800' : 'bg-amber-50 text-amber-900';
+                const history = `Historical record ${String(mission.legacyRowNumber).padStart(3, '0')}: ${mission.historicalType} in ${mission.historicalCity}`;
                 missionCard.innerHTML = `
-                    <h3 class="font-bold text-xl text-gray-800">${mission.country}</h3>
-                    <p class="text-gray-600 font-medium">${mission.type} in ${mission.city}</p>
-                    <p class="text-sm text-gray-500 mt-2 flex-grow">${mission.address}</p>
-                    <a href="${mission.website}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline text-sm mt-4 inline-block self-start">
-                        Visit Website →
-                    </a>
+                    <h3 class="font-bold text-xl text-gray-800">${escapeText(mission.country)}</h3>
+                    <p class="text-gray-700 font-medium mt-1">${escapeText(mission.address ? mission.name : 'Historical ' + mission.type + ' listing - ' + mission.historicalCity)}</p>
+                    <p class="self-start text-xs font-semibold px-2 py-1 rounded mt-3 ${badgeColour}">${statusLabels[category]}</p>
+                    <p class="text-sm text-gray-700 mt-4">${mission.address
+                        ? '<strong>Checked office address</strong><br>' + escapeText(mission.address)
+                        : 'No current Australian office address is presented for this historical listing.'}</p>
+                    <p class="text-sm text-gray-600 mt-3">${escapeText(mission.reason)}</p>
+                    ${mission.reviewNote ? '<details class="text-sm mt-3"><summary class="cursor-pointer text-blue-700">Address review notes</summary><p class="mt-2 text-gray-600">' + escapeText(mission.reviewNote) + '</p></details>' : ''}
+                    <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm mt-4">
+                        ${sourceUrl ? '<a href="' + escapeText(sourceUrl) + '" target="_blank" rel="noopener noreferrer" class="text-blue-700 underline">Official evidence</a>' : ''}
+                        ${website ? '<a href="' + escapeText(website) + '" target="_blank" rel="noopener noreferrer" class="text-blue-700 underline">Listed office website</a>' : ''}
+                        ${mission.status === 'mapped' ? '<a href="https://auraofintelligence.github.io/aura-horn-torus/?mission=' + encodeURIComponent(mission.id) + '" class="text-blue-700 underline">Show on globe</a>' : ''}
+                    </div>
+                    ${(sources.length || positionSource) ? '<details class="text-sm mt-3"><summary class="cursor-pointer text-blue-700">Sources and map evidence</summary><div class="mt-2 space-y-3">' + sources.map(source => '<p><a class="text-blue-700 underline" target="_blank" rel="noopener noreferrer" href="' + escapeText(safeLink(source.url)) + '">' + escapeText(new URL(source.url).hostname) + '</a><br>' + escapeText(source.supports) + '</p>').join('') + (positionSource ? '<p><a class="text-blue-700 underline" target="_blank" rel="noopener noreferrer" href="' + escapeText(positionSource) + '">Position source</a><br>' + escapeText(mission.coordinateBasis) + '. Not a verified entrance or permission to visit.</p>' : '') + '</div></details>' : ''}
+                    <p class="text-xs text-gray-500 mt-auto pt-5">${escapeText(history)}<br>Checked ${escapeText(reviewDate)}</p>
                 `;
                 missionsGrid.appendChild(missionCard);
             });
         }
 
         function filterMissions() {
+            populateMissions();
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            ['cityFilter', 'typeFilter', 'statusFilter'].forEach(id => document.getElementById(id).value = 'All');
+            populateMissions();
+        }
+
+        function initialiseReview() {
+            document.getElementById('sourceCheckDate').textContent = reviewDate;
+            for (const [id, field, allLabel] of [['cityFilter', 'city', 'All cities'], ['typeFilter', 'type', 'All types']]) {
+                const select = document.getElementById(id);
+                select.replaceChildren(new Option(allLabel, 'All'));
+                [...new Set(missionsData.map(record => record[field]).filter(Boolean))]
+                    .sort((left, right) => left.localeCompare(right, 'en-AU'))
+                    .forEach(value => select.add(new Option(value, value)));
+            }
+            document.getElementById('checkedAddressCount').textContent = `${missionsData.filter(record => record.address).length} of ${missionsData.length} records`;
+            document.getElementById('mappedCount').textContent = `${missionsData.filter(record => record.status === 'mapped').length} of ${missionsData.length} records`;
             populateMissions();
         }
 
@@ -333,7 +452,7 @@
         }
 
         window.onload = () => {
-            populateMissions();
+            initialiseReview();
         };
     </script>
 </body>
