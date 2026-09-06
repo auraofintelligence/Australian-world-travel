@@ -370,13 +370,14 @@
                 const missionCard = document.createElement('article');
                 missionCard.id = mission.id;
                 missionCard.className = 'mission-card bg-white p-6 rounded-lg border border-gray-200 flex flex-col';
-                const badgeColour = category === 'mapped' ? 'bg-green-50 text-green-800' : category === 'address-checked'
+                const approximate = mission.coordinateBasis && mission.coordinateBasis.includes('approximate city position');
+                const badgeColour = approximate ? 'bg-amber-50 text-amber-800' : category === 'mapped' ? 'bg-green-50 text-green-800' : category === 'address-checked'
                     ? 'bg-blue-50 text-blue-800' : 'bg-amber-50 text-amber-900';
                 const history = `Historical record ${String(mission.legacyRowNumber).padStart(3, '0')}: ${mission.historicalType} in ${mission.historicalCity}`;
                 missionCard.innerHTML = `
                     <h3 class="font-bold text-xl text-gray-800">${escapeText(mission.country)}</h3>
                     <p class="text-gray-700 font-medium mt-1">${escapeText(mission.address ? mission.name : 'Historical ' + mission.type + ' listing - ' + mission.historicalCity)}</p>
-                    <p class="self-start text-xs font-semibold px-2 py-1 rounded mt-3 ${badgeColour}">${statusLabels[category]}</p>
+                    <p class="self-start text-xs font-semibold px-2 py-1 rounded mt-3 ${badgeColour}">${approximate ? 'Approximate city position' : statusLabels[category]}</p>
                     <p class="text-sm text-gray-700 mt-4">${mission.address
                         ? '<strong>Checked office address</strong><br>' + escapeText(mission.address)
                         : 'No current Australian office address is presented for this historical listing.'}</p>

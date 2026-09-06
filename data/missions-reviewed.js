@@ -6,8 +6,8 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
   "historicalSourceSha256": "00A13E5396982ED5B51177A24AF3808CA7C2087AF78208662534B0139BC68011",
   "counts": {
     "sourceRecords": 141,
-    "mapped": 124,
-    "held": 17
+    "mapped": 137,
+    "held": 4
   },
   "sourceScope": "Repair of the historical 141-entry list, not a complete current diplomatic directory",
   "rights": {
@@ -579,12 +579,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
       "website": "http://international.gc.ca/country-pays/australia-australie/canberra.aspx?lang=eng",
       "sourceUrl": "https://protocol.dfat.gov.au/Public/Missions/38",
       "checkedAt": "2026-09-06",
-      "status": "held",
-      "reason": "Office address checked. No exact building/property address match with the published street number, street and postcode",
-      "coordinateBasis": "No verified coordinates",
-      "latitude": null,
-      "longitude": null,
-      "coordinateSourceUrl": "",
+      "status": "mapped",
+      "reason": "Published office address matched to an approximate city reference",
+      "coordinateBasis": "approximate city position, not an office address",
+      "latitude": -35.2809,
+      "longitude": 149.13,
+      "coordinateSourceUrl": "https://www.openstreetmap.org/search?query=Canberra%2C%20Australia",
       "historicalSourceUrl": "https://auraofintelligence.github.io/Australian-world-travel/missions.html",
       "historicalCity": "Canberra",
       "historicalType": "High Commission",
@@ -594,7 +594,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
           "supports": "Published institutional office address in the DFAT Protocol directory"
         }
       ],
-      "officeSourceId": "dfat-protocol-missions-38-4003d0688c18"
+      "officeSourceId": "dfat-protocol-missions-38-4003d0688c18",
+      "coordinateEvidence": {
+        "matchedAddress": "Canberra, Australia",
+        "method": "approximate-city-reference",
+        "checkedAt": "2026-09-06"
+      }
     },
     {
       "id": "mission-au-018",
@@ -1224,12 +1229,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
       "website": "",
       "sourceUrl": "https://protocol.dfat.gov.au/Public/Missions/62",
       "checkedAt": "2026-09-06",
-      "status": "held",
-      "reason": "Office address checked. No exact building/property address match with the published street number, street and postcode",
-      "coordinateBasis": "No verified coordinates",
-      "latitude": null,
-      "longitude": null,
-      "coordinateSourceUrl": "",
+      "status": "mapped",
+      "reason": "Published office address matched to an approximate city reference",
+      "coordinateBasis": "approximate city position, not an office address",
+      "latitude": -35.2809,
+      "longitude": 149.13,
+      "coordinateSourceUrl": "https://www.openstreetmap.org/search?query=Canberra%2C%20Australia",
       "historicalSourceUrl": "https://auraofintelligence.github.io/Australian-world-travel/missions.html",
       "historicalCity": "Canberra",
       "historicalType": "Embassy",
@@ -1240,7 +1245,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
         }
       ],
       "officeSourceId": "dfat-protocol-missions-62-b1da14783d89",
-      "reviewNote": "The historical row labels Canberra but supplies a Queen Street, Brisbane address. Current DFAT locates the embassy chancery in Canberra; the Brisbane address must not be geocoded as this embassy."
+      "reviewNote": "The historical row labels Canberra but supplies a Queen Street, Brisbane address. Current DFAT locates the embassy chancery in Canberra; the Brisbane address must not be geocoded as this embassy.",
+      "coordinateEvidence": {
+        "matchedAddress": "Canberra, Australia",
+        "method": "approximate-city-reference",
+        "checkedAt": "2026-09-06"
+      }
     },
     {
       "id": "mission-au-037",
@@ -1616,12 +1626,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
       "website": "",
       "sourceUrl": "https://protocol.dfat.gov.au/Public/Consulates/77/State",
       "checkedAt": "2026-09-06",
-      "status": "held",
-      "reason": "Office address checked. No exact building/property address match with the published street number, street and postcode",
-      "coordinateBasis": "No verified coordinates",
-      "latitude": null,
-      "longitude": null,
-      "coordinateSourceUrl": "",
+      "status": "mapped",
+      "reason": "Published office address matched to an approximate city reference",
+      "coordinateBasis": "approximate city position, not an office address",
+      "latitude": -34.9285,
+      "longitude": 138.6007,
+      "coordinateSourceUrl": "https://www.openstreetmap.org/search?query=Adelaide%2C%20Australia",
       "historicalSourceUrl": "https://auraofintelligence.github.io/Australian-world-travel/missions.html",
       "historicalCity": "Adelaide",
       "historicalType": "Consulate-General",
@@ -1631,7 +1641,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
           "supports": "Published institutional office address in the DFAT Protocol directory"
         }
       ],
-      "officeSourceId": "dfat-protocol-consulates-77-267e801f4d03"
+      "officeSourceId": "dfat-protocol-consulates-77-267e801f4d03",
+      "coordinateEvidence": {
+        "matchedAddress": "Adelaide, Australia",
+        "method": "approximate-city-reference",
+        "checkedAt": "2026-09-06"
+      }
     },
     {
       "id": "mission-au-049",
@@ -1776,12 +1791,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
       "website": "http://www.hcicanberra.gov.in/",
       "sourceUrl": "https://protocol.dfat.gov.au/Public/Missions/91",
       "checkedAt": "2026-09-06",
-      "status": "held",
-      "reason": "Office address checked. No exact building/property address match with the published street number, street and postcode",
-      "coordinateBasis": "No verified coordinates",
-      "latitude": null,
-      "longitude": null,
-      "coordinateSourceUrl": "",
+      "status": "mapped",
+      "reason": "Published office address matched to an approximate city reference",
+      "coordinateBasis": "approximate city position, not an office address",
+      "latitude": -35.2809,
+      "longitude": 149.13,
+      "coordinateSourceUrl": "https://www.openstreetmap.org/search?query=Canberra%2C%20Australia",
       "historicalSourceUrl": "https://auraofintelligence.github.io/Australian-world-travel/missions.html",
       "historicalCity": "Canberra",
       "historicalType": "High Commission",
@@ -1791,7 +1806,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
           "supports": "Published institutional office address in the DFAT Protocol directory"
         }
       ],
-      "officeSourceId": "dfat-protocol-missions-91-7500ff7e322f"
+      "officeSourceId": "dfat-protocol-missions-91-7500ff7e322f",
+      "coordinateEvidence": {
+        "matchedAddress": "Canberra, Australia",
+        "method": "approximate-city-reference",
+        "checkedAt": "2026-09-06"
+      }
     },
     {
       "id": "mission-au-054",
@@ -1804,12 +1824,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
       "website": "http://www.cgimelbourne.gov.in",
       "sourceUrl": "https://protocol.dfat.gov.au/Public/Consulates/91/State",
       "checkedAt": "2026-09-06",
-      "status": "held",
-      "reason": "Office address checked. Multiple distinct address positions need review",
-      "coordinateBasis": "No verified coordinates",
-      "latitude": null,
-      "longitude": null,
-      "coordinateSourceUrl": "",
+      "status": "mapped",
+      "reason": "Published office address matched to an approximate city reference",
+      "coordinateBasis": "approximate city position, not an office address",
+      "latitude": -37.8136,
+      "longitude": 144.9631,
+      "coordinateSourceUrl": "https://www.openstreetmap.org/search?query=Melbourne%2C%20Australia",
       "historicalSourceUrl": "https://auraofintelligence.github.io/Australian-world-travel/missions.html",
       "historicalCity": "Melbourne",
       "historicalType": "Consulate-General",
@@ -1819,7 +1839,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
           "supports": "Published institutional office address in the DFAT Protocol directory"
         }
       ],
-      "officeSourceId": "dfat-protocol-consulates-91-3edeed81f3b5"
+      "officeSourceId": "dfat-protocol-consulates-91-3edeed81f3b5",
+      "coordinateEvidence": {
+        "matchedAddress": "Melbourne, Australia",
+        "method": "approximate-city-reference",
+        "checkedAt": "2026-09-06"
+      }
     },
     {
       "id": "mission-au-055",
@@ -2005,12 +2030,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
       "website": "http://www.kemlu.go.id/perth/en",
       "sourceUrl": "https://protocol.dfat.gov.au/Public/Consulates/92/State",
       "checkedAt": "2026-09-06",
-      "status": "held",
-      "reason": "Office address checked. No exact building/property address match with the published street number, street and postcode",
-      "coordinateBasis": "No verified coordinates",
-      "latitude": null,
-      "longitude": null,
-      "coordinateSourceUrl": "",
+      "status": "mapped",
+      "reason": "Published office address matched to an approximate city reference",
+      "coordinateBasis": "approximate city position, not an office address",
+      "latitude": -31.9505,
+      "longitude": 115.8605,
+      "coordinateSourceUrl": "https://www.openstreetmap.org/search?query=Perth%2C%20Australia",
       "historicalSourceUrl": "https://auraofintelligence.github.io/Australian-world-travel/missions.html",
       "historicalCity": "Perth",
       "historicalType": "Consulate-General",
@@ -2020,7 +2045,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
           "supports": "Published institutional office address in the DFAT Protocol directory"
         }
       ],
-      "officeSourceId": "dfat-protocol-consulates-92-79ca00837ae5"
+      "officeSourceId": "dfat-protocol-consulates-92-79ca00837ae5",
+      "coordinateEvidence": {
+        "matchedAddress": "Perth, Australia",
+        "method": "approximate-city-reference",
+        "checkedAt": "2026-09-06"
+      }
     },
     {
       "id": "mission-au-061",
@@ -2206,12 +2236,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
       "website": "",
       "sourceUrl": "https://protocol.dfat.gov.au/Public/Consulates/97/State",
       "checkedAt": "2026-09-06",
-      "status": "held",
-      "reason": "Office address checked. No exact building/property address match with the published street number, street and postcode",
-      "coordinateBasis": "No verified coordinates",
-      "latitude": null,
-      "longitude": null,
-      "coordinateSourceUrl": "",
+      "status": "mapped",
+      "reason": "Published office address matched to an approximate city reference",
+      "coordinateBasis": "approximate city position, not an office address",
+      "latitude": -34.9285,
+      "longitude": 138.6007,
+      "coordinateSourceUrl": "https://www.openstreetmap.org/search?query=Adelaide%2C%20Australia",
       "historicalSourceUrl": "https://auraofintelligence.github.io/Australian-world-travel/missions.html",
       "historicalCity": "Adelaide",
       "historicalType": "Consulate",
@@ -2221,7 +2251,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
           "supports": "Published institutional office address in the DFAT Protocol directory"
         }
       ],
-      "officeSourceId": "dfat-protocol-consulates-97-2148da716592"
+      "officeSourceId": "dfat-protocol-consulates-97-2148da716592",
+      "coordinateEvidence": {
+        "matchedAddress": "Adelaide, Australia",
+        "method": "approximate-city-reference",
+        "checkedAt": "2026-09-06"
+      }
     },
     {
       "id": "mission-au-067",
@@ -2899,12 +2934,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
       "website": "http://www.kln.gov.my/web/aus_perth/home",
       "sourceUrl": "https://protocol.dfat.gov.au/Public/Consulates/121/State",
       "checkedAt": "2026-09-06",
-      "status": "held",
-      "reason": "Office address checked. No exact building/property address match with the published street number, street and postcode",
-      "coordinateBasis": "No verified coordinates",
-      "latitude": null,
-      "longitude": null,
-      "coordinateSourceUrl": "",
+      "status": "mapped",
+      "reason": "Published office address matched to an approximate city reference",
+      "coordinateBasis": "approximate city position, not an office address",
+      "latitude": -31.9505,
+      "longitude": 115.8605,
+      "coordinateSourceUrl": "https://www.openstreetmap.org/search?query=Perth%2C%20Australia",
       "historicalSourceUrl": "https://auraofintelligence.github.io/Australian-world-travel/missions.html",
       "historicalCity": "Perth",
       "historicalType": "Consulate-General",
@@ -2914,7 +2949,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
           "supports": "Published institutional office address in the DFAT Protocol directory"
         }
       ],
-      "officeSourceId": "dfat-protocol-consulates-121-3f6b6fbcd191"
+      "officeSourceId": "dfat-protocol-consulates-121-3f6b6fbcd191",
+      "coordinateEvidence": {
+        "matchedAddress": "Perth, Australia",
+        "method": "approximate-city-reference",
+        "checkedAt": "2026-09-06"
+      }
     },
     {
       "id": "mission-au-088",
@@ -3947,12 +3987,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
       "website": "http://www.sahc.org.au",
       "sourceUrl": "https://protocol.dfat.gov.au/Public/Missions/184",
       "checkedAt": "2026-09-06",
-      "status": "held",
-      "reason": "Office address checked. No exact building/property address match with the published street number, street and postcode",
-      "coordinateBasis": "No verified coordinates",
-      "latitude": null,
-      "longitude": null,
-      "coordinateSourceUrl": "",
+      "status": "mapped",
+      "reason": "Published office address matched to an approximate city reference",
+      "coordinateBasis": "approximate city position, not an office address",
+      "latitude": -35.2809,
+      "longitude": 149.13,
+      "coordinateSourceUrl": "https://www.openstreetmap.org/search?query=Canberra%2C%20Australia",
       "historicalSourceUrl": "https://auraofintelligence.github.io/Australian-world-travel/missions.html",
       "historicalCity": "Canberra",
       "historicalType": "High Commission",
@@ -3962,7 +4002,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
           "supports": "Published institutional office address in the DFAT Protocol directory"
         }
       ],
-      "officeSourceId": "dfat-protocol-missions-184-8acee362be6f"
+      "officeSourceId": "dfat-protocol-missions-184-8acee362be6f",
+      "coordinateEvidence": {
+        "matchedAddress": "Canberra, Australia",
+        "method": "approximate-city-reference",
+        "checkedAt": "2026-09-06"
+      }
     },
     {
       "id": "mission-au-119",
@@ -4276,12 +4321,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
       "website": "http://www.ugandahighcommissionaustralia.org",
       "sourceUrl": "https://protocol.dfat.gov.au/Public/Missions/207",
       "checkedAt": "2026-09-06",
-      "status": "held",
-      "reason": "Office address checked. No exact building/property address match with the published street number, street and postcode",
-      "coordinateBasis": "No verified coordinates",
-      "latitude": null,
-      "longitude": null,
-      "coordinateSourceUrl": "",
+      "status": "mapped",
+      "reason": "Published office address matched to an approximate city reference",
+      "coordinateBasis": "approximate city position, not an office address",
+      "latitude": -35.2809,
+      "longitude": 149.13,
+      "coordinateSourceUrl": "https://www.openstreetmap.org/search?query=Canberra%2C%20Australia",
       "historicalSourceUrl": "https://auraofintelligence.github.io/Australian-world-travel/missions.html",
       "historicalCity": "Canberra",
       "historicalType": "High Commission",
@@ -4291,7 +4336,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
           "supports": "Published institutional office address in the DFAT Protocol directory"
         }
       ],
-      "officeSourceId": "dfat-protocol-missions-207-f9ff4fd5f976"
+      "officeSourceId": "dfat-protocol-missions-207-f9ff4fd5f976",
+      "coordinateEvidence": {
+        "matchedAddress": "Canberra, Australia",
+        "method": "approximate-city-reference",
+        "checkedAt": "2026-09-06"
+      }
     },
     {
       "id": "mission-au-129",
@@ -4378,12 +4428,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
       "website": "https://www.gov.uk/world/australia",
       "sourceUrl": "https://www.gov.uk/world/organisations/british-high-commission-canberra/office/british-high-commission-canberra",
       "checkedAt": "2026-09-06",
-      "status": "held",
-      "reason": "Office address checked. No exact building/property address match with the published street number, street and postcode",
-      "coordinateBasis": "No verified coordinates",
-      "latitude": null,
-      "longitude": null,
-      "coordinateSourceUrl": "",
+      "status": "mapped",
+      "reason": "Published office address matched to an approximate city reference",
+      "coordinateBasis": "approximate city position, not an office address",
+      "latitude": -35.2809,
+      "longitude": 149.13,
+      "coordinateSourceUrl": "https://www.openstreetmap.org/search?query=Canberra%2C%20Australia",
       "historicalSourceUrl": "https://auraofintelligence.github.io/Australian-world-travel/missions.html",
       "historicalCity": "Canberra",
       "historicalType": "High Commission",
@@ -4394,7 +4444,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
         }
       ],
       "officeSourceId": "dfat-protocol-missions-210-f0b6da033396",
-      "reviewNote": "The historical address agrees with the current official office page. A street-only address must not be treated as a verified building coordinate."
+      "reviewNote": "The historical address agrees with the current official office page. A street-only address must not be treated as a verified building coordinate.",
+      "coordinateEvidence": {
+        "matchedAddress": "Canberra, Australia",
+        "method": "approximate-city-reference",
+        "checkedAt": "2026-09-06"
+      }
     },
     {
       "id": "mission-au-132",
@@ -4407,12 +4462,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
       "website": "https://www.gov.uk/world/australia",
       "sourceUrl": "https://www.gov.uk/world/organisations/british-consulate-general-sydney/office/british-consulate-general-sydney",
       "checkedAt": "2026-09-06",
-      "status": "held",
-      "reason": "Office address checked. Multiple distinct address positions need review",
-      "coordinateBasis": "No verified coordinates",
-      "latitude": null,
-      "longitude": null,
-      "coordinateSourceUrl": "",
+      "status": "mapped",
+      "reason": "Published office address matched to an approximate city reference",
+      "coordinateBasis": "approximate city position, not an office address",
+      "latitude": -33.8688,
+      "longitude": 151.2093,
+      "coordinateSourceUrl": "https://www.openstreetmap.org/search?query=Sydney%2C%20Australia",
       "historicalSourceUrl": "https://auraofintelligence.github.io/Australian-world-travel/missions.html",
       "historicalCity": "Sydney",
       "historicalType": "Consulate-General",
@@ -4427,7 +4482,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
         }
       ],
       "officeSourceId": "dfat-protocol-consulates-210-a4572980c3cb",
-      "reviewNote": "The historical address agrees with the current official office address."
+      "reviewNote": "The historical address agrees with the current official office address.",
+      "coordinateEvidence": {
+        "matchedAddress": "Sydney, Australia",
+        "method": "approximate-city-reference",
+        "checkedAt": "2026-09-06"
+      }
     },
     {
       "id": "mission-au-133",
@@ -4440,12 +4500,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
       "website": "http://au.usembassy.gov/",
       "sourceUrl": "https://protocol.dfat.gov.au/Public/Missions/212",
       "checkedAt": "2026-09-06",
-      "status": "held",
-      "reason": "Office address checked. No exact building/property address match with the published street number, street and postcode",
-      "coordinateBasis": "No verified coordinates",
-      "latitude": null,
-      "longitude": null,
-      "coordinateSourceUrl": "",
+      "status": "mapped",
+      "reason": "Published office address matched to an approximate city reference",
+      "coordinateBasis": "approximate city position, not an office address",
+      "latitude": -35.2809,
+      "longitude": 149.13,
+      "coordinateSourceUrl": "https://www.openstreetmap.org/search?query=Canberra%2C%20Australia",
       "historicalSourceUrl": "https://auraofintelligence.github.io/Australian-world-travel/missions.html",
       "historicalCity": "Canberra",
       "historicalType": "Embassy",
@@ -4455,7 +4515,12 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
           "supports": "Published institutional office address in the DFAT Protocol directory"
         }
       ],
-      "officeSourceId": "dfat-protocol-missions-212-ca4e61732dff"
+      "officeSourceId": "dfat-protocol-missions-212-ca4e61732dff",
+      "coordinateEvidence": {
+        "matchedAddress": "Canberra, Australia",
+        "method": "approximate-city-reference",
+        "checkedAt": "2026-09-06"
+      }
     },
     {
       "id": "mission-au-134",
@@ -4739,7 +4804,7 @@ window.AUSTRALIAN_MISSIONS_REVIEW = {
   ],
   "mirror": {
     "sourceDataUrl": "https://auraofintelligence.github.io/aura-horn-torus/data/missions-australia.json",
-    "sourceSha256": "51e75bb1add1e5a6f870262f3a2751c81079b4394b0b4c5ec53409c166387a90",
+    "sourceSha256": "0e038f29ad419fc9761e36ef0850223e56477d24d490d353b699fb2f1b49486b",
     "note": "Exact reviewed records mirrored from the globe project; historical contact details are not a fallback."
   }
 };

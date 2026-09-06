@@ -8,7 +8,7 @@ The page's styling is also local, in `assets/missions.css`; it no longer depends
 
 ## Snapshot checked 6 September 2026
 
-All 141 historical records remain present. There are 137 checked office addresses and 124 mapped positions. The 17 records without map points comprise 13 checked addresses awaiting coordinates, two official operational notices and two non-resident representations. A missing coordinate is not treated as a closure. These are dated snapshot counts, not a claim about every diplomatic office currently operating in Australia.
+All 141 historical records remain present. There are 137 checked office addresses and 137 map positions: 124 source-backed building/property points and 13 clearly labelled approximate city positions. Four records remain without map points: two official operational notices and two non-resident representations. An approximate city position is not an office entrance. These are dated snapshot counts, not a claim about every diplomatic office currently operating in Australia.
 
 ## Refreshing the page
 
